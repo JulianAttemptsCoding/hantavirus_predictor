@@ -30,13 +30,14 @@ python -m ruff check src tests tools
 2. `docs/PROJECT_STATE.md`
 3. `docs/SOURCE_ARCHIVE_AUDIT.md`
 4. `docs/RESEARCH_CLAIMS_AUDIT.md`
-5. `docs/PUBLICATION_FIRST_DIFFERENTIATION_PLAN.md`
-6. `docs/INTERNATIONAL_PUBLICATION_AND_MARKETING_PLAN.md`
-7. `docs/DATA_REQUIREMENTS.md`
-8. `docs/PUBLICATION_ROADMAP.md`
-9. `docs/BLOCKER_RESPONSE_PLAN.md`
-10. `configs/data_catalog.yaml`
-11. `configs/modeling_plan.yaml`
+5. `docs/PAPER_IMPLEMENTATION_PLAN_AND_BLOCKERS.md`
+6. `docs/PUBLICATION_FIRST_DIFFERENTIATION_PLAN.md`
+7. `docs/INTERNATIONAL_PUBLICATION_AND_MARKETING_PLAN.md`
+8. `docs/DATA_REQUIREMENTS.md`
+9. `docs/PUBLICATION_ROADMAP.md`
+10. `docs/BLOCKER_RESPONSE_PLAN.md`
+11. `configs/data_catalog.yaml`
+12. `configs/modeling_plan.yaml`
 
 ## Rules For Future Agents
 
@@ -51,13 +52,14 @@ python -m ruff check src tests tools
 
 ## Immediate Next Tasks
 
-1. Implement country-level raster aggregation for TerraClimate NetCDF files.
-2. Implement quality-masked country-level raster aggregation for MODIS MOD13C2 HDF granules.
-3. Extend `data/manual/international_country_cases.csv` with PAHO and China CDC rows only when provenance is complete.
-4. Add calibration plots from `data/processed/international_baseline_predictions.csv`.
-5. Implement a proper negative-binomial GLM or Bayesian hierarchical model if dependencies are approved.
-6. Keep U.S./NEON as mechanistic support and fallback manuscript.
-7. Only then evaluate PINN, TimesFM, or graph models.
+1. Implement TerraClimate country-year aggregation for ECDC countries only.
+2. Add leakage and missingness tests for TerraClimate lag features.
+3. Rebuild the processed country-year table and audit report.
+4. Re-run baselines with feature ablations.
+5. Decide whether MODIS aggregation is feasible locally; if yes, implement QA-masked NDVI/EVI country-year features.
+6. Extend `data/manual/international_country_cases.csv` with PAHO and China CDC rows only after covariate QA.
+7. Keep simulation as reservoir-spillover/scenario stress testing, not generic human spread.
+8. Only then evaluate PINN, TimesFM, or graph models.
 
 ## Expected First Milestone
 

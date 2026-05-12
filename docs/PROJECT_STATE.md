@@ -28,6 +28,7 @@ Ready:
 - source archive audit and blocker response
 - international publication and marketing plan
 - publication-first differentiation plan against HantavirusMap-style live signal trackers
+- exact paper implementation plan and blocker register
 - data requirements and source registry
 - international country-case schema
 - international case-source matrix
@@ -60,13 +61,14 @@ Not ready yet:
 Read in this order:
 
 1. `docs/AGENT_HANDOFF.md`
-2. `docs/PUBLICATION_FIRST_DIFFERENTIATION_PLAN.md`
-3. `docs/INTERNATIONAL_PUBLICATION_AND_MARKETING_PLAN.md`
-4. `docs/DATA_REQUIREMENTS.md`
-5. `docs/PUBLICATION_ROADMAP.md`
-6. `docs/BLOCKER_RESPONSE_PLAN.md`
-7. `configs/data_catalog.yaml`
-8. `configs/modeling_plan.yaml`
+2. `docs/PAPER_IMPLEMENTATION_PLAN_AND_BLOCKERS.md`
+3. `docs/PUBLICATION_FIRST_DIFFERENTIATION_PLAN.md`
+4. `docs/INTERNATIONAL_PUBLICATION_AND_MARKETING_PLAN.md`
+5. `docs/DATA_REQUIREMENTS.md`
+6. `docs/PUBLICATION_ROADMAP.md`
+7. `docs/BLOCKER_RESPONSE_PLAN.md`
+8. `configs/data_catalog.yaml`
+9. `configs/modeling_plan.yaml`
 
 ## QA Commands
 
@@ -97,12 +99,13 @@ Expected today:
 
 ## Next Exact Work Package
 
-1. Implement TerraClimate country-year raster aggregation from the manifest in `metadata/terraclimate_source_manifest.csv`.
-2. Implement MODIS MOD13C2 quality-masked country-year aggregation from `metadata/mod13c2_granule_manifest.csv`.
-3. Add PAHO Americas rows and China CDC rows only with complete source provenance.
-4. Upgrade empirical count baselines to a dependency-approved negative-binomial GLM or Bayesian hierarchical model.
-5. Expand baseline figures into manuscript-ready calibration panels.
-6. Keep deep learning blocked until simple baselines and covariates are complete.
+1. Implement TerraClimate country-year raster aggregation from `metadata/terraclimate_source_manifest.csv`.
+2. Add leakage and missingness tests for TerraClimate lag features.
+3. Rebuild the processed table, audit report, and feature-ablation baselines.
+4. Decide whether MODIS quality-masked NDVI/EVI aggregation is feasible locally.
+5. Add PAHO Americas rows and China CDC rows only with complete source provenance after covariate QA.
+6. Upgrade empirical count baselines to a dependency-approved negative-binomial GLM or Bayesian hierarchical model.
+7. Keep deep learning blocked until simple baselines and covariates are complete.
 
 ## Marketing Position
 
