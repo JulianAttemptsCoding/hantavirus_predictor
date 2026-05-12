@@ -40,6 +40,8 @@ Ready:
 - frozen first temporal split config
 - historical, persistence, empirical negative-binomial, hierarchical shrinkage, and gradient-boosting baseline runner
 - first-pass baseline skill and observed-vs-predicted figure script
+- Markov-style incidence-state simulation stress test
+- paper readiness and results report generator
 - generated local audit and baseline reports
 - shared forecast metrics tests
 - future-agent handoff

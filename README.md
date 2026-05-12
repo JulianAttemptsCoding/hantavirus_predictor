@@ -32,6 +32,8 @@ python tools/create_mod13c2_manifest.py
 python tools/write_international_data_audit.py
 python tools/run_international_baselines.py
 python tools/plot_international_baselines.py
+python tools/run_markov_simulation.py
+python tools/write_paper_readiness_report.py
 pytest
 ```
 
