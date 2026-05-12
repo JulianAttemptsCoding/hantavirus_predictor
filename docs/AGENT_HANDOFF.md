@@ -10,7 +10,10 @@ python -m pip install -e ".[dev]"
 python tools/summarize_neon_products.py
 python tools/create_ecdc_case_table.py --accessed-date 2026-05-12
 python tools/validate_international_cases.py --strict
+python tools/download_faostat_land_use.py
 python tools/build_international_dataset.py
+python tools/create_terraclimate_manifest.py
+python tools/create_mod13c2_manifest.py
 python tools/write_international_data_audit.py
 python tools/run_international_baselines.py
 python tools/validate_manual_data.py
@@ -44,14 +47,13 @@ python -m ruff check src tests tools
 
 ## Immediate Next Tasks
 
-1. Add TerraClimate country-year climate features.
-2. Add MODIS MOD13C2 NDVI/EVI features after Earthdata credentials or a credentialed export path exist.
-3. Add FAOSTAT land-use covariates.
-4. Extend `data/manual/international_country_cases.csv` with PAHO and China CDC rows only when provenance is complete.
-5. Add calibration plots from `data/processed/international_baseline_predictions.csv`.
-6. Implement a proper negative-binomial GLM or Bayesian hierarchical model if dependencies are approved.
-7. Keep U.S./NEON as mechanistic support and fallback manuscript.
-8. Only then evaluate PINN, TimesFM, or graph models.
+1. Implement country-level raster aggregation for TerraClimate NetCDF files.
+2. Implement quality-masked country-level raster aggregation for MODIS MOD13C2 HDF granules.
+3. Extend `data/manual/international_country_cases.csv` with PAHO and China CDC rows only when provenance is complete.
+4. Add calibration plots from `data/processed/international_baseline_predictions.csv`.
+5. Implement a proper negative-binomial GLM or Bayesian hierarchical model if dependencies are approved.
+6. Keep U.S./NEON as mechanistic support and fallback manuscript.
+7. Only then evaluate PINN, TimesFM, or graph models.
 
 ## Expected First Milestone
 
@@ -70,3 +72,5 @@ Minimum contents:
 - Exact train/validation/test split proposal.
 
 Generated `data/` and `reports/` files are ignored by git. Rebuild them with the first-command block.
+
+Credential note: `nasa earthdata acc info.txt` is ignored by git. Use `python tools/check_earthdata_credentials.py` to confirm it parses without printing secrets.

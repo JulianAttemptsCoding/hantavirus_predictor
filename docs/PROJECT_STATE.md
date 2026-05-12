@@ -34,6 +34,9 @@ Ready:
 - reproducible ECDC 2019-2023 country-year seed table builder
 - World Bank population, rurality, and GDP context join
 - processed international country-year CSV builder
+- FAOSTAT land-use download and country-year join
+- TerraClimate and MOD13C2 source/granule manifests
+- Earthdata credential parser for local untracked credential files
 - frozen first temporal split config
 - historical, persistence, empirical negative-binomial, hierarchical shrinkage, and gradient-boosting baseline runner
 - generated local audit and baseline reports
@@ -42,9 +45,8 @@ Ready:
 
 Not ready yet:
 
-- TerraClimate country-year feature ingestion
-- MODIS MOD13C2 NDVI/EVI ingestion, which needs Earthdata credentials or exported inputs
-- FAOSTAT land-use ingestion
+- TerraClimate country-year raster aggregation
+- MODIS MOD13C2 quality-masked country-year HDF aggregation
 - PAHO Americas and China CDC extension rows
 - full Bayesian hierarchical model or dependency-approved negative-binomial GLM
 - manuscript figures
@@ -69,7 +71,10 @@ Run these from the repository root:
 python -m pip install -e ".[dev]"
 python tools/create_ecdc_case_table.py --accessed-date 2026-05-12
 python tools/validate_international_cases.py --strict
+python tools/download_faostat_land_use.py
 python tools/build_international_dataset.py
+python tools/create_terraclimate_manifest.py
+python tools/create_mod13c2_manifest.py
 python tools/write_international_data_audit.py
 python tools/run_international_baselines.py
 python tools/validate_manual_data.py
@@ -86,13 +91,12 @@ Expected today:
 
 ## Next Exact Work Package
 
-1. Add TerraClimate country-year climate features.
-2. Add FAOSTAT land-use covariates.
-3. Stop for `EARTHDATA_USERNAME` and `EARTHDATA_PASSWORD` before MODIS MOD13C2 download unless the user provides an exported MOD13C2 country-year table.
-4. Add PAHO Americas rows and China CDC rows only with complete source provenance.
-5. Add calibration plots and manuscript-ready figures.
-6. Upgrade empirical count baselines to a dependency-approved negative-binomial GLM or Bayesian hierarchical model.
-7. Keep deep learning blocked until simple baselines and covariates are complete.
+1. Implement TerraClimate country-year raster aggregation from the manifest in `metadata/terraclimate_source_manifest.csv`.
+2. Implement MODIS MOD13C2 quality-masked country-year aggregation from `metadata/mod13c2_granule_manifest.csv`.
+3. Add PAHO Americas rows and China CDC rows only with complete source provenance.
+4. Add calibration plots and manuscript-ready figures.
+5. Upgrade empirical count baselines to a dependency-approved negative-binomial GLM or Bayesian hierarchical model.
+6. Keep deep learning blocked until simple baselines and covariates are complete.
 
 ## Marketing Position
 

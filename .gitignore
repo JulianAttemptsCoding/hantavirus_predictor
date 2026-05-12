@@ -20,6 +20,7 @@ Thumbs.db
 credentials.json
 earthdata_credentials*
 cdsapirc*
+nasa earthdata acc info.txt
 
 # Large and derived data
 data/raw/*
@@ -36,7 +37,7 @@ data/manual/*
 # Reports and model artifacts
 reports/*
 !reports/.gitkeep
-models/
+/models/
 outputs/
 figures/
 mlruns/
@@ -50,4 +51,3 @@ wandb/
 *.out
 *.toc
 *.synctex.gz
-

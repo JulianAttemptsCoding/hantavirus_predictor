@@ -7,10 +7,12 @@ import warnings
 
 import pandas as pd
 
+from hantavirus_predictor.ingest.faostat import ITEM_TO_FEATURE, build_land_use_features
 from hantavirus_predictor.ingest.world_bank import INDICATORS, fetch_indicators
 
 
 WORLD_BANK_CONTEXT_INDICATORS = ["SP.RUR.TOTL.ZS", "NY.GDP.PCAP.CD"]
+DEFAULT_FAOSTAT_ZIP = Path("data/raw/faostat_land_use_normalized.zip")
 
 
 def _normalise_source_system(reporting_system: str) -> str:
@@ -51,7 +53,26 @@ def _world_bank_context(cases: pd.DataFrame) -> pd.DataFrame:
     return context
 
 
-def build_country_year(case_table: Path) -> pd.DataFrame:
+def _join_faostat_land_use(cases: pd.DataFrame, faostat_zip: Path) -> pd.DataFrame:
+    if not faostat_zip.exists():
+        for column in ITEM_TO_FEATURE.values():
+            cases[column] = pd.NA
+        cases["faostat_land_use_joined"] = False
+        return cases
+
+    years = sorted(int(year) for year in cases["year"].unique())
+    land_use = build_land_use_features(faostat_zip, cases[["iso3", "country"]], years)
+    joined = cases.merge(land_use, on=["iso3", "year"], how="left", validate="many_to_one")
+    joined["faostat_land_use_joined"] = ~joined[list(ITEM_TO_FEATURE.values())].isna().all(axis=1)
+    for column in ITEM_TO_FEATURE.values():
+        joined[f"{column}_missing"] = joined[column].isna()
+    return joined
+
+
+def build_country_year(
+    case_table: Path,
+    faostat_zip: Path = DEFAULT_FAOSTAT_ZIP,
+) -> pd.DataFrame:
     """Return an analysis table from the validated case table and public context data."""
     cases = pd.read_csv(case_table)
     cases["source_system"] = cases["reporting_system"].map(_normalise_source_system)
@@ -67,8 +88,10 @@ def build_country_year(case_table: Path) -> pd.DataFrame:
     for column in ("rural_population_pct", "gdp_per_capita_current_usd"):
         joined[f"{column}_missing"] = joined[column].isna()
 
-    # Explicit placeholders make the data audit honest before remote-sensing inputs are available.
-    for family in ("terraclimate", "mod13c2", "faostat_land_use"):
+    joined = _join_faostat_land_use(joined, faostat_zip)
+
+    # Explicit placeholders make the data audit honest before gridded inputs are available.
+    for family in ("terraclimate", "mod13c2"):
         joined[f"{family}_joined"] = False
 
     sort_columns = ["source_system", "region", "country", "syndrome", "year"]

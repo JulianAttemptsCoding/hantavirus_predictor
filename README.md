@@ -25,7 +25,10 @@ python -m pip install -e ".[dev]"
 python tools/summarize_neon_products.py
 python tools/create_ecdc_case_table.py --accessed-date 2026-05-12
 python tools/validate_international_cases.py --strict
+python tools/download_faostat_land_use.py
 python tools/build_international_dataset.py
+python tools/create_terraclimate_manifest.py
+python tools/create_mod13c2_manifest.py
 python tools/write_international_data_audit.py
 python tools/run_international_baselines.py
 pytest
@@ -61,6 +64,8 @@ The first ECDC seed milestone is reproducible:
 
 - `tools/create_ecdc_case_table.py` creates the ignored manual ECDC country-year table.
 - `tools/build_international_dataset.py` joins World Bank population, rurality, and GDP context.
+- `tools/download_faostat_land_use.py` adds FAOSTAT land-use features to the processed table.
+- `tools/create_terraclimate_manifest.py` and `tools/create_mod13c2_manifest.py` create source manifests.
 - `tools/write_international_data_audit.py` writes `reports/01_international_data_audit.md`.
 - `tools/run_international_baselines.py` writes quantile forecasts, metrics, and
   `reports/02_international_baselines.md`.

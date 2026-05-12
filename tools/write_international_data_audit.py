@@ -7,6 +7,8 @@ from pathlib import Path
 
 import pandas as pd
 
+from hantavirus_predictor.ingest.faostat import ITEM_TO_FEATURE
+
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_INPUT = ROOT / "data" / "processed" / "international_country_year.csv"
@@ -71,6 +73,7 @@ def build_report(data: pd.DataFrame) -> str:
             "rural_population_pct",
             "gdp_per_capita_current_usd",
             "deaths",
+            *ITEM_TO_FEATURE.values(),
         ],
     )
     covariate_status = pd.DataFrame(
@@ -103,7 +106,7 @@ def build_report(data: pd.DataFrame) -> str:
             {
                 "covariate_family": "FAOSTAT land use",
                 "joined": bool(data["faostat_land_use_joined"].any()),
-                "missing_rows": len(data),
+                "missing_rows": int((~data["faostat_land_use_joined"]).sum()),
             },
         ]
     )
@@ -157,7 +160,7 @@ def build_report(data: pd.DataFrame) -> str:
         "## Limitations Before Manuscript Use",
         "",
         "- Deaths are only populated for 2023 because the extracted ECDC country-year table does not provide 2019-2022 country death counts.",
-        "- TerraClimate, MODIS, and FAOSTAT covariates are represented by explicit unjoined flags in this milestone.",
+        "- TerraClimate and MODIS covariates are represented by explicit unjoined flags in this milestone.",
         "- The current ECDC-only seed table validates the pipeline but is not the final international publication dataset.",
     ]
     return "\n".join(lines) + "\n"
