@@ -34,6 +34,8 @@ def _format_cell(value: object) -> str:
 def build_report(cases: pd.DataFrame, metrics: pd.DataFrame, simulation: pd.DataFrame) -> str:
     annual = cases.groupby("year", as_index=False)["cases"].sum()
     annual["countries_reporting_or_zero"] = cases.groupby("year")["iso3"].nunique().to_numpy()
+    terraclimate_rows = int(cases["terraclimate_joined"].sum())
+    terraclimate_status = "ready" if terraclimate_rows else "not joined"
     joined = pd.DataFrame(
         [
             {"asset": "ECDC country-year case rows", "status": "ready", "value": len(cases)},
@@ -54,8 +56,8 @@ def build_report(cases: pd.DataFrame, metrics: pd.DataFrame, simulation: pd.Data
             },
             {
                 "asset": "TerraClimate country-year covariates",
-                "status": "manifest only",
-                "value": int(cases["terraclimate_joined"].sum()),
+                "status": terraclimate_status,
+                "value": terraclimate_rows,
             },
             {
                 "asset": "MOD13C2 country-year covariates",
@@ -81,8 +83,8 @@ def build_report(cases: pd.DataFrame, metrics: pd.DataFrame, simulation: pd.Data
             },
             {
                 "criterion": "Climate and vegetation covariates",
-                "status": "not yet",
-                "note": "TerraClimate and MODIS are discovered but not aggregated to countries.",
+                "status": "partial pass" if terraclimate_rows else "not yet",
+                "note": "TerraClimate is joined when available; MODIS still requires QA-masked aggregation.",
             },
             {
                 "criterion": "International generalization",
@@ -102,7 +104,7 @@ def build_report(cases: pd.DataFrame, metrics: pd.DataFrame, simulation: pd.Data
         "",
         "## Verdict",
         "",
-        "Not fully paper-ready yet. The project is now a reproducible ECDC seed benchmark with audited data, first-pass baselines, FAOSTAT land-use covariates, source manifests for TerraClimate/MOD13C2, figures, and an exploratory Markov simulation stress test. It is not ready for journal submission until gridded climate/vegetation covariates and either a defensible ECDC-only manuscript frame or additional source systems are complete.",
+        "Not fully journal-submission-ready yet. The project is now a reproducible ECDC seed benchmark with audited data, first-pass baselines, FAOSTAT land-use covariates, optional TerraClimate country-year aggregation, source manifests for MOD13C2, figures, and an exploratory Markov simulation stress test. It is not ready for final journal submission until MODIS is either implemented or removed from claims, and the manuscript chooses an ECDC-only methods/data frame or adds PAHO/China source systems.",
         "",
         "## Current Data Assets",
         "",

@@ -37,12 +37,14 @@ Ready:
 - World Bank population, rurality, and GDP context join
 - processed international country-year CSV builder
 - FAOSTAT land-use download and country-year join
-- TerraClimate and MOD13C2 source/granule manifests
+- TerraClimate source manifest, Natural Earth boundary download, and ECDC country-year aggregation
+- MOD13C2 source/granule manifest
 - Earthdata credential parser for local untracked credential files
 - frozen first temporal split config
 - historical, persistence, empirical negative-binomial, hierarchical shrinkage, and gradient-boosting baseline runner
 - first-pass baseline skill and observed-vs-predicted figure script
 - Markov-style incidence-state simulation stress test
+- final publication-readiness QA gate
 - paper readiness and results report generator
 - generated local audit and baseline reports
 - shared forecast metrics tests
@@ -50,11 +52,10 @@ Ready:
 
 Not ready yet:
 
-- TerraClimate country-year raster aggregation
 - MODIS MOD13C2 quality-masked country-year HDF aggregation
 - PAHO Americas and China CDC extension rows
 - full Bayesian hierarchical model or dependency-approved negative-binomial GLM
-- manuscript figures
+- manuscript text and final journal-specific figure set
 
 ## Main Documents
 
@@ -75,16 +76,19 @@ Read in this order:
 Run these from the repository root:
 
 ```powershell
-python -m pip install -e ".[dev]"
+python -m pip install -e ".[dev,geo]"
 python tools/create_ecdc_case_table.py --accessed-date 2026-05-12
 python tools/validate_international_cases.py --strict
 python tools/download_faostat_land_use.py
-python tools/build_international_dataset.py
 python tools/create_terraclimate_manifest.py
+python tools/download_natural_earth_countries.py
+python tools/aggregate_terraclimate_country_year.py
+python tools/build_international_dataset.py
 python tools/create_mod13c2_manifest.py
 python tools/write_international_data_audit.py
 python tools/run_international_baselines.py
 python tools/plot_international_baselines.py
+python tools/check_publication_readiness.py
 python tools/validate_manual_data.py
 pytest
 python -m ruff check src tests tools
@@ -96,16 +100,16 @@ Expected today:
 - `ruff` passes for `src`, `tests`, and `tools`.
 - `validate_international_cases.py --strict` passes after rebuilding the ECDC seed table.
 - `validate_manual_data.py` still reports optional restricted county/state files missing.
+- `check_publication_readiness.py` passes for the ECDC-only public-data benchmark path.
 
 ## Next Exact Work Package
 
-1. Implement TerraClimate country-year raster aggregation from `metadata/terraclimate_source_manifest.csv`.
-2. Add leakage and missingness tests for TerraClimate lag features.
-3. Rebuild the processed table, audit report, and feature-ablation baselines.
-4. Decide whether MODIS quality-masked NDVI/EVI aggregation is feasible locally.
-5. Add PAHO Americas rows and China CDC rows only with complete source provenance after covariate QA.
-6. Upgrade empirical count baselines to a dependency-approved negative-binomial GLM or Bayesian hierarchical model.
-7. Keep deep learning blocked until simple baselines and covariates are complete.
+1. Keep the main manuscript as an ECDC-only public-data benchmark unless PAHO/China extraction is completed with full provenance.
+2. Decide whether MODIS quality-masked NDVI/EVI aggregation is worth implementing; otherwise remove vegetation claims from the paper.
+3. Add feature ablation tables that compare context only, land use, TerraClimate, and all public covariates.
+4. Upgrade empirical count baselines to a dependency-approved negative-binomial GLM or Bayesian hierarchical model.
+5. Draft manuscript methods/results from the generated reports and figures.
+6. Keep deep learning blocked until simple baselines and covariates are complete.
 
 ## Marketing Position
 

@@ -14,6 +14,15 @@ VARIABLES = {
     "def": "climate_water_deficit_mm",
 }
 
+ANNUAL_FEATURES = {
+    "ppt": ("terraclimate_ppt_annual_sum_mm", "sum"),
+    "tmin": ("terraclimate_tmin_annual_mean_c", "mean"),
+    "tmax": ("terraclimate_tmax_annual_mean_c", "mean"),
+    "vpd": ("terraclimate_vpd_annual_mean_kpa", "mean"),
+    "soil": ("terraclimate_soil_annual_mean_mm", "mean"),
+    "def": ("terraclimate_def_annual_sum_mm", "sum"),
+}
+
 
 def terraclimate_file_url(variable: str, year: int) -> str:
     if variable not in VARIABLES:
@@ -22,6 +31,22 @@ def terraclimate_file_url(variable: str, year: int) -> str:
         "http://thredds.northwestknowledge.net:8080/thredds/fileServer/"
         f"TERRACLIMATE_ALL/data/TerraClimate_{variable}_{year}.nc"
     )
+
+
+def terraclimate_opendap_url(variable: str, year: int) -> str:
+    return terraclimate_file_url(variable, year).replace("/fileServer/", "/dodsC/")
+
+
+def annual_feature_column(variable: str) -> str:
+    if variable not in ANNUAL_FEATURES:
+        raise ValueError(f"Unsupported TerraClimate variable: {variable}")
+    return ANNUAL_FEATURES[variable][0]
+
+
+def annual_feature_stat(variable: str) -> str:
+    if variable not in ANNUAL_FEATURES:
+        raise ValueError(f"Unsupported TerraClimate variable: {variable}")
+    return ANNUAL_FEATURES[variable][1]
 
 
 def build_terraclimate_manifest(years: list[int]) -> pd.DataFrame:
@@ -34,6 +59,9 @@ def build_terraclimate_manifest(years: list[int]) -> pd.DataFrame:
                     "variable": variable,
                     "feature_family": feature_family,
                     "url": terraclimate_file_url(variable, year),
+                    "opendap_url": terraclimate_opendap_url(variable, year),
+                    "annual_feature": annual_feature_column(variable),
+                    "annual_stat": annual_feature_stat(variable),
                     "status": "source_discovered_not_aggregated",
                 }
             )

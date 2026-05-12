@@ -21,19 +21,22 @@ The supplied ZIP packages are preserved and audited, but their code is not copie
 ```powershell
 python -m venv .venv
 .\\.venv\\Scripts\\Activate.ps1
-python -m pip install -e ".[dev]"
+python -m pip install -e ".[dev,geo]"
 python tools/summarize_neon_products.py
 python tools/create_ecdc_case_table.py --accessed-date 2026-05-12
 python tools/validate_international_cases.py --strict
 python tools/download_faostat_land_use.py
-python tools/build_international_dataset.py
 python tools/create_terraclimate_manifest.py
+python tools/download_natural_earth_countries.py
+python tools/aggregate_terraclimate_country_year.py
+python tools/build_international_dataset.py
 python tools/create_mod13c2_manifest.py
 python tools/write_international_data_audit.py
 python tools/run_international_baselines.py
 python tools/plot_international_baselines.py
 python tools/run_markov_simulation.py
 python tools/write_paper_readiness_report.py
+python tools/check_publication_readiness.py
 pytest
 ```
 
@@ -70,7 +73,11 @@ The first ECDC seed milestone is reproducible:
 - `tools/create_ecdc_case_table.py` creates the ignored manual ECDC country-year table.
 - `tools/build_international_dataset.py` joins World Bank population, rurality, and GDP context.
 - `tools/download_faostat_land_use.py` adds FAOSTAT land-use features to the processed table.
-- `tools/create_terraclimate_manifest.py` and `tools/create_mod13c2_manifest.py` create source manifests.
+- `tools/create_terraclimate_manifest.py`, `tools/download_natural_earth_countries.py`, and
+  `tools/aggregate_terraclimate_country_year.py` add country-year TerraClimate climate and
+  water-balance covariates.
+- `tools/create_mod13c2_manifest.py` creates the MODIS source manifest; quality-masked
+  vegetation aggregation is optional future work until it is implemented and audited.
 - `tools/write_international_data_audit.py` writes `reports/01_international_data_audit.md`.
 - `tools/run_international_baselines.py` writes quantile forecasts, metrics, and
   `reports/02_international_baselines.md`.

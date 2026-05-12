@@ -6,19 +6,22 @@ Start here after opening the repo.
 
 ```powershell
 git status --short --branch
-python -m pip install -e ".[dev]"
+python -m pip install -e ".[dev,geo]"
 python tools/summarize_neon_products.py
 python tools/create_ecdc_case_table.py --accessed-date 2026-05-12
 python tools/validate_international_cases.py --strict
 python tools/download_faostat_land_use.py
-python tools/build_international_dataset.py
 python tools/create_terraclimate_manifest.py
+python tools/download_natural_earth_countries.py
+python tools/aggregate_terraclimate_country_year.py
+python tools/build_international_dataset.py
 python tools/create_mod13c2_manifest.py
 python tools/write_international_data_audit.py
 python tools/run_international_baselines.py
 python tools/plot_international_baselines.py
 python tools/run_markov_simulation.py
 python tools/write_paper_readiness_report.py
+python tools/check_publication_readiness.py
 python tools/validate_manual_data.py
 pytest
 python -m ruff check src tests tools
@@ -26,18 +29,17 @@ python -m ruff check src tests tools
 
 ## Read Order
 
-1. `instructions.txt`
-2. `docs/PROJECT_STATE.md`
-3. `docs/SOURCE_ARCHIVE_AUDIT.md`
-4. `docs/RESEARCH_CLAIMS_AUDIT.md`
-5. `docs/PAPER_IMPLEMENTATION_PLAN_AND_BLOCKERS.md`
-6. `docs/PUBLICATION_FIRST_DIFFERENTIATION_PLAN.md`
-7. `docs/INTERNATIONAL_PUBLICATION_AND_MARKETING_PLAN.md`
-8. `docs/DATA_REQUIREMENTS.md`
-9. `docs/PUBLICATION_ROADMAP.md`
-10. `docs/BLOCKER_RESPONSE_PLAN.md`
-11. `configs/data_catalog.yaml`
-12. `configs/modeling_plan.yaml`
+1. `docs/PROJECT_STATE.md`
+2. `docs/SOURCE_ARCHIVE_AUDIT.md`
+3. `docs/RESEARCH_CLAIMS_AUDIT.md`
+4. `docs/PAPER_IMPLEMENTATION_PLAN_AND_BLOCKERS.md`
+5. `docs/PUBLICATION_FIRST_DIFFERENTIATION_PLAN.md`
+6. `docs/INTERNATIONAL_PUBLICATION_AND_MARKETING_PLAN.md`
+7. `docs/DATA_REQUIREMENTS.md`
+8. `docs/PUBLICATION_ROADMAP.md`
+9. `docs/BLOCKER_RESPONSE_PLAN.md`
+10. `configs/data_catalog.yaml`
+11. `configs/modeling_plan.yaml`
 
 ## Rules For Future Agents
 
@@ -52,14 +54,12 @@ python -m ruff check src tests tools
 
 ## Immediate Next Tasks
 
-1. Implement TerraClimate country-year aggregation for ECDC countries only.
-2. Add leakage and missingness tests for TerraClimate lag features.
-3. Rebuild the processed country-year table and audit report.
-4. Re-run baselines with feature ablations.
-5. Decide whether MODIS aggregation is feasible locally; if yes, implement QA-masked NDVI/EVI country-year features.
-6. Extend `data/manual/international_country_cases.csv` with PAHO and China CDC rows only after covariate QA.
-7. Keep simulation as reservoir-spillover/scenario stress testing, not generic human spread.
-8. Only then evaluate PINN, TimesFM, or graph models.
+1. Treat TerraClimate as implemented for the ECDC country-year path; rerun it with the first-command block when rebuilding local ignored data.
+2. Add feature ablation tables that compare context only, FAOSTAT, TerraClimate, and all public covariates.
+3. Decide whether MODIS aggregation is feasible locally; if yes, implement QA-masked NDVI/EVI country-year features. If not, remove vegetation claims from the manuscript.
+4. Extend `data/manual/international_country_cases.csv` with PAHO and China CDC rows only after covariate QA.
+5. Keep simulation as reservoir-spillover/scenario stress testing, not generic human spread.
+6. Only then evaluate PINN, TimesFM, or graph models.
 
 ## Expected First Milestone
 
@@ -67,13 +67,14 @@ Delivered locally by tracked scripts:
 
 `reports/01_international_data_audit.md`
 `reports/02_international_baselines.md`
+`reports/05_publication_readiness_gate.md`
 
 Minimum contents:
 
 - Country-year row counts by syndrome, source system, and quality grade.
 - Source total reconciliation against ECDC/PAHO/China CDC inputs.
 - Population denominator join report.
-- Climate, vegetation, and land-use covariate missingness.
+- Climate and land-use covariate missingness; vegetation only if MODIS is implemented.
 - Missingness and duplicate report.
 - Exact train/validation/test split proposal.
 

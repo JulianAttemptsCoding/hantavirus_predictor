@@ -105,24 +105,32 @@ def _estimate_nb_alpha(train: pd.DataFrame) -> float:
 
 
 def _model_feature_matrix(data: pd.DataFrame) -> pd.DataFrame:
-    features = data[
-        [
-            "iso3",
-            "region",
-            "syndrome",
-            "source_system",
-            "year",
-            "population",
-            "rural_population_pct",
-            "gdp_per_capita_current_usd",
-        ]
-    ].copy()
-    for column in ("rural_population_pct", "gdp_per_capita_current_usd"):
+    categorical_columns = ["iso3", "region", "syndrome", "source_system"]
+    numeric_columns = ["year", "population"]
+    lagged_covariates = [
+        column
+        for column in data.columns
+        if column.endswith("_lag1")
+        and not column.endswith("_missing")
+        and (
+            column.startswith("terraclimate_")
+            or column.startswith("faostat_")
+            or column in {"rural_population_pct_lag1", "gdp_per_capita_current_usd_lag1"}
+        )
+    ]
+    if lagged_covariates:
+        numeric_columns.extend(sorted(lagged_covariates))
+    else:
+        numeric_columns.extend(["rural_population_pct", "gdp_per_capita_current_usd"])
+
+    features = data[categorical_columns + numeric_columns].copy()
+    for column in numeric_columns:
         features[column] = pd.to_numeric(features[column], errors="coerce")
-        features[column] = features[column].fillna(features[column].median())
+        median = features[column].median()
+        features[column] = features[column].fillna(0.0 if pd.isna(median) else median)
     features["log_population"] = np.log(features["population"].astype(float))
     features = features.drop(columns=["population"])
-    return pd.get_dummies(features, columns=["iso3", "region", "syndrome", "source_system"])
+    return pd.get_dummies(features, columns=categorical_columns)
 
 
 def _gradient_boosting_predictions(train: pd.DataFrame, target: pd.DataFrame) -> pd.Series:

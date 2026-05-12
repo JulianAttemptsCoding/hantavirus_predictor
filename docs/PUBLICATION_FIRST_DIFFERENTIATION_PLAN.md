@@ -221,11 +221,13 @@ Current status:
 - ECDC 2019-2023 country-year table builder exists.
 - Source totals reconcile exactly.
 - World Bank and FAOSTAT covariates join.
-- TerraClimate and MOD13C2 manifests exist.
+- TerraClimate country-year covariates join for the ECDC seed table.
+- MOD13C2 manifest exists.
 
 Gap:
 
-- TerraClimate and MODIS country-year aggregation is not done.
+- MODIS quality-masked country-year aggregation is not done.
+- PAHO and China CDC rows are not extracted.
 
 ### 2. Forecast Evaluation Instead Of Signal Alerts
 
@@ -341,7 +343,7 @@ Use "spillover simulation," "reservoir-spillover scenario model," or "reported-i
 
 2. **Reservoir-spillover scenario question**
    - If climate/vegetation anomalies change reservoir suitability, how does the distribution of reported human cases shift?
-   - Requires TerraClimate/MODIS aggregation first.
+   - TerraClimate is now available; vegetation claims still require MODIS aggregation.
    - Best long-term simulation contribution.
 
 3. **Benchmark stress-test question**
@@ -590,18 +592,16 @@ Do not say:
 
 ## Next Engineering Work Package
 
-1. Implement TerraClimate country-year aggregation.
-2. Implement MOD13C2 quality-masked country-year NDVI/EVI aggregation.
-3. Rebuild processed model table with lagged climate/vegetation features.
-4. Add calibration panels and feature-ablation report.
-5. Decide whether the first paper is ECDC-only.
-6. If not ECDC-only, extract PAHO and China CDC rows with complete provenance.
-7. Upgrade the count model to a proper negative-binomial GLM or Bayesian hierarchical model.
-8. Expand the simulation from current incidence-state Markov model to reservoir-spillover scenario stress test.
-9. Write a manuscript skeleton with figure captions before adding advanced models.
+1. Add calibration panels and feature-ablation report.
+2. Decide whether the first paper is ECDC-only.
+3. Implement MOD13C2 quality-masked country-year NDVI/EVI aggregation only if vegetation improves the manuscript; otherwise remove vegetation claims.
+4. If not ECDC-only, extract PAHO and China CDC rows with complete provenance.
+5. Upgrade the count model to a proper negative-binomial GLM or Bayesian hierarchical model.
+6. Expand the simulation from current incidence-state Markov model to reservoir-spillover scenario stress test using TerraClimate anomalies.
+7. Write a manuscript skeleton with figure captions before adding advanced models.
 
 ## Go/No-Go Recommendation Today
 
-No-go for journal submission today.
+No-go for final journal submission today because manuscript text, feature ablations, and final target-journal formatting are not done.
 
 Go for continued development toward a publication-quality benchmark. The current repo is past "toy project" stage, but the paper's novelty depends on benchmark rigor, validation, and covariate evaluation, not on being a live map.

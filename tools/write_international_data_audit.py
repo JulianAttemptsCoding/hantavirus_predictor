@@ -76,6 +76,19 @@ def build_report(data: pd.DataFrame) -> str:
             *ITEM_TO_FEATURE.values(),
         ],
     )
+    terraclimate_feature_columns = [
+        column
+        for column in data.columns
+        if column.startswith("terraclimate_")
+        and "_annual_" in column
+        and not column.endswith("_missing")
+        and not column.endswith("_cell_count")
+    ]
+    terraclimate_missing = (
+        int((~data["terraclimate_joined"]).sum())
+        if "terraclimate_joined" in data
+        else len(data)
+    )
     covariate_status = pd.DataFrame(
         [
             {
@@ -96,7 +109,7 @@ def build_report(data: pd.DataFrame) -> str:
             {
                 "covariate_family": "TerraClimate",
                 "joined": bool(data["terraclimate_joined"].any()),
-                "missing_rows": len(data),
+                "missing_rows": terraclimate_missing,
             },
             {
                 "covariate_family": "MODIS MOD13C2",
@@ -160,7 +173,8 @@ def build_report(data: pd.DataFrame) -> str:
         "## Limitations Before Manuscript Use",
         "",
         "- Deaths are only populated for 2023 because the extracted ECDC country-year table does not provide 2019-2022 country death counts.",
-        "- TerraClimate and MODIS covariates are represented by explicit unjoined flags in this milestone.",
+        f"- TerraClimate feature columns present: {len(terraclimate_feature_columns)}.",
+        "- MODIS covariates are represented by explicit unjoined flags until quality-masked MOD13C2 aggregation is implemented.",
         "- The current ECDC-only seed table validates the pipeline but is not the final international publication dataset.",
     ]
     return "\n".join(lines) + "\n"

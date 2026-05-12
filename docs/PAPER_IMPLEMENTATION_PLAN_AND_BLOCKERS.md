@@ -125,7 +125,7 @@ Core contribution:
 
 Minimum result needed:
 
-- ECDC country-year benchmark with climate/vegetation/land-use features
+- ECDC country-year benchmark with climate and land-use features
 - at least temporal validation
 - ideally leave-country validation
 - negative results included
@@ -157,14 +157,14 @@ Do not pursue first.
 
 Use later if:
 
-- TerraClimate/MODIS features are complete
+- TerraClimate and/or MODIS features are complete
 - NEON or other rodent/reservoir data are integrated
 - simulation is calibrated to empirical data
 
 Core contribution:
 
 - latent reservoir pressure and reported-spillover state model
-- climate/vegetation scenario analysis
+- climate and, if implemented, vegetation scenario analysis
 - underreporting stress tests
 
 ## Exact Implementation Specs
@@ -199,25 +199,23 @@ Status:
 
 - World Bank: done.
 - FAOSTAT: done.
-- TerraClimate: manifest only.
+- TerraClimate: done for ECDC country-year current-year and lag-1 features.
 - MOD13C2: manifest only.
 
 Implement:
 
 1. Country polygon source:
-   - use Natural Earth Admin 0 or World Bank/GeoBoundaries equivalent
-   - store boundary metadata and version
-   - do not commit large shapefiles unless license and size are acceptable
+   - implemented with Natural Earth 50m Admin 0 boundaries
+   - raw boundary ZIP is downloaded locally and ignored by git
+   - ECDC aggregation clips country geometries to a Europe/EEA bounding box
 
 2. TerraClimate aggregation:
    - input: `metadata/terraclimate_source_manifest.csv`
    - variables: `ppt`, `tmin`, `tmax`, `vpd`, `soil`, `def`
    - output: `data/processed/terraclimate_country_year.csv`
    - features:
-     - annual mean/sum as appropriate
-     - seasonal summaries
-     - lag 0, 1, 2, 3 years
-     - country-specific anomaly relative to available baseline
+     - annual area-weighted country mean/sum as appropriate
+     - lag 1 year for forecast features
    - QA:
      - row coverage by iso3/year
      - missingness by variable
@@ -250,7 +248,7 @@ Acceptance criteria:
 
 - every ECDC row has World Bank and FAOSTAT covariates
 - at least 95 percent of rows have TerraClimate features
-- at least 95 percent of rows have MODIS features or documented QA missingness
+- MODIS features are implemented with documented QA missingness or removed from manuscript claims
 - audit report lists missingness for every feature family
 
 ### Phase 3: Baseline Forecast Benchmark
@@ -281,7 +279,7 @@ Upgrade needed:
   - +World Bank
   - +FAOSTAT
   - +TerraClimate
-  - +MODIS
+  - +MODIS, only if quality-masked aggregation is implemented
   - all covariates
 
 Metrics:
@@ -513,17 +511,14 @@ Next agent should do this in order:
 
 1. Read this file and `docs/PUBLICATION_FIRST_DIFFERENTIATION_PLAN.md`.
 2. Run the full QA command block in `docs/PROJECT_STATE.md`.
-3. Implement TerraClimate country-year aggregation for ECDC countries only.
-4. Add tests for:
-   - expected output columns
-   - no future leakage in lag features
-   - missingness reporting
-5. Rebuild `data/processed/international_country_year.csv`.
-6. Update `reports/01_international_data_audit.md`.
-7. Re-run baselines with feature ablations.
-8. Update `reports/02_international_baselines.md`.
+3. Rebuild TerraClimate with `tools/aggregate_terraclimate_country_year.py` if local ignored data are missing.
+4. Rebuild `data/processed/international_country_year.csv`.
+5. Update `reports/01_international_data_audit.md`.
+6. Re-run baselines and add feature ablations.
+7. Update `reports/02_international_baselines.md`.
+8. Run `tools/check_publication_readiness.py`.
 9. Decide whether MODIS aggregation is feasible locally.
-10. Only after climate/vegetation QA, consider PAHO/China extraction.
+10. Only after climate QA, consider PAHO/China extraction.
 
 ## Final QA Checklist
 
@@ -535,6 +530,7 @@ Before calling the paper plan ready:
 - `python tools/run_international_baselines.py`
 - `python tools/run_markov_simulation.py`
 - `python tools/write_paper_readiness_report.py`
+- `python tools/check_publication_readiness.py`
 - `pytest`
 - `python -m ruff check src tests tools`
 - confirm generated reports match the scope claimed in docs
