@@ -30,12 +30,13 @@ python -m ruff check src tests tools
 2. `docs/PROJECT_STATE.md`
 3. `docs/SOURCE_ARCHIVE_AUDIT.md`
 4. `docs/RESEARCH_CLAIMS_AUDIT.md`
-5. `docs/INTERNATIONAL_PUBLICATION_AND_MARKETING_PLAN.md`
-6. `docs/DATA_REQUIREMENTS.md`
-7. `docs/PUBLICATION_ROADMAP.md`
-8. `docs/BLOCKER_RESPONSE_PLAN.md`
-9. `configs/data_catalog.yaml`
-10. `configs/modeling_plan.yaml`
+5. `docs/PUBLICATION_FIRST_DIFFERENTIATION_PLAN.md`
+6. `docs/INTERNATIONAL_PUBLICATION_AND_MARKETING_PLAN.md`
+7. `docs/DATA_REQUIREMENTS.md`
+8. `docs/PUBLICATION_ROADMAP.md`
+9. `docs/BLOCKER_RESPONSE_PLAN.md`
+10. `configs/data_catalog.yaml`
+11. `configs/modeling_plan.yaml`
 
 ## Rules For Future Agents
 

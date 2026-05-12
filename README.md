@@ -44,6 +44,7 @@ pytest
 - `docs/PROJECT_STATE.md` - current checkpoint, QA status, and next work package.
 - `docs/DATA_REQUIREMENTS.md` - exact data inventory and what must be provided manually.
 - `docs/PUBLICATION_ROADMAP.md` - spec-by-spec plan from this repo to journal submission.
+- `docs/PUBLICATION_FIRST_DIFFERENTIATION_PLAN.md` - how to publish something distinct from HantavirusMap.
 - `docs/INTERNATIONAL_PUBLICATION_AND_MARKETING_PLAN.md` - international pivot, QA,
   implementation specs, and audience positioning.
 - `docs/BLOCKER_RESPONSE_PLAN.md` - response to the blockers in the root text files.

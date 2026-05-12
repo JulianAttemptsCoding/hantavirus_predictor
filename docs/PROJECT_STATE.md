@@ -27,6 +27,7 @@ Ready:
 
 - source archive audit and blocker response
 - international publication and marketing plan
+- publication-first differentiation plan against HantavirusMap-style live signal trackers
 - data requirements and source registry
 - international country-case schema
 - international case-source matrix
@@ -59,12 +60,13 @@ Not ready yet:
 Read in this order:
 
 1. `docs/AGENT_HANDOFF.md`
-2. `docs/INTERNATIONAL_PUBLICATION_AND_MARKETING_PLAN.md`
-3. `docs/DATA_REQUIREMENTS.md`
-4. `docs/PUBLICATION_ROADMAP.md`
-5. `docs/BLOCKER_RESPONSE_PLAN.md`
-6. `configs/data_catalog.yaml`
-7. `configs/modeling_plan.yaml`
+2. `docs/PUBLICATION_FIRST_DIFFERENTIATION_PLAN.md`
+3. `docs/INTERNATIONAL_PUBLICATION_AND_MARKETING_PLAN.md`
+4. `docs/DATA_REQUIREMENTS.md`
+5. `docs/PUBLICATION_ROADMAP.md`
+6. `docs/BLOCKER_RESPONSE_PLAN.md`
+7. `configs/data_catalog.yaml`
+8. `configs/modeling_plan.yaml`
 
 ## QA Commands
 
