@@ -1,0 +1,11 @@
+source_id,source_name,url,license_or_terms,redistribution_notes
+neon_hantavirus_serology,"NEON Rodent pathogen status, hantavirus",https://data.neonscience.org/api/v0/products/DP1.10064.001,"NEON data terms; cite product DOI/release","Raw public data can be downloaded; cite exact release and DOI."
+neon_small_mammal_box_trapping,"NEON Small mammal box trapping",https://data.neonscience.org/api/v0/products/DP1.10072.001,"NEON data terms; cite product DOI/release","Raw public data can be downloaded; cite exact release and DOI."
+cdc_hantavirus_cases_public,"CDC reported hantavirus disease cases",https://www.cdc.gov/hantavirus/data-research/cases/index.html,"U.S. government public information","Use public state-level data only; no public county data."
+nndss_annual_tables,"CDC NNDSS annual tables",https://www.cdc.gov/nndss/notifiable-infectious-disease-tables/about-tables.html,"CDC public surveillance tables","Counts are finalized reported cases and likely underestimates."
+daymet,"Daymet daily surface weather",https://daymet.ornl.gov/,"ORNL DAAC/NASA data terms","Cite Daymet dataset DOI/version used."
+appeears,"NASA AppEEARS MODIS/VIIRS extracts",https://www.earthdata.nasa.gov/data/tools/appeears,"NASA Earthdata/AppEEARS terms plus product citations","Store generated request README and cite each product."
+nlcd,"USGS Annual NLCD",https://www.usgs.gov/centers/eros/science/annual-nlcd-data-access,"Public domain / USGS terms","Cite Annual NLCD collection/version and access path."
+svi,"CDC/ATSDR SVI",https://www.atsdr.cdc.gov/place-health/php/svi/index.html,"Public domain / CDC terms","Use for sensitivity analysis; cite release year."
+census_acs,"U.S. Census ACS API",https://www.census.gov/programs-surveys/acs/data/data-via-api.html,"U.S. Census terms","Cite ACS release and table IDs."
+restricted_county_cases,"Restricted county-level human case data","state or CDC DUA","Restricted/DUA","Do not commit raw records; publish only approved aggregates."

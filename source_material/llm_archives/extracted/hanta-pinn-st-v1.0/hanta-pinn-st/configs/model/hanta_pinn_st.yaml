@@ -1,0 +1,47 @@
+model:
+  name: "HANTA-PINN-ST"
+
+  climate_encoder:
+    type: "ResNet3D"
+    in_channels: 5
+    output_dim: 128
+    dropout: 0.3
+
+  temporal_encoder:
+    type: "Transformer"
+    d_model: 256
+    nhead: 8
+    num_layers: 4
+    dim_feedforward: 1024
+    dropout: 0.2
+    activation: "gelu"
+
+  pinn_core:
+    param_net:
+      hidden_dims: [128, 128]
+      activation: "tanh"
+      output_activation: "softplus"
+    state_net:
+      hidden_dims: [128, 128]
+      activation: "tanh"
+    ode_solver: "dopri5"
+    ode_rtol: 1e-5
+    ode_atol: 1e-6
+
+  stgnn:
+    gat_layers: 3
+    gat_heads: 4
+    gat_hidden: 64
+    gat_dropout: 0.2
+    temporal_kernel: 3
+    temporal_dilations: [1, 2, 4, 8]
+
+  output:
+    distribution: "negative_binomial"
+    quantiles: [0.05, 0.25, 0.5, 0.75, 0.95]
+
+  uncertainty:
+    mc_dropout_samples: 50
+    ensemble_size: 5
+    conformal_method: "jackknife+"
+    conformal_alpha: 0.1

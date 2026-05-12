@@ -1,0 +1,29 @@
+# Training configuration
+training:
+  batch_size: 64
+  epochs: 500
+  patience: 50
+  lr: 0.001
+  weight_decay: 0.0001
+  warmup_steps: 500
+
+loss_weights:
+  alpha_data: 0.6
+  alpha_physics: 0.3
+  alpha_physics_anneal_start: 1.0
+  alpha_physics_anneal_end: 0.3
+  alpha_physics_anneal_epochs: 100
+  alpha_reg: 0.1
+
+optimizer:
+  type: AdamW
+  lr_scheduler: CosineAnnealingLR
+  T_max: 200
+
+hardware:
+  device: cuda
+  mixed_precision: bf16
+  gradient_checkpointing: true
+
+reproducibility:
+  seeds: [42, 123, 456, 789, 999]

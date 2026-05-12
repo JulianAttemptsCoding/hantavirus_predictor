@@ -1,0 +1,53 @@
+# Hantavirus Predictor
+
+Research-grade setup for a hantavirus reservoir and spillover-risk forecasting project.
+
+This repository is not an operational public-health predictor yet. It is a rigor-first handoff for future agents to build one without inheriting unsupported claims from the LLM-generated archive packages in `source_material/`.
+
+## Current Decision
+
+The live project should target:
+
+1. Forecasting rodent reservoir risk and seroprevalence where ground truth exists.
+2. Estimating human spillover risk only as a calibrated, state-level or partner-approved local signal.
+3. Treating county-level human case prediction as blocked until a state health department, CDC, or IRB-approved partner provides data.
+
+The supplied ZIP packages are preserved and audited, but their code is not copied into production because their tests either fail or depend on uninstalled heavy packages, and their reports overclaim readiness.
+
+## Quick Start
+
+```powershell
+python -m venv .venv
+.\\.venv\\Scripts\\Activate.ps1
+python -m pip install -e ".[dev]"
+python tools/summarize_neon_products.py
+pytest
+```
+
+## Repository Map
+
+- `docs/SOURCE_ARCHIVE_AUDIT.md` - what is inside the three ZIP packages and what is reusable.
+- `docs/RESEARCH_CLAIMS_AUDIT.md` - checked claims, citations, and project decisions.
+- `docs/DATA_REQUIREMENTS.md` - exact data inventory and what must be provided manually.
+- `docs/PUBLICATION_ROADMAP.md` - spec-by-spec plan from this repo to journal submission.
+- `docs/BLOCKER_RESPONSE_PLAN.md` - response to the blockers in the root text files.
+- `docs/AGENT_HANDOFF.md` - next-agent instructions.
+- `src/hantavirus_predictor/` - small, tested utilities for shared metadata and metrics.
+- `tools/` - setup and validation scripts.
+- `source_material/llm_archives/extracted/` - extracted LLM packages for reference only.
+
+## Non-Negotiable Scientific Guardrails
+
+- Do not claim county-level human case prediction from public CDC data; CDC's current hantavirus page says public case data are state-level only for privacy.
+- Do not claim the model predicts human infections unless validated against human case data at the matching spatial and temporal resolution.
+- Do not train primarily on synthetic trajectories unless the manuscript frames them as priors or regularizers, not evidence.
+- Do not advance a PINN, graph neural network, or time-series foundation model unless it beats SARIMAX, GAM/GLMM, and gradient-boosted baselines under strict temporal and spatial validation.
+
+## GitHub
+
+Intended remote:
+
+```powershell
+git remote add origin https://github.com/JulianAttemptsCoding/hantavirus_predictor.git
+```
+

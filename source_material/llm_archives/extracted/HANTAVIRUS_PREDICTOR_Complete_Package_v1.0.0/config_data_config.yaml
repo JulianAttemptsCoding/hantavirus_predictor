@@ -1,0 +1,117 @@
+# HantaST-PINN-FM Data Configuration
+
+# Geographic scope
+region:
+  name: "us_southwest"
+  bounding_box: [-125.0, 25.0, -100.0, 42.0]  # [min_lon, min_lat, max_lon, max_lat]
+  crs: "EPSG:4326"
+  target_crs: "EPSG:5070"
+  grid_resolution: 1000  # meters
+
+# Data sources
+sources:
+  cdc_cases:
+    type: "tabular"
+    source: "CDC NNDSS / WONDER"
+    url: "https://wonder.cdc.gov"
+    format: "csv"
+    update_frequency: "weekly"
+    variables:
+      - county_fips
+      - date
+      - cases
+      - deaths
+      - demographics
+    license: "Public Domain"
+
+  neon_rodents:
+    type: "tabular"
+    source: "NEON DP1.10072.001"
+    url: "https://data.neonscience.org"
+    format: "csv"
+    update_frequency: "monthly"
+    variables:
+      - site_id
+      - collectDate
+      - taxonID
+      - sex
+      - testResult
+      - tagID
+    license: "CC0"
+
+  modis_ndvi:
+    type: "raster"
+    source: "NASA LP DAAC"
+    product: "MOD13Q1"
+    resolution: 250
+    temporal_resolution: "16-day"
+    bands: ["NDVI", "EVI"]
+    scale_factor: 0.0001
+    license: "Free"
+
+  era5:
+    type: "raster"
+    source: "Copernicus CDS"
+    product: "reanalysis-era5-single-levels"
+    variables:
+      - "2m_temperature"
+      - "total_precipitation"
+      - "soil_temperature_level_1"
+      - "relative_humidity"
+    temporal_resolution: "hourly"
+    license: "Copernicus T&C"
+
+  chirps:
+    type: "raster"
+    source: "USGS"
+    resolution: 0.05
+    temporal_resolution: "daily"
+    variables: ["precipitation"]
+    license: "Free"
+
+  cdc_svi:
+    type: "vector"
+    source: "CDC"
+    year: 2022
+    variables:
+      - SVI_theme1  # Socioeconomic status
+      - SVI_theme2  # Household composition
+      - SVI_theme3  # Minority status
+      - SVI_theme4  # Housing type
+      - SVI_overall
+    license: "Public Domain"
+
+  safegraph_mobility:
+    type: "tabular"
+    source: "SafeGraph"
+    update_frequency: "weekly"
+    variables:
+      - origin_cbg
+      - destination_cbg
+      - visitor_count
+    license: "Application Required"
+
+# Processing pipeline
+processing:
+  temporal_alignment:
+    frequency: "monthly"
+    aggregation: "mean"  # for continuous vars
+
+  spatial_alignment:
+    method: "reproject_and_resample"
+    target_resolution: 1000
+    resampling: "bilinear"
+
+  missing_data:
+    threshold: 0.10  # max 10% missing
+    imputation_method: "knn"  # or "mice", "gp"
+
+  normalization:
+    method: "zscore"
+    per_feature: true
+
+  train_val_test_split:
+    method: "temporal"
+    train_years: [2014, 2015, 2016, 2017, 2018]
+    val_years: [2019]
+    test_years: [2020, 2021, 2022, 2023]

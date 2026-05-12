@@ -1,0 +1,101 @@
+# HantaST-PINN-FM Model Architecture Configuration
+
+# Biological parameters (informative priors)
+biology:
+  beta_m:
+    prior: "lognormal"
+    mean: -2.303  # log(0.1)
+    sigma: 0.5
+
+  beta_f:
+    prior: "lognormal"
+    mean: -3.507  # log(0.03)
+    sigma: 0.5
+
+  gamma_m:
+    prior: "lognormal"
+    mean: -3.401  # log(1/30)
+    sigma: 0.3
+
+  gamma_f:
+    prior: "lognormal"
+    mean: -3.045  # log(1/21)
+    sigma: 0.3
+
+  delta:
+    prior: "lognormal"
+    mean: -2.639  # log(1/14)
+    sigma: 0.3
+
+  a:
+    prior: "lognormal"
+    mean: -4.605  # log(0.01)
+    sigma: 0.5
+
+  c:
+    prior: "lognormal"
+    mean: -9.210  # log(1e-4)
+    sigma: 0.5
+
+  b:
+    prior: "lognormal"
+    mean: -2.303  # log(0.1)
+    sigma: 0.5
+
+  K:
+    prior: "lognormal"
+    mean: 6.908   # log(1000)
+    sigma: 1.0
+
+  alpha_spillover:
+    prior: "lognormal"
+    mean: -9.210  # log(1e-4)
+    sigma: 1.0
+
+# Climate encoder
+climate_encoder:
+  in_channels: 4
+  hidden_dim: 128
+  num_layers: 4
+  temporal_len: 24
+  spatial_size: [64, 64]
+  dropout: 0.1
+
+# PINN-SEIR
+pinn:
+  depth: 5
+  width: 128
+  activation: "tanh"
+  ode_method: "dopri5"
+  ode_rtol: 1.0e-5
+  ode_atol: 1.0e-6
+  collocation_points: 10000
+  physics_weight_schedule: "adaptive"  # or "fixed"
+
+# Foundation model
+foundation:
+  model_name: "google/timesfm-2.5-500m"
+  lora_rank: 8
+  lora_alpha: 16
+  lora_dropout: 0.1
+  freeze_base: true
+  context_length: 512
+  prediction_length: 12
+
+# ST-GAT
+stgat:
+  node_dim: 128
+  hidden_dim: 128
+  n_heads: 8
+  n_gat_layers: 2
+  n_gru_layers: 2
+  forecast_horizon: 12
+  dropout: 0.2
+  edge_types: ["adjacency", "mobility", "ecological"]
+  edge_weights: [0.4, 0.4, 0.2]
+
+# Feature combiner
+feature_combiner:
+  input_dim: 264
+  hidden_dim: 128
+  dropout: 0.2

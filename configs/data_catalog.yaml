@@ -1,0 +1,86 @@
+project_scope:
+  primary_target: "NEON site-month rodent hantavirus seroprevalence where available"
+  secondary_target: "state-level or partner-approved human spillover risk"
+  blocked_target: "public county-level human hantavirus case prediction"
+
+sources:
+  neon_hantavirus_serology:
+    product_id: "DP1.10064.001"
+    url: "https://data.neonscience.org/api/v0/products/DP1.10064.001"
+    auth: "none"
+    expected_tables:
+      - "rpt_bloodtesting"
+    join_keys:
+      - "bloodSampleID"
+    role: "primary infection-status label"
+    qa:
+      - "deduplicate bloodSampleID before joins"
+      - "count positives, negatives, indeterminates by site-month and species"
+      - "do not extrapolate serology after 2019 as ground truth"
+
+  neon_small_mammal_box_trapping:
+    product_id: "DP1.10072.001"
+    url: "https://data.neonscience.org/api/v0/products/DP1.10072.001"
+    auth: "none"
+    expected_tables:
+      - "mam_pertrapnight"
+      - "mam_perplotnight"
+    role: "abundance, trap effort, species, and individual-level covariates"
+    qa:
+      - "use trap nights as denominator for abundance proxies"
+      - "honor samplingImpractical and site closure flags"
+      - "stratify by reservoir species instead of pooling all rodents by default"
+
+  cdc_hantavirus_public:
+    url: "https://www.cdc.gov/hantavirus/data-research/cases/index.html"
+    auth: "none"
+    role: "state-level human case context and external plausibility check"
+    qa:
+      - "document that public CDC county-level data are unavailable"
+      - "do not fit county-month human models without restricted partner data"
+
+  daymet:
+    url: "https://daymet.ornl.gov/"
+    auth: "none"
+    variables:
+      - "tmin"
+      - "tmax"
+      - "prcp"
+      - "vp"
+      - "srad"
+      - "swe"
+      - "dayl"
+    role: "site-scale weather covariates"
+
+  modis_viirs_appeears:
+    url: "https://www.earthdata.nasa.gov/data/tools/appeears"
+    auth: "NASA Earthdata account"
+    variables:
+      - "NDVI"
+      - "EVI"
+      - "land surface temperature"
+      - "quality flags"
+    role: "vegetation/productivity and habitat proxies"
+    qa:
+      - "store AppEEARS request JSON and generated README"
+      - "mask or weight by quality flags"
+
+  nlcd:
+    url: "https://www.usgs.gov/centers/eros/science/annual-nlcd-data-access"
+    auth: "none or requester-pays AWS depending on access path"
+    role: "annual land cover, developed/open area, forest/grassland features"
+
+  restricted_county_cases:
+    path: "data/manual/cdc_county_month_cases.csv"
+    auth: "DUA, IRB, or state health department approval"
+    role: "only valid source for county-level human spillover validation"
+    required_columns:
+      - "county_fips"
+      - "report_year"
+      - "report_month"
+      - "cases"
+      - "condition"
+      - "source_url_or_dua_id"
+      - "release_date"
+      - "suppression_flag"
+

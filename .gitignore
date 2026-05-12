@@ -1,0 +1,53 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.venv/
+venv/
+
+# OS and editors
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Secrets
+.env
+*.env
+credentials.json
+earthdata_credentials*
+cdsapirc*
+
+# Large and derived data
+data/raw/*
+data/interim/*
+data/processed/*
+data/external/*
+data/manual/*
+!data/raw/.gitkeep
+!data/interim/.gitkeep
+!data/processed/.gitkeep
+!data/external/.gitkeep
+!data/manual/.gitkeep
+
+# Reports and model artifacts
+reports/*
+!reports/.gitkeep
+models/
+outputs/
+figures/
+mlruns/
+wandb/
+
+# LaTeX build outputs
+*.aux
+*.bbl
+*.blg
+*.log
+*.out
+*.toc
+*.synctex.gz
+

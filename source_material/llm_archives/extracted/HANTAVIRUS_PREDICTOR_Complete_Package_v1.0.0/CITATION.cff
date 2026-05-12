@@ -1,0 +1,26 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite both the article and the software itself."
+type: software
+title: "HantaST-PINN-FM: Physics-Informed Foundation Model for Hantavirus Spillover Prediction"
+authors:
+  - family-names: "One"
+    given-names: "Author"
+    orcid: "https://orcid.org/0000-0000-0000-0000"
+  - family-names: "Two"
+    given-names: "Author"
+    orcid: "https://orcid.org/0000-0000-0000-0000"
+repository-code: "https://github.com/username/hantavirus-predictor"
+license: MIT
+version: 1.0.0
+date-released: 2026-05-11
+
+preferred-citation:
+  type: article
+  title: "A Physics-Informed Foundation Model for Hantavirus Spillover Prediction: Integrating Rodent Reservoir Dynamics, Climate Forcing, and Neural Uncertainty Quantification"
+  authors:
+    - family-names: "One"
+      given-names: "Author"
+    - family-names: "Two"
+      given-names: "Author"
+  journal: "Nature Communications"
+  year: 2026

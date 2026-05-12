@@ -1,0 +1,15 @@
+# Model architecture configuration
+encoder:
+  input_channels: 4
+  seq_len: 24
+  hidden_dim: 64
+
+pinn_core:
+  hidden_dim: 128
+  n_layers: 5
+  dropout: 0.1
+
+spillover:
+  input_dim: 13  # 8 states + 5 human features
+  hidden_dim: 32
+  dropout: 0.2

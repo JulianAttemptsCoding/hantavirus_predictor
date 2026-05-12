@@ -1,0 +1,43 @@
+validation_gates:
+  minimum_before_deep_learning:
+    - "NEON serology join audited with row counts and duplicate report"
+    - "trap effort denominators validated by site-month"
+    - "strict temporal split with no future covariates"
+    - "SARIMAX, GAM/GLMM, and gradient boosting baselines implemented"
+  promote_complex_model_only_if:
+    - "mean WIS improves by at least 10 percent over best simple baseline"
+    - "90 percent interval empirical coverage is between 85 and 95 percent overall"
+    - "coverage does not collapse below 80 percent in any major region/biome stratum"
+    - "spatial leave-domain-out result is directionally consistent with temporal CV"
+
+model_sequence:
+  phase_1_baselines:
+    - name: "historical climatology"
+      purpose: "minimum skill floor"
+    - name: "SARIMAX with weather and vegetation covariates"
+      purpose: "time-series reviewer baseline"
+    - name: "binomial or beta-binomial GLMM/GAM"
+      purpose: "interpretable ecological baseline for seroprevalence"
+    - name: "gradient boosting"
+      purpose: "strong tabular nonlinear baseline"
+  phase_2_mechanistic:
+    - name: "hierarchical reservoir transmission model"
+      purpose: "biologically constrained dynamics with partial pooling"
+  phase_3_optional_advanced:
+    - name: "PINN"
+      purpose: "only if residual physics constraints improve held-out performance"
+    - name: "TimesFM or Chronos prior"
+      purpose: "cold-start time-series prior, not proof of biological mechanism"
+    - name: "spatiotemporal graph model"
+      purpose: "only if graph edges are justified without private mobility data"
+
+publication_claims_allowed:
+  - "reservoir-risk forecast"
+  - "spillover-risk proxy"
+  - "decision-support research prototype"
+
+publication_claims_blocked_until_partner_data:
+  - "county-level human case predictor"
+  - "operational public-health warning system"
+  - "validated prospective hantavirus outbreak forecast"
+
