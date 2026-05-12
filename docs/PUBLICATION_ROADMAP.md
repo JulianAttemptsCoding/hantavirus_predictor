@@ -1,19 +1,30 @@
 # Publication Roadmap
 
-Goal: build a credible hantavirus reservoir and spillover-risk predictor that can survive peer review.
+Goal: build a credible hantavirus surveillance, reservoir, and spillover-risk predictor that can survive peer review.
+
+## 2026-05-12 Strategy Update
+
+The strongest publication path is no longer U.S.-only. The primary manuscript should be an international country-year reported-incidence benchmark, with syndrome, region, and surveillance system modeled explicitly. The U.S./NEON reservoir track remains valuable as mechanistic support and as a fallback manuscript.
+
+See `docs/INTERNATIONAL_PUBLICATION_AND_MARKETING_PLAN.md` for the detailed international plan, source matrix, QA gates, and marketing strategy.
 
 Recommended target journals, in order:
 
-1. PLOS Computational Biology - best match if the contribution is methods plus rigorous validation.
-2. PLOS Neglected Tropical Diseases - good fit if the public-health and zoonotic-spillover framing dominates.
-3. The Lancet Planetary Health - only if the final work has strong climate-health evidence and partner validation.
-4. Nature Communications - only if there is clear biological or methodological novelty beyond a risk model.
+1. PLOS Neglected Tropical Diseases - good fit if the public-health, neglected zoonotic, and One Health framing dominates.
+2. Emerging Infectious Diseases - good fit if surveillance utility and reemerging infectious disease framing dominate.
+3. International Journal of Health Geographics - good fit if the remote-sensing and geospatial benchmark is the main contribution.
+4. PLOS Computational Biology or PLOS Digital Health - best only if the methods contribution is strong beyond hantavirus.
+5. The Lancet Planetary Health or Nature Communications - only if the final work has strong climate-health evidence and partner validation.
 
 ## Publication Claim
 
 Primary claim:
 
-> We provide an uncertainty-calibrated forecasting framework for hantavirus reservoir seroprevalence and spillover-risk proxies, benchmarked against strong statistical and machine-learning baselines under strict temporal and spatial validation.
+> We provide an open, uncertainty-calibrated country-year forecasting benchmark for reported hantavirus incidence, stratified by syndrome, region, and surveillance system, and benchmarked against strong statistical baselines under temporal and leave-country-out validation.
+
+Secondary claim:
+
+> U.S./NEON rodent serology supports the biological plausibility of climate and vegetation covariates, but it is not used to claim local human case prediction.
 
 Blocked claims until new data exist:
 
@@ -21,12 +32,13 @@ Blocked claims until new data exist:
 - Real-time operational warning system.
 - Validated prospective outbreak forecast.
 - Clinical diagnosis or individual risk prediction.
+- Pooled global "hantavirus" prediction without syndrome and surveillance-system strata.
 
 ## Phase 0: Governance and Scope
 
 Deliverables:
 
-- Scope statement: U.S./North American reservoir-risk model focused on Sin Nombre and related rodent-borne spillover.
+- Scope statement: international country-year reported-incidence benchmark first; U.S./NEON reservoir-risk model second.
 - Ethics memo: whether IRB review is required for any human case data or risk maps.
 - Data-use register: public data, restricted data, licenses, citation requirements.
 - Pre-analysis plan: primary outcomes, splits, metrics, and go/no-go gates.
@@ -43,7 +55,52 @@ QA gates:
 - Every human-data source has permission and privacy notes.
 - Claims match available data resolution.
 
-## Phase 1: Data Acquisition and Audit
+## Phase 1A: International Country-Level Data Acquisition
+
+Primary tables:
+
+- `data/manual/international_country_cases.csv`
+- `metadata/international_case_source_matrix.csv`
+- World Bank country-year population and context indicators
+- TerraClimate country-year climate features
+- MODIS MOD13C2 country-year NDVI/EVI features
+- FAOSTAT country-year land-use features
+
+Implementation specs:
+
+- Use `schemas/international_country_cases.schema.yaml`.
+- Run `python tools/validate_international_cases.py --strict`.
+- Start with ECDC EU/EEA as the primary harmonized anchor.
+- Add PAHO Americas HPS/HCPS as a separate syndrome/region stratum only after provenance is complete.
+- Add China HFRS as external validation or sensitivity analysis, not as a blindly pooled source.
+- Build `data/processed/international_country_year.parquet`.
+- Include columns:
+  - `iso3`
+  - `country`
+  - `region`
+  - `syndrome`
+  - `source_system`
+  - `year`
+  - `cases`
+  - `deaths`
+  - `population`
+  - `incidence_per_100k`
+  - `quality_grade`
+  - climate lag features
+  - vegetation lag features
+  - land-use covariates
+  - reporting-context covariates
+
+QA gates:
+
+- Source totals reconcile to official reports.
+- Duplicate country-year-syndrome-source keys rejected.
+- Population denominators present for every primary target row.
+- HFRS and HPS/HCPS never pooled without explicit strata.
+- Quality-grade D rows excluded from primary model.
+- Generated `reports/01_international_data_audit.md`.
+
+## Phase 1B: U.S./NEON Data Acquisition and Audit
 
 Primary tables:
 
@@ -253,4 +310,3 @@ Minimum credible timeline:
 - Weeks 11-12: internal review, preprint, journal submission.
 
 This is aggressive. If restricted human data or IRB review are needed, add 1-3 months.
-

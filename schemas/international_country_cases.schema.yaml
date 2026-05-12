@@ -1,0 +1,112 @@
+name: international_country_cases
+version: 1
+description: >
+  Manual country-level hantavirus human case table for the international
+  publication track. One row is one country-period-syndrome-source record.
+
+primary_key:
+  - iso3
+  - year
+  - syndrome
+  - pathogen_or_virus
+  - reporting_system
+
+required_columns:
+  iso3:
+    type: string
+    rule: "ISO 3166-1 alpha-3, uppercase"
+    example: "ARG"
+  country:
+    type: string
+    example: "Argentina"
+  region:
+    type: string
+    example: "Americas"
+  syndrome:
+    type: enum
+    allowed:
+      - HFRS
+      - HPS
+      - HCPS
+      - hantavirus_infection
+      - mixed_or_unspecified
+  pathogen_or_virus:
+    type: string
+    rule: "Use known virus where reported; otherwise use unspecified_hantavirus."
+  case_definition:
+    type: string
+    rule: "Describe confirmed/probable/suspected basis or cite official definition."
+  reporting_system:
+    type: string
+    example: "ECDC TESSy annual report"
+  year:
+    type: integer
+    rule: "Calendar year unless the source only reports an epidemiological year."
+  cases:
+    type: integer
+    rule: "Nonnegative reported cases."
+  deaths:
+    type: integer
+    rule: "Nonnegative reported deaths; use 0 only when source says none."
+  population:
+    type: integer
+    rule: "Country population denominator used for rate calculation."
+  source_url:
+    type: string
+    rule: "Direct source URL or DOI."
+  source_title:
+    type: string
+    rule: "Human-readable source title."
+  accessed_date:
+    type: date
+    rule: "YYYY-MM-DD."
+  source_type:
+    type: enum
+    allowed:
+      - surveillance_report
+      - annual_report
+      - epidemiological_alert
+      - peer_reviewed_article
+      - ministry_dashboard
+      - restricted_partner_extract
+  quality_grade:
+    type: enum
+    allowed:
+      - A
+      - B
+      - C
+      - D
+    rubric:
+      A: "Machine-readable official surveillance with stable definitions."
+      B: "Official report or alert manually extracted with clear provenance."
+      C: "Peer-reviewed or ministry summary with partial definition gaps."
+      D: "Context only; exclude from primary model."
+  notes:
+    type: string
+
+optional_columns:
+  month:
+    type: integer
+    rule: "1-12 if monthly data are available."
+  epidemiological_week:
+    type: integer
+    rule: "1-53 if weekly data are available."
+  subnational_unit:
+    type: string
+    rule: "Province/state/region where source reports subnational exposure."
+  incidence_per_100k:
+    type: number
+    rule: "Use source value or computed cases/population*100000, with method noted."
+  fatality_rate:
+    type: number
+    rule: "Use source value or computed deaths/cases, with method noted."
+  suppression_flag:
+    type: string
+    rule: "Required for restricted or privacy-suppressed records."
+
+qa_rules:
+  - "Do not pool HFRS and HPS/HCPS without syndrome as a model stratum."
+  - "Do not mix countries with incompatible case definitions in the primary model."
+  - "Retain all source URLs, access dates, and extraction notes."
+  - "Exclude quality_grade D rows from primary validation."
+  - "Compute rates only with matched country-year population denominators."

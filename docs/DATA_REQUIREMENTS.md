@@ -1,6 +1,6 @@
 # Data Requirements
 
-This project can start without asking the user for anything else, but it cannot finish a county-level human case predictor from public data alone.
+This project can start without asking the user for anything else, but it cannot finish a county-level human case predictor from public data alone. The recommended publication path is now international country-level reported incidence first, with U.S./NEON as mechanistic support.
 
 ## What Is Already Set Up
 
@@ -10,9 +10,71 @@ The repo contains:
 - `configs/data_catalog.yaml` with source definitions and QA rules.
 - `tools/summarize_neon_products.py` to refresh NEON product metadata.
 - `tools/validate_manual_data.py` to validate manual restricted CSVs.
+- `tools/validate_international_cases.py` to validate international country-level case rows.
+- `schemas/international_country_cases.schema.yaml` for the new publication-track case table.
 - `metadata/neon_products_summary.json` can be generated locally.
 
 ## Data That Future Agents Can Download
+
+### International Country-Level Human Hantavirus Cases
+
+Primary manual table: `data/manual/international_country_cases.csv`
+
+Validator:
+
+```powershell
+python tools/validate_international_cases.py --strict
+```
+
+Required role: primary human reported-incidence label for the international publication track.
+
+Required source tiers:
+
+- ECDC EU/EEA annual hantavirus infection surveillance:
+  - Source: https://www.ecdc.europa.eu/en/publications-data/hantavirus-infection-annual-epidemiological-report-2023
+  - Role: primary harmonized Europe anchor.
+  - Caveat: extract country-year totals with report year, access date, and TESSy retrieval date where reported.
+- PAHO/WHO Americas HPS alerts and cited national sources:
+  - Source: https://www.paho.org/sites/default/files/2025-12/2025-12-19-epidemiological-alert-hantavirus-engfinal.pdf
+  - Role: Americas HPS/HCPS extension and outbreak context.
+  - Caveat: alerts are not complete long-term time series by themselves.
+- China CDC Weekly HFRS publications:
+  - Source: https://weekly.chinacdc.cn/en/article/doi/10.46234/ccdcw2025.141
+  - Role: large HFRS external validation/sensitivity source.
+  - Caveat: model as separate source system; do not assume comparability with EU/EEA.
+
+Required columns are defined in `schemas/international_country_cases.schema.yaml`. Minimum required fields include `iso3`, `country`, `region`, `syndrome`, `year`, `cases`, `deaths`, `population`, `source_url`, `source_title`, `reporting_system`, and `quality_grade`.
+
+Hard QA rules:
+
+- Do not pool HFRS with HPS/HCPS unless syndrome is an explicit model stratum.
+- Do not use rows without source URLs or clear extraction notes.
+- Do not include quality-grade D rows in the primary model.
+- Do not call counts "incidence" unless population denominators are joined.
+
+### International Covariates
+
+Country-year population and context:
+
+- World Bank Indicators API: https://datahelpdesk.worldbank.org/knowledgebase/articles/889392-about-the-indicators-api-documentation
+- Minimum indicators: total population, rural population percentage, GDP per capita or similar reporting-context proxy.
+
+Climate:
+
+- TerraClimate: https://www.climatologylab.org/terraclimate.html
+- Minimum variables: precipitation, temperature, vapor pressure deficit, soil moisture, and water deficit.
+- Required lags: 0, 1, 2, and 3 years, pre-registered before model tuning.
+
+Vegetation:
+
+- MODIS MOD13C2: https://lpdaac.usgs.gov/products/mod13c2v061/
+- Minimum variables: NDVI and EVI.
+- Caveat: NASA Earthdata credentials may be needed; do not commit them.
+
+Land use:
+
+- FAOSTAT land-use data: https://www.fao.org/faostat/en/#data/RL
+- Minimum variables: cropland, forest, agricultural land, and pasture/grassland where available.
 
 ### NEON Hantavirus Serology
 
@@ -119,7 +181,16 @@ ERA5/CDS is optional in the first publication plan because Daymet is simpler, hi
 
 ## Minimal Publishable Dataset
 
-A first defensible paper can be built with:
+A first defensible international paper can be built with:
+
+1. ECDC country-year reported hantavirus infection/HFRS data.
+2. World Bank population denominators and rurality/context indicators.
+3. TerraClimate country-year climate lags.
+4. MODIS MOD13C2 NDVI/EVI country-year summaries.
+5. FAOSTAT land-use covariates.
+6. Strict baselines and leave-country/temporal validation.
+
+A fallback U.S./NEON reservoir paper can be built with:
 
 1. NEON hantavirus serology through 2019.
 2. NEON small mammal trapping through at least 2019, plus post-2019 proxy analysis as a limitation.
@@ -129,4 +200,3 @@ A first defensible paper can be built with:
 6. CDC state-level cases as external context only.
 
 The project should only add county-level human outcomes after a partner data agreement is documented.
-

@@ -10,9 +10,25 @@ This plan responds to the blocker notes in:
 
 The blockers correctly identify the biggest danger: a flashy model could end up predicting rodent proxies, not validated human hantavirus cases. The repo therefore pivots to a staged, evidence-gated framework:
 
-1. Reservoir seroprevalence and trap-success modeling first.
-2. Human spillover risk second, only at data-supported resolution.
-3. Complex neural models only after simple baselines are beaten.
+1. International country-year reported human incidence first.
+2. Reservoir seroprevalence and trap-success modeling as mechanistic support and fallback.
+3. Human spillover risk only at data-supported resolution.
+4. Complex neural models only after simple baselines are beaten.
+
+## International Pivot
+
+The project is no longer U.S.-only. U.S. county-level prediction remains blocked by public data limitations, but international country-level modeling is feasible enough for a publication plan because ECDC, PAHO/WHO, China CDC Weekly, World Bank, TerraClimate, MODIS, and FAOSTAT provide public or manually extractable country-level inputs.
+
+Hard rule:
+
+- International does not mean blindly global. The main model must track syndrome, region, and source system in every row.
+
+New QA artifacts:
+
+- `docs/INTERNATIONAL_PUBLICATION_AND_MARKETING_PLAN.md`
+- `schemas/international_country_cases.schema.yaml`
+- `metadata/international_case_source_matrix.csv`
+- `tools/validate_international_cases.py`
 
 ## Data Blockers
 
@@ -22,6 +38,8 @@ The blockers correctly identify the biggest danger: a flashy model could end up 
 | NEON geographic/site bias | Use leave-site and leave-domain validation; report failure modes by region and species. |
 | Sparse seroprevalence positives | Use binomial/beta-binomial models with effort denominators and partial pooling; avoid deep learning until sample counts justify it. |
 | CDC county-level data unavailable | Verified public blocker. County human model is blocked until restricted partner data are supplied. |
+| U.S.-only case counts are too sparse for a strong human paper | Pivot primary human outcome to international country-year reported incidence. |
+| International surveillance is not comparable | Require syndrome, case definition, reporting system, source system, and quality grade; include source-system effects and sensitivity analyses. |
 | CDC underreporting | Treat NNDSS as reported-case surveillance; do not call it true incidence. |
 | MODIS cloud contamination | Use AppEEARS quality flags; prefer site summaries and gap-fill only with documented uncertainty. |
 | ERA5 coarseness/rate limits | Defer ERA5. Use Daymet 1 km daily North America weather first. |
@@ -84,4 +102,3 @@ Stop or re-scope if:
 - Spatial validation collapses without a clear ecological explanation.
 - Human case validation is impossible beyond descriptive state-level comparison.
 - Complex models do not beat simple baselines.
-
