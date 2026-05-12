@@ -156,7 +156,7 @@ def build_report(cases: pd.DataFrame, metrics: pd.DataFrame, simulation: pd.Data
         "## How To Make The Paper Useful",
         "",
         "1. Keep the main empirical claim narrow: an open, audited ECDC/EU-EEA country-year reported-incidence benchmark.",
-        "2. Add TerraClimate and MODIS country-year lags before making climate/vegetation claims.",
+        "2. Use TerraClimate lagged features for climate claims; add MODIS country-year lags only before making vegetation claims.",
         "3. Use the Markov simulation as a scenario stress-test appendix for sparse surveillance dynamics, not as extra validation data.",
         "4. Add PAHO/China CDC only with full provenance and explicit syndrome/source-system strata.",
         "5. Promote complex models only if they beat the best simple baseline under WIS, relative WIS, interval width, and coverage.",
