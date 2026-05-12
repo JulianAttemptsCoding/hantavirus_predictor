@@ -1,18 +1,23 @@
 # Hantavirus Predictor
 
-Research-grade setup for an international hantavirus surveillance, reservoir, and
-spillover-risk forecasting project.
+Research-grade setup for an international hantavirus surveillance, reservoir,
+and reported-incidence benchmark project.
 
-This repository is not an operational public-health predictor yet. It is a rigor-first handoff for future agents to build one without inheriting unsupported claims from the LLM-generated archive packages in `source_material/`.
+This repository is not an operational public-health predictor. It is a
+rigor-first handoff for future agents to build a publishable paper without
+inheriting unsupported claims from the LLM-generated archive packages in
+`source_material/`.
 
 ## Current Decision
 
 The live project should target:
 
-1. An international country-year reported-incidence paper as the primary publication path.
-2. Explicit syndrome and surveillance strata: HFRS, HPS/HCPS, region, and source system.
-3. U.S./NEON rodent serology as mechanistic support and a fallback reservoir-risk paper.
-4. County-level U.S. human prediction only after a state health department, CDC, or IRB-approved partner provides data.
+1. An ECDC/EU-EEA country-year reported-incidence benchmark as the primary publication path.
+2. Retrospective one-year-ahead evaluation, not true prospective forecasting.
+3. International Journal of Health Geographics as the first journal target, with Scientific Data or BMC Public Health as fallbacks.
+4. Explicit syndrome and surveillance strata before any non-ECDC expansion.
+5. U.S./NEON rodent serology as mechanistic support and a fallback reservoir-risk paper.
+6. County-level U.S. human prediction only after a state health department, CDC, or IRB-approved partner provides data.
 
 The supplied ZIP packages are preserved and audited, but their code is not copied into production because their tests either fail or depend on uninstalled heavy packages, and their reports overclaim readiness.
 
@@ -42,9 +47,13 @@ pytest
 
 ## Repository Map
 
+- `PUBLICATION_MASTER_PLAN.md` - authoritative audited plan from repo state to publication.
 - `docs/SOURCE_ARCHIVE_AUDIT.md` - what is inside the three ZIP packages and what is reusable.
 - `docs/RESEARCH_CLAIMS_AUDIT.md` - checked claims, citations, and project decisions.
 - `docs/PROJECT_STATE.md` - current checkpoint, QA status, and next work package.
+- `docs/data_dictionary.md` - publication-track data dictionary.
+- `docs/reproducibility_manifest.md` - rebuild, attribution, and archive manifest.
+- `docs/reviewer_response_playbook.md` - reviewer defense notes.
 - `docs/DATA_REQUIREMENTS.md` - exact data inventory and what must be provided manually.
 - `docs/PUBLICATION_ROADMAP.md` - spec-by-spec plan from this repo to journal submission.
 - `docs/PUBLICATION_FIRST_DIFFERENTIATION_PLAN.md` - how to publish something distinct from HantavirusMap.
@@ -71,6 +80,8 @@ pytest
 The first ECDC seed milestone is reproducible:
 
 - `tools/create_ecdc_case_table.py` creates the ignored manual ECDC country-year table.
+- The ECDC table carries EU/EEA status and surveillance-completeness flags, including
+  Belgium 2023 and Cyprus 2023 caveats.
 - `tools/build_international_dataset.py` joins World Bank population, rurality, and GDP context.
 - `tools/download_faostat_land_use.py` adds FAOSTAT land-use features to the processed table.
 - `tools/create_terraclimate_manifest.py`, `tools/download_natural_earth_countries.py`, and
@@ -79,7 +90,8 @@ The first ECDC seed milestone is reproducible:
 - `tools/create_mod13c2_manifest.py` creates the MODIS source manifest; quality-masked
   vegetation aggregation is optional future work until it is implemented and audited.
 - `tools/write_international_data_audit.py` writes `reports/01_international_data_audit.md`.
-- `tools/run_international_baselines.py` writes quantile forecasts, metrics, and
+- `tools/run_international_baselines.py` writes quantile forecasts, WIS, relative WIS,
+  empirical coverage, interval width, MAE, deviance, Brier metrics, and
   `reports/02_international_baselines.md`.
 
 Generated `data/` and `reports/` outputs are ignored by git; tracked scripts rebuild them.

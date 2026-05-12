@@ -11,7 +11,14 @@ Primary publication path:
 - international country-year reported human hantavirus incidence
 - explicit syndrome strata: HFRS, HPS, HCPS, hantavirus infection, mixed/unspecified
 - explicit source-system and region strata
-- uncertainty-calibrated validation against strong statistical baselines
+- retrospective one-year-ahead evaluation against strong statistical baselines
+- uncertainty, calibration, sharpness, and source-quality flags
+
+Primary journal path:
+
+- International Journal of Health Geographics first
+- Scientific Data or BMC Public Health fallback
+- PLOS NTD deferred unless a PAHO/LMIC source-system-specific expansion exists
 
 Secondary path:
 
@@ -34,6 +41,7 @@ Ready:
 - international case-source matrix
 - international manual-data validator
 - reproducible ECDC 2019-2023 country-year seed table builder
+- EU/EEA membership and surveillance-completeness metadata flags
 - World Bank population, rurality, and GDP context join
 - processed international country-year CSV builder
 - FAOSTAT land-use download and country-year join
@@ -42,10 +50,13 @@ Ready:
 - Earthdata credential parser for local untracked credential files
 - frozen first temporal split config
 - historical, persistence, empirical negative-binomial, hierarchical shrinkage, and gradient-boosting baseline runner
+- baseline metric outputs with WIS, relative WIS, empirical coverage, interval width, MAE, deviance, and Brier score
 - first-pass baseline skill and observed-vs-predicted figure script
 - Markov-style incidence-state simulation stress test
 - final publication-readiness QA gate
 - paper readiness and results report generator
+- audited root publication plan
+- data dictionary, reproducibility manifest, and reviewer response playbook
 - generated local audit and baseline reports
 - shared forecast metrics tests
 - future-agent handoff
@@ -61,15 +72,19 @@ Not ready yet:
 
 Read in this order:
 
-1. `docs/AGENT_HANDOFF.md`
-2. `docs/PAPER_IMPLEMENTATION_PLAN_AND_BLOCKERS.md`
-3. `docs/PUBLICATION_FIRST_DIFFERENTIATION_PLAN.md`
-4. `docs/INTERNATIONAL_PUBLICATION_AND_MARKETING_PLAN.md`
-5. `docs/DATA_REQUIREMENTS.md`
-6. `docs/PUBLICATION_ROADMAP.md`
-7. `docs/BLOCKER_RESPONSE_PLAN.md`
-8. `configs/data_catalog.yaml`
-9. `configs/modeling_plan.yaml`
+1. `PUBLICATION_MASTER_PLAN.md`
+2. `docs/AGENT_HANDOFF.md`
+3. `docs/data_dictionary.md`
+4. `docs/reproducibility_manifest.md`
+5. `docs/reviewer_response_playbook.md`
+6. `docs/PAPER_IMPLEMENTATION_PLAN_AND_BLOCKERS.md`
+7. `docs/PUBLICATION_FIRST_DIFFERENTIATION_PLAN.md`
+8. `docs/INTERNATIONAL_PUBLICATION_AND_MARKETING_PLAN.md`
+9. `docs/DATA_REQUIREMENTS.md`
+10. `docs/PUBLICATION_ROADMAP.md`
+11. `docs/BLOCKER_RESPONSE_PLAN.md`
+12. `configs/data_catalog.yaml`
+13. `configs/modeling_plan.yaml`
 
 ## QA Commands
 
@@ -107,9 +122,10 @@ Expected today:
 1. Keep the main manuscript as an ECDC-only public-data benchmark unless PAHO/China extraction is completed with full provenance.
 2. Decide whether MODIS quality-masked NDVI/EVI aggregation is worth implementing; otherwise remove vegetation claims from the paper.
 3. Add feature ablation tables that compare context only, land use, TerraClimate, and all public covariates.
-4. Upgrade empirical count baselines to a dependency-approved negative-binomial GLM or Bayesian hierarchical model.
-5. Draft manuscript methods/results from the generated reports and figures.
-6. Keep deep learning blocked until simple baselines and covariates are complete.
+4. Add MASE, calibration plots, interval-width plots, and IJHG-ready choropleths/data-gap maps.
+5. Upgrade empirical count baselines to a penalized or hierarchical count model only after feature ablation.
+6. Draft manuscript methods/results from the generated reports and figures.
+7. Keep deep learning blocked until simple baselines and covariates are complete.
 
 ## Marketing Position
 
@@ -117,10 +133,15 @@ Use this framing:
 
 > Open Hantavirus Risk Benchmark is an open, country-level research benchmark for reported hantavirus risk that is provenance-first, syndrome-aware, and uncertainty-calibrated.
 
+For the manuscript title, prefer:
+
+> An open benchmark for country-level reported hantavirus incidence: retrospective one-year-ahead evaluation under sparse public surveillance
+
 Avoid this framing:
 
 - outbreak oracle
 - clinical tool
 - individual risk predictor
+- prospective forecast unless true prospective labels are withheld
 - public county risk dashboard
 - global model that ignores syndrome or surveillance differences

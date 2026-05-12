@@ -61,6 +61,12 @@ def build_report(data: pd.DataFrame) -> str:
         .size()
         .reset_index(name="country_year_rows")
     )
+    surveillance_flags = (
+        data.groupby(["year", "surveillance_completeness", "quality_grade"])
+        .size()
+        .reset_index(name="country_year_rows")
+        .sort_values(["year", "surveillance_completeness"])
+    )
     reconciliation = data.groupby("year", as_index=False)["cases"].sum()
     reconciliation["ecdc_reported_total"] = reconciliation["year"].map(ECDC_TOTALS)
     reconciliation["difference"] = reconciliation["cases"] - reconciliation["ecdc_reported_total"]
@@ -84,6 +90,11 @@ def build_report(data: pd.DataFrame) -> str:
         and not column.endswith("_missing")
         and not column.endswith("_cell_count")
     ]
+    terraclimate_forecast_columns = [
+        column for column in terraclimate_feature_columns if column.endswith("_lag1")
+    ]
+    forecast_rows = data[data["year"] > int(data["year"].min())]
+    terraclimate_feature_missing = _missingness(forecast_rows, terraclimate_forecast_columns)
     terraclimate_missing = (
         int((~data["terraclimate_joined"]).sum())
         if "terraclimate_joined" in data
@@ -141,6 +152,10 @@ def build_report(data: pd.DataFrame) -> str:
         "",
         _markdown_table(counts),
         "",
+        "## ECDC Surveillance Metadata Flags",
+        "",
+        _markdown_table(surveillance_flags),
+        "",
         "## Source Total Reconciliation",
         "",
         _markdown_table(reconciliation),
@@ -157,6 +172,10 @@ def build_report(data: pd.DataFrame) -> str:
         "## Covariate Join Status",
         "",
         _markdown_table(covariate_status),
+        "",
+        "## TerraClimate Lag-1 Per-Variable Missingness",
+        "",
+        _markdown_table(terraclimate_feature_missing),
         "",
         "## Duplicate Keys",
         "",

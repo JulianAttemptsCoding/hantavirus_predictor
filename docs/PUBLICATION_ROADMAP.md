@@ -1,5 +1,9 @@
 # Publication Roadmap
 
+Authoritative update: `PUBLICATION_MASTER_PLAN.md` at repo root supersedes this
+older roadmap for journal targeting, feature-ablation specifications, MODIS
+decision gates, and final QA.
+
 Goal: build a credible hantavirus surveillance, reservoir, and spillover-risk predictor that can survive peer review.
 
 ## 2026-05-12 Strategy Update

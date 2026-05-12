@@ -56,6 +56,17 @@ def _lag_columns(cases: pd.DataFrame) -> list[str]:
     ]
 
 
+def _coverage_note(best: pd.DataFrame) -> str:
+    if best.empty or "coverage_90" not in best:
+        return "No best-model coverage rows available."
+    rows = []
+    for _, row in best.sort_values("target_year").iterrows():
+        coverage = float(row["coverage_90"])
+        status = "under-covered" if coverage < 0.8 else "over-wide" if coverage > 0.98 else "near target"
+        rows.append(f"{int(row['target_year'])}: {coverage:.3f} ({status})")
+    return "; ".join(rows)
+
+
 def build_gate_report(
     cases: pd.DataFrame,
     metrics: pd.DataFrame,
@@ -120,13 +131,38 @@ def build_gate_report(
                 ),
             },
             {
+                "area": "Surveillance metadata flags",
+                "status": _status(
+                    {"eu_eea_status", "surveillance_completeness"}.issubset(cases.columns)
+                ),
+                "evidence": (
+                    "ECDC source-quality metadata present; Belgium 2023 and Cyprus 2023 "
+                    "must be handled in sensitivity analyses."
+                ),
+            },
+            {
                 "area": "Forecast benchmark outputs",
                 "status": _status(
                     required_models.issubset(set(metrics["model"]))
                     and {2022, 2023}.issubset(set(metrics["target_year"]))
                     and not predictions.empty
+                    and {
+                        "relative_wis_observed_mean",
+                        "mean_interval_width_90",
+                    }.issubset(metrics.columns)
                 ),
-                "evidence": f"{len(metrics)} metric rows and {len(predictions)} quantile rows.",
+                "evidence": (
+                    f"{len(metrics)} metric rows and {len(predictions)} quantile rows, "
+                    "including relative WIS and 90 percent interval width."
+                ),
+            },
+            {
+                "area": "Calibration caution",
+                "status": _status(False, warning=True),
+                "evidence": (
+                    "Coverage is descriptive at this stage and must be discussed rather "
+                    f"than hidden. Best-model coverage: {_coverage_note(best)}."
+                ),
             },
             {
                 "area": "Simulation appendix",
@@ -181,7 +217,9 @@ def build_gate_report(
                     "model",
                     "n",
                     "mean_wis",
+                    "relative_wis_observed_mean",
                     "coverage_90",
+                    "mean_interval_width_90",
                     "mae",
                     "brier_any_case",
                 ]

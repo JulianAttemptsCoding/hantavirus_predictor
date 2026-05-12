@@ -1,1682 +1,1099 @@
-# Publication Master Plan From Current Repo State To Journal Submission
+# Publication Master Plan
 
 Last updated: 2026-05-12
 
-This is the root-level audited plan for taking this repository from its current
-ECDC-only public-data benchmark state to a publication-ready manuscript and
-reproducible code release.
+Working title:
 
-The plan is intentionally conservative. It is written so a reviewer, future
-agent, or human collaborator can see exactly what is implemented, what remains,
-what claims are allowed, and what must fail QA before the paper is submitted.
+> An open benchmark for country-level reported hantavirus incidence: retrospective one-year-ahead evaluation under sparse public surveillance
 
-## 1. Executive Decision
+This is the root-level handoff plan for turning this repository into a paper
+package targeted at a credible journal, preferably Q1 or impact factor above
+approximately 2.5. It incorporates the three external audits supplied on
+2026-05-12 plus a fresh source check on 2026-05-12.
+
+The plan is intentionally conservative. The project can be publishable only if
+it is honest about the data: five ECDC annual reporting years, sparse
+country-level observations, source-system quirks, and public covariates that
+may or may not improve over simple baselines.
+
+## 1. Final Scientific Position
 
 ### 1.1 Paper Identity
 
-Recommended project identity:
+The paper is a public-data benchmark and reproducibility paper, not a live
+outbreak tracker and not a medical advice tool.
+
+Core identity:
 
 > Open Hantavirus Risk Benchmark: an open, provenance-first,
 > uncertainty-calibrated benchmark for country-year reported hantavirus
 > incidence using free public surveillance, demographic, land-use, and climate
 > data.
 
-Recommended manuscript title:
+Allowed paper type:
 
-> An open benchmark for country-level reported hantavirus incidence forecasting
-> under sparse public surveillance
+- Retrospective one-year-ahead evaluation.
+- Data/methods benchmark with reproducible source joins.
+- Quantile forecast evaluation under sparse public surveillance.
+- Geospatial health surveillance paper for EU/EEA reported incidence.
+- Negative-result paper if climate or machine learning does not improve over
+  simple surveillance baselines.
 
-The paper should be a forecast benchmark and reproducible data/methods paper.
-It should not be a public alert dashboard, a clinical tool, a county-level human
-risk predictor, or a generic human-to-human spread simulator.
+Not allowed:
 
-### 1.2 Current Verdict
+- Do not call the current work true prospective forecasting.
+- Do not claim operational alerting, medical diagnosis, or individual risk.
+- Do not claim county-level U.S. prediction. CDC states hantavirus data are
+  reported by state only and county-level data cannot be provided to protect
+  identities.
+- Do not claim causal climate effects.
+- Do not claim generic human-to-human spread. Andes virus is a special case
+  and is not the EU/EEA ECDC target.
+- Do not pool ECDC, PAHO, and China CDC labels in one model without explicit
+  syndrome and source-system strata.
 
-The repo currently passes the ECDC-only public-data benchmark gate:
+### 1.2 Primary Scope
 
-- `reports/05_publication_readiness_gate.md`: PASS for the ECDC-only
-  public-data benchmark manuscript path.
-- `data/processed/international_country_year.csv`: 142 ECDC country-year rows,
-  95 columns.
-- ECDC totals reconcile exactly for 2019-2023.
-- World Bank context joins all rows.
-- FAOSTAT land-use joins all rows.
-- TerraClimate current-year features join all rows.
-- TerraClimate lag-1 forecast features are complete for all non-2019 rows.
-- Baseline forecasts, metrics, figures, audit reports, and Markov-style
-  stress-test outputs rebuild from scripts.
+Primary manuscript scope:
 
-The repo is not yet ready for final journal submission because the manuscript
-text, feature-ablation tables, final figure set, and target-journal package are
-not done. MODIS vegetation claims and global generalization claims are not
-allowed unless the corresponding data work is completed and passes QA.
+- Geography: EU/EEA countries in the ECDC Annual Epidemiological Report.
+- Labels: annual country-year reported hantavirus infection counts,
+  2019-2023.
+- Primary source system: ECDC only.
+- Unit of analysis: country-year.
+- Target: reported annual cases and incidence per 100,000 population.
+- Evaluation: retrospective one-year-ahead evaluation, especially 2022 and
+  2023, plus leave-one-year-out sensitivity analysis.
+- Public covariates: World Bank population/rurality/GDP, FAOSTAT land use,
+  TerraClimate climate/water-balance features, Natural Earth country
+  boundaries.
+- Optional covariate: MODIS MOD13C2 Collection 6.1 NDVI/EVI only if the hard
+  QA gate in Section 7.4 passes.
 
-### 1.3 Main Publication Path
+The current ECDC seed table reconciles ECDC annual totals:
 
-Primary path:
+| Year | ECDC total |
+| --- | ---: |
+| 2019 | 4088 |
+| 2020 | 1693 |
+| 2021 | 4947 |
+| 2022 | 2185 |
+| 2023 | 1885 |
 
-1. Submit an ECDC/EU-EEA public-data benchmark paper to International Journal
-   of Health Geographics.
-2. Keep the manuscript narrow: EU/EEA country-year reported incidence,
-   uncertainty-calibrated forecasting, climate/land-use covariate evaluation,
-   and surveillance limitations.
-3. Treat simulation as a stress-test appendix, not validation evidence.
-4. Add PAHO and China CDC rows only if there is time to extract them with
-   complete provenance and explicit source-system strata.
-5. Add MODIS only if quality-masked NDVI/EVI aggregation is implemented and
-   auditable; otherwise remove vegetation claims.
+The current processed table is a raw analysis table, not the modeling feature
+matrix. The audits correctly flagged that 95 raw columns for 142 rows can look
+like feature inflation. The manuscript must report:
 
-Fallback path:
+- raw processed table dimensions separately;
+- final modeling matrix dimensions separately;
+- the number of candidate features before and after screening;
+- the exact feature sets used in ablation.
 
-1. If model skill is weak but data reproducibility is strong, submit as a
-   Scientific Data style Data Descriptor or benchmark descriptor.
-2. If PAHO/China extension becomes strong, consider PLOS Neglected Tropical
-   Diseases or Emerging Infectious Diseases.
+Hard rule: the final modeling matrix should normally contain 15-25 predictors
+before one-hot encoding. If the model matrix has more candidate predictors than
+rows, the analysis must switch to penalized or shrinkage-only models and report
+that complex models are exploratory.
 
-## 2. Evidence Base And Source Anchors
+### 1.3 Journal Targeting
 
-These are the external sources that anchor the plan. They should be cited in
-the manuscript or used to justify scope decisions.
+Primary target: International Journal of Health Geographics.
 
-### 2.1 Surveillance And Disease Context
+Why it fits:
 
-- ECDC Hantavirus infection Annual Epidemiological Report for 2023:
-  https://www.ecdc.europa.eu/en/publications-data/hantavirus-infection-annual-epidemiological-report-2023
-  - Planning role: primary harmonized EU/EEA seed source.
-  - Current repo extracts and reconciles ECDC Table 1 for 2019-2023.
-  - ECDC reports 1,885 EU/EEA cases for 2023.
+- The journal explicitly covers GIS-enabled surveillance, remote sensing,
+  spatial epidemiology, and spatio-temporal statistics in health.
+- The 2024 journal impact factor shown on the journal page is 3.2.
+- The paper can be framed around public geospatial health surveillance,
+  uncertainty, and reproducible open covariate joins.
 
-- CDC reported hantavirus disease cases:
-  https://www.cdc.gov/hantavirus/data-research/cases/index.html
-  - Planning role: confirms public U.S. county-level human prediction is
-    blocked by privacy constraints.
-  - CDC states county-level data cannot be provided to protect identities.
+What IJHG will expect:
 
-- CDC hantavirus surveillance and case definitions:
-  https://www.cdc.gov/hantavirus/php/surveillance/index.html
-  - Planning role: supports case-definition and NNDSS context if U.S. state
-    data are discussed.
+- Maps, not only tables.
+- Explicit geospatial methods.
+- Area-appropriate projections and clear boundaries.
+- A real public health/geographic insight, even if the result is that simple
+  baselines and surveillance quality dominate the signal.
 
-- WHO hantavirus fact sheet:
-  https://www.who.int/news-room/fact-sheets/detail/hantavirus
-  - Planning role: supports disease/transmission framing and the Andes virus
-    exception.
+Required IJHG figures:
 
-- CDC Andes virus page:
-  https://www.cdc.gov/hantavirus/about/andesvirus.html
-  - Planning role: confirms Andes virus is the only hantavirus type known to
-    spread person-to-person.
+- EU/EEA incidence choropleth by year or 2023 snapshot.
+- Data-gap and surveillance-quality map.
+- Predicted versus observed incidence map for the best model.
+- Uncertainty map or hatching layer showing high interval width.
 
-- WHO Disease Outbreak News, 2026 DON600:
-  https://www.who.int/emergencies/disease-outbreak-news/item/2026-DON600
-  - Planning role: shows current public relevance, but event signals must not
-    be mixed with annual surveillance labels unless separately coded.
+Strong fallback: Scientific Data.
 
-- PAHO/WHO Hantavirus Pulmonary Syndrome alert, 2025:
-  https://www.paho.org/en/documents/epidemiological-alert-hantavirus-pulmonary-syndrome-americas-region-19-december-2025
-  - Planning role: optional Americas expansion source and public-health
-    relevance anchor.
+Why it fits:
 
-- China CDC Weekly HFRS article, 2014-2023:
-  https://weekly.chinacdc.cn/en/article/doi/10.46234/ccdcw2025.141
-  - Planning role: optional external-validation or source-system extension for
-    HFRS; never pool blindly with ECDC.
+- Scientific Data publishes Data Descriptors and emphasizes data sharing and
+  reusable processing methods.
+- Its 2024 journal impact factor is listed as 6.9 on the journal metrics page.
+- This is the best fallback if model skill is weak but the dataset, pipeline,
+  provenance, and benchmark format are strong.
 
-### 2.2 Covariate And Geospatial Sources
+Strong fallback: BMC Public Health.
 
-- World Bank Indicators API:
-  https://datahelpdesk.worldbank.org/knowledgebase/articles/889392
-  - Planning role: free country-year population, rurality, GDP, and additional
-    contextual indicators.
+Why it fits:
 
-- FAOSTAT Land Use:
-  https://www.fao.org/faostat/en/#data/RL
-  - Planning role: free country-year land-use covariates.
+- The journal scope includes infectious disease epidemiology, environmental
+  health, public health informatics, and surveillance.
+- The journal page lists a 2024 impact factor of 3.6.
+- This is a better fallback than PLOS NTD for an ECDC-only paper if the
+  geospatial contribution is less central.
 
-- TerraClimate Scientific Data paper:
-  https://www.nature.com/articles/sdata2017191
-  - Planning role: free high-resolution monthly global climate and water
-    balance covariates.
+Conditional reach: PLOS Computational Biology.
 
-- TerraClimate Earth Engine catalog:
-  https://developers.google.com/earth-engine/datasets/catalog/IDAHO_EPSCOR_TERRACLIMATE
-  - Planning role: source documentation for variables and public availability.
+Use only if the modeling contribution becomes methodologically stronger, for
+example a reusable benchmark framework with strong uncertainty evaluation and
+substantial biological insight. The current ECDC-only seed is probably too
+small for this as a primary target.
 
-- Natural Earth downloads:
-  https://www.naturalearthdata.com/downloads/
-  - Planning role: public country-boundary source for zonal aggregation.
+Do not target PLOS Neglected Tropical Diseases for the ECDC-only paper.
 
-- MOD13C2 product documentation, NASA LAADS:
-  https://ladsweb.modaps.eosdis.nasa.gov/api/v1/productPage/product=MOD13C2
-  - Planning role: optional vegetation covariates; requires QA-aware
-    aggregation.
+Reason:
 
-- MODIS Collection 6.1 vegetation index user guide:
-  https://lpdaac.usgs.gov/documents/621/MOD13_User_Guide_V61.pdf
-  - Planning role: required reference for QA flags if MODIS is implemented.
+- PLOS NTD defines its core scope around poverty-promoting diseases that
+  primarily occur in rural or poor urban areas in low-income and middle-income
+  countries, and explicitly says high-income-country work is out of scope
+  unless it has consequences in LMIC.
+- The ECDC-only panel is dominated by high-income European surveillance.
+- PLOS NTD becomes plausible only after a PAHO/LMIC One Health expansion with
+  clear relevance to neglected populations. That is post-submission work, not
+  version 1.
 
-- NASA Common Metadata Repository:
-  https://www.earthdata.nasa.gov/about/esdis/eosdis/cmr
-  - Planning role: discovery API for MODIS granules.
+Do not prioritize Epidemics under the user's journal constraint.
 
-### 2.3 Journal Scope Sources
+Reason:
 
-- International Journal of Health Geographics:
-  https://ij-healthgeographics.biomedcentral.com/about
-  - Best first target because it explicitly covers geospatial health, remote
-    sensing, spatial epidemiology, spatiotemporal statistics, and surveillance
-    services.
+- Epidemics is scientifically relevant for infectious disease dynamics, but
+  the current page lists a 2.4 impact factor, below the requested approximate
+  threshold of 2.5.
+- It can remain a backup only if the user relaxes the journal metric
+  constraint or if the paper becomes a stronger transmission-dynamics paper.
 
-- PLOS Neglected Tropical Diseases:
-  https://journals.plos.org/plosntds/s/journal-information
-  - Stronger if PAHO/China rows, One Health framing, and neglected-population
-    relevance are added.
+## 2. Source Anchors And Evidence
 
-- Emerging Infectious Diseases:
-  https://wwwnc.cdc.gov/eid/pages/about.htm
-  - Stronger if the paper emphasizes surveillance interpretation, emergence,
-    public-health utility, and limitations.
+These sources must appear in the manuscript references, data availability
+statement, or cover-letter justification.
 
-- Scientific Data aims and scope:
-  https://www.nature.com/sdata/aims-and-scope
-  - Backup route if the data/schema/reproducibility contribution is stronger
-    than model skill.
+### 2.1 ECDC Surveillance
 
-### 2.4 Competitive Context
+Primary ECDC source:
 
-- HantavirusMap:
-  https://hantavirusmap.com/
-  - Current positioning: live global hantavirus outbreak tracker and signal
-    aggregator.
-  - This project must not compete as a live alert map.
-  - Differentiator: validated forecast benchmark, provenance, uncertainty,
-    and reproducible data pipeline.
+- https://www.ecdc.europa.eu/en/publications-data/hantavirus-infection-annual-epidemiological-report-2023
+- ECDC citation: European Centre for Disease Prevention and Control.
+  Hantavirus infection. In: ECDC. Annual Epidemiological Report for 2023.
+  Stockholm: ECDC; 2025.
 
-## 3. Scientific Claim Boundaries
+Required ECDC metadata handling:
 
-### 3.1 Claims Allowed Now
+- The report is based on 2023 TESSy data retrieved on 2024-11-06.
+- In 2023, 28 EU/EEA countries reported 1885 cases.
+- Finland and Germany accounted for 60.5 percent of 2023 cases.
+- The United Kingdom had no data from 2020 onward because it withdrew from the
+  EU on 2020-01-31. The current ECDC seed table excludes UK rows entirely so
+  the panel is consistent. If a future table adds UK 2019, it must be flagged
+  as `eu_eea_status = withdrawn` and excluded from the primary balanced-panel
+  analysis.
+- Belgium 2023 must be flagged because ECDC says its surveillance system
+  changed and was no longer comprehensive, so the rate was not calculated.
+  Current repo action: `surveillance_completeness = not_comprehensive` and
+  `quality_grade = C`.
+- Cyprus 2023 is flagged by ECDC metadata as unspecified/not available for
+  some rate context. Current repo action: `surveillance_completeness =
+  unspecified` and `quality_grade = C`.
+- The paper must include a sensitivity analysis excluding Belgium 2023 and any
+  other non-comprehensive rows.
 
-Allowed after the current repo state and generated outputs:
+### 2.2 CDC Privacy Boundary
 
-- The repo provides an auditable ECDC/EU-EEA country-year benchmark for
-  reported hantavirus incidence from 2019 to 2023.
-- The source totals reconcile exactly to ECDC annual totals.
-- Free public covariates from World Bank, FAOSTAT, and TerraClimate can be
-  joined reproducibly at country-year level.
-- Simple rate baselines and a gradient-boosting tabular baseline can produce
-  one-year-ahead quantile forecasts.
-- The current results show that simple baselines are strong and complex models
-  should not be promoted unless they beat those baselines under WIS and
-  calibration.
-- Markov-style incidence-state simulation is useful for stress testing sparse
-  surveillance dynamics.
+CDC source:
 
-### 3.2 Claims Not Allowed Yet
+- https://www.cdc.gov/hantavirus/data-research/cases/index.html
 
-Not allowed unless new evidence is added and QA passes:
+Use in manuscript:
 
-- "Global" hantavirus prediction.
-- U.S. county-level human case prediction from public data.
-- Individual or clinical risk prediction.
-- Operational public-health warning or live outbreak detection.
-- Generic human-to-human spread simulation.
-- Vegetation/NDVI/EVI effects unless MODIS QA-masked aggregation is complete.
-- Source-system pooled inference across ECDC, PAHO, China CDC, WHO DON, and
-  news sources without explicit source-system modeling.
-- Causal climate claims.
-- Prospective outbreak prediction.
+- CDC reports U.S. hantavirus data by state only and states that county-level
+  data cannot be provided to protect identities.
+- This justifies why the paper does not attempt U.S. county-level human
+  prediction using free public data.
 
-### 3.3 Required Language
+### 2.3 Competitor And Market Position
+
+HantavirusMap exists:
+
+- https://hantavirusmap.com/
+
+Positioning:
+
+- HantavirusMap is a live signal tracker and public-facing map.
+- This paper must not compete as another live alert map.
+- The novelty is the auditable benchmark: frozen labels, public covariates,
+  source provenance, uncertainty-calibrated evaluation, calibration plots,
+  feature ablations, and negative-result transparency.
+
+One-line marketing statement for cover letter:
+
+> Existing public trackers aggregate signals; this study provides a frozen,
+> reproducible benchmark that tests whether public climate and land-use
+> covariates actually improve country-year hantavirus reported-incidence
+> evaluation over strong surveillance baselines.
+
+### 2.4 Public Covariates And Licenses
+
+World Bank:
+
+- Source: https://www.worldbank.org/en/about/legal/terms-of-use-for-datasets
+- Default license: CC BY 4.0 unless specifically labeled otherwise.
+- Required attribution in data availability statement.
+
+FAOSTAT:
+
+- Source: https://www.fao.org/statistics/data-dissemination/agrifood-systems/en
+- FAO provides free and unrestricted access to statistical databases and has an
+  open data licensing policy.
+- Required attribution: acknowledge FAO/FAOSTAT in the data availability and
+  figure/table notes where land-use data are used.
+
+TerraClimate:
+
+- Source paper: Abatzoglou JT, Dobrowski SZ, Parks SA, Hegewisch KC.
+  TerraClimate, a high-resolution global dataset of monthly climate and
+  climatic water balance from 1958-2015. Scientific Data. 2018;5:170191.
+  https://doi.org/10.1038/sdata.2017.191
+- Use as lagged climate/water-balance covariates.
+- Required caveat: country-level aggregation can mask within-country exposure
+  heterogeneity.
+- Verify current endpoint before final data freeze because mirrors and THREDDS
+  endpoints can change.
+
+Natural Earth:
+
+- Source: https://www.naturalearthdata.com/about/terms-of-use/
+- Public domain.
+- Recommended attribution line even though not required: "Made with Natural
+  Earth. Free vector and raster map data at naturalearthdata.com."
+
+MODIS MOD13C2:
+
+- Source: https://www.earthdata.nasa.gov/data/catalog/lpcloud-mod13c2-061
+- Product: MODIS/Terra Vegetation Indices Monthly L3 Global 0.05Deg CMG
+  Version 6.1.
+- Includes NDVI, EVI, VI QA, and spatial statistics.
+- Requires NASA Earthdata access but is free with registration.
+- Use only if the Section 7.4 decision gate passes.
+
+### 2.5 Optional Non-ECDC Sources
+
+PAHO:
+
+- Source: https://www.paho.org/en/documents/epidemiological-alert-hantavirus-pulmonary-syndrome-americas-region-19-december-2025
+- The PAHO alert is event/epidemiological-alert information about Hantavirus
+  Pulmonary Syndrome in the Americas, not a harmonized annual country-year
+  surveillance table.
+- Do not use PAHO alerts as primary labels for the ECDC v1 paper. At most,
+  use them as post-submission external-stress-test material.
+
+China CDC Weekly:
+
+- Source: https://weekly.chinacdc.cn/en/article/doi/10.46234/ccdcw2025.141
+- Covers HFRS in China from 2014-2023 and includes county/PLAD information and
+  HTNV/SEOV diversity.
+- Do not pool with ECDC v1. China data are a different spatial scale and a
+  different source system.
+
+## 3. Related Work And Novelty Defense
+
+The paper must not pretend there are no hantavirus risk models. The novelty is
+not "first hantavirus map" and not "first climate model." It is the first
+audited, open, public-data, country-year reported-incidence benchmark that
+links ECDC labels to public covariates and evaluates uncertainty-calibrated
+one-year-ahead retrospective predictions against strong baselines.
+
+Required related work:
+
+- Zeimes et al. 2015, Landscape and Regional Environmental Analysis of the
+  Spatial Distribution of Hantavirus Human Cases in Europe. Frontiers in
+  Public Health. This is the closest European spatial risk-map competitor. It
+  used environmental/spatial modeling, boosted regression trees, and
+  multilevel logistic regression. Differentiate by saying it is spatial
+  distribution/risk mapping, while this project is a temporal country-year
+  benchmark with probabilistic evaluation and reproducible public-data
+  covariate joins.
+- Kallio et al. 2009, Cyclic hantavirus epidemics in humans predicted by
+  rodent host dynamics. Differentiate by saying that mechanistic reservoir
+  dynamics require richer rodent/host time series; this project asks what can
+  be done with free public human surveillance and broad covariates.
+- Reusken and Heyman 2013, Factors driving hantavirus emergence in Europe.
+  Use as background for multi-factorial reservoir, land-use, climate, and
+  anthropogenic drivers. Do not turn this into causal claims.
+- Kazasidis, Geduhn, and Jacob 2024, High-resolution early warning system for
+  human Puumala hantavirus infection risk in Germany. This is a key
+  district-level German PUUV early warning and map platform comparator.
+  Differentiate by geographic scope, public-data benchmark format, and
+  evaluation of cross-country surveillance limitations.
+- Glass et al. 2000, remotely sensed data for HPS risk. Use as remote-sensing
+  precedent in hantavirus ecology, not as evidence for ECDC country-year
+  prediction.
+- Allen, McCormack, and Jonsson 2006, mathematical models for hantavirus
+  infection in rodents. Use to justify why mechanistic spread simulation is
+  biologically interesting but not the main validation evidence here.
+- Forecast-benchmark literature such as COVID-19 Forecast Hub and Bracher,
+  Ray, Gneiting, and Reich on weighted interval score. Use to justify WIS,
+  coverage, sharpness, and probabilistic forecast formats.
+
+Novelty paragraph to use in the introduction:
+
+> Authoritative surveillance reports provide annual case totals, and prior
+> hantavirus studies have mapped ecological suitability or local outbreak risk.
+> However, there is no frozen, open-source benchmark that reconciles EU/EEA
+> country-year reported hantavirus labels, links them to public climate,
+> land-use, and demographic covariates, and tests whether those covariates
+> improve probabilistic retrospective one-year-ahead evaluation over simple
+> surveillance baselines. This benchmark fills that gap and makes negative
+> results visible rather than burying them.
+
+## 4. Claims Policy
+
+### 4.1 Allowed Claims After QA
+
+- The dataset reconciles ECDC annual totals for 2019-2023.
+- The pipeline links ECDC country-year labels to public World Bank, FAOSTAT,
+  TerraClimate, and Natural Earth sources.
+- The benchmark evaluates simple baselines and selected covariate models using
+  WIS, relative WIS, interval coverage, interval width, MAE, Brier score, and
+  calibration plots.
+- If true after ablation: covariates do or do not improve over surveillance
+  baselines.
+- If true after QA: simple empirical baselines are hard to beat in sparse
+  country-year public surveillance.
+- The open benchmark is useful because it reveals what current public data can
+  and cannot support.
+
+### 4.2 Prohibited Claims
+
+- No causal effect of climate, land use, or vegetation.
+- No real-time outbreak detection.
+- No authoritative risk map.
+- No clinical decision support.
+- No individual, county, or address-level risk.
+- No global generalization from ECDC-only labels.
+- No superiority of machine learning unless it improves WIS, relative WIS,
+  coverage, and interval width against the best simple baseline.
+- No vegetation/NDVI/EVI claim until MODIS QA-masked aggregation passes.
+- No simulation-as-validation claim.
+
+### 4.3 Required Language
 
 Use:
 
 - "reported incidence"
 - "public surveillance"
-- "one-year-ahead benchmark"
-- "forecast distributions"
-- "uncertainty-calibrated"
+- "retrospective one-year-ahead evaluation"
+- "probabilistic benchmark"
+- "calibration and sharpness"
+- "country-year"
 - "source-system stratified"
-- "ECDC/EU-EEA benchmark"
-- "sparse surveillance"
-- "scenario stress test"
+- "uncertainty-calibrated"
+- "negative results retained"
 
-Avoid:
+Avoid unless a true prospective component is added:
 
-- "true infection risk"
-- "outbreak oracle"
-- "county-level predictor"
-- "medical advice"
-- "clinical triage"
-- "live alert system"
-- "global model" unless non-ECDC sources are added
-- "human spread" except Andes-virus-specific discussion
+- "prospective forecast"
+- "predicts outbreaks"
+- "live risk"
+- "spread prediction"
+- "causal driver"
+- "early warning system" except when discussing related work.
 
-## 4. Current Repo State
+## 5. Current Repo State
 
-### 4.1 Current Branch And Commit
+Branch: `main`.
 
-As of this plan:
+Known current tracked state before this revision:
 
-- Branch: `main`
-- Remote: `origin/main`
-- Latest pushed implementation commit before this plan:
-  `d51bec9 Add TerraClimate aggregation and publication QA gate`
-- Current working tree may show unstaged deletions of old root note files:
-  `instructions.txt`, `potential blockers.txt`,
-  `potential blockers (2).txt`, and `potential blockers (3).txt`.
-  These are user-side workspace changes and must not be staged unless the user
-  explicitly confirms.
+- Latest pushed commit before this audit pass: `26e5757 Add publication master
+  plan`.
+- TerraClimate and publication QA gate implementation exists in prior commit
+  `d51bec9`.
+- The repo has generated data and reports ignored by git; agents must rebuild
+  them locally.
+- NASA Earthdata credentials may exist in `nasa earthdata acc info.txt`; this
+  file must remain ignored and must never be printed or committed.
 
-### 4.2 Implemented Components
+Current implemented components:
 
-Data:
+- ECDC case-table creation and validation.
+- International country-year processed table builder.
+- World Bank, FAOSTAT, TerraClimate, Natural Earth, and MODIS manifest code.
+- Simple baseline forecast models.
+- First-pass Markov incidence-state simulation.
+- Data audit, baseline, paper-readiness, and publication-gate reports.
+- Tests for validation, features, metrics, sources, and simulation.
 
-- ECDC country-year case table builder:
-  `src/hantavirus_predictor/datasets/ecdc_hantavirus.py`
-  `tools/create_ecdc_case_table.py`
-- International case validator:
-  `src/hantavirus_predictor/validation/international_cases.py`
-  `tools/validate_international_cases.py`
-- World Bank context ingestion:
-  `src/hantavirus_predictor/ingest/world_bank.py`
-- FAOSTAT land-use ingestion:
-  `src/hantavirus_predictor/ingest/faostat.py`
-  `tools/download_faostat_land_use.py`
-- TerraClimate manifest and aggregation:
-  `src/hantavirus_predictor/ingest/terraclimate.py`
-  `src/hantavirus_predictor/ingest/terraclimate_aggregate.py`
-  `tools/create_terraclimate_manifest.py`
-  `tools/download_natural_earth_countries.py`
-  `tools/aggregate_terraclimate_country_year.py`
-- MODIS manifest:
-  `src/hantavirus_predictor/ingest/modis.py`
-  `tools/create_mod13c2_manifest.py`
-- Processed modeling table:
-  `src/hantavirus_predictor/features/country_year.py`
-  `tools/build_international_dataset.py`
+Current audit-pass code additions:
 
-Models and simulation:
+- `eu_eea_status` in the case schema.
+- `surveillance_completeness` in the case schema.
+- Belgium 2023 and Cyprus 2023 source-quality flags.
+- Relative WIS and mean 90 percent interval width metrics.
+- Publication readiness gate warning for calibration concerns.
+- TerraClimate lag-1 per-variable missingness report.
 
-- Forecast metrics:
-  `src/hantavirus_predictor/metrics.py`
-- Baselines:
-  `src/hantavirus_predictor/models/international_baselines.py`
-  `tools/run_international_baselines.py`
-- Figures:
-  `tools/plot_international_baselines.py`
-- Markov incidence-state simulation:
-  `src/hantavirus_predictor/simulations/markov_incidence.py`
-  `tools/run_markov_simulation.py`
+Generated outputs are not committed. Rebuild them with the commands in Section
+12.
 
-Reports and QA:
+## 6. Dataset Specification
 
-- Data audit:
-  `tools/write_international_data_audit.py`
-- Paper readiness:
-  `tools/write_paper_readiness_report.py`
-- Publication gate:
-  `tools/check_publication_readiness.py`
-- Earthdata credential parser:
-  `src/hantavirus_predictor/ingest/earthdata.py`
-  `tools/check_earthdata_credentials.py`
+### 6.1 Manual Case Table
 
-Tests:
+Tracked schema:
 
-- `tests/test_metrics.py`
-- `tests/test_international_validator.py`
-- `tests/test_data_sources.py`
-- `tests/test_international_baselines.py`
-- `tests/test_faostat_ingest.py`
-- `tests/test_earthdata_credentials.py`
-- `tests/test_source_manifests.py`
-- `tests/test_markov_simulation.py`
-- `tests/test_terraclimate_aggregation.py`
+- `schemas/international_country_cases.schema.yaml`
+- Validator: `src/hantavirus_predictor/validation/international_cases.py`
 
-### 4.3 Current Generated Outputs
+Required columns:
 
-These are ignored by git and must be regenerated locally:
+- `iso3`
+- `country`
+- `year`
+- `reporting_system`
+- `syndrome`
+- `pathogen_or_virus`
+- `cases`
+- `deaths`
+- `population`
+- `case_definition`
+- `source_url`
+- `source_title`
+- `accessed_date`
+- `source_type`
+- `quality_grade`
+- `region`
+- `eu_eea_status`
+- `surveillance_completeness`
+- `notes`
+
+Required source metadata:
+
+- `source_url` must be nonempty.
+- `accessed_date` must be nonempty.
+- `source_system` is derived in the processed table from `reporting_system`
+  and is used for model stratification.
+- `case_definition` must distinguish reportable disease definitions when
+  known.
+- `pathogen_or_virus` must use a known virus only when source-reported;
+  otherwise use `unspecified_hantavirus`.
+
+Required quality metadata:
+
+- `quality_grade = A`: official, comprehensive, harmonized, primary-source
+  series.
+- `quality_grade = B`: official table but extracted manually or with some
+  denominator/source caveat.
+- `quality_grade = C`: official but non-comprehensive, rate not calculated,
+  or completeness caveat.
+- `quality_grade = D`: event-based alert or media-derived signal. Do not use
+  as a primary label for the ECDC v1 paper.
+
+Allowed `eu_eea_status` values:
+
+- `eu_member`
+- `eea_non_eu`
+- `withdrawn`
+- `not_applicable`
+
+Allowed `surveillance_completeness` values:
+
+- `comprehensive`
+- `not_comprehensive`
+- `unspecified`
+- `not_reported`
+
+### 6.2 Processed Analysis Table
+
+File:
+
+- `data/processed/international_country_year.csv`
+
+Purpose:
+
+- Audit and analysis table. It may contain many raw/source/intermediate
+  columns.
+
+Hard manuscript rule:
+
+- Do not describe all raw columns as model features.
+- Report modeling matrix dimensions separately.
+- Report missingness per variable and per feature family.
+
+Required no-leakage rules:
+
+- Forecast features for target year `t` must use only information available on
+  or before 31 December of `t - 1`.
+- No current-year climate, land-use, or reporting completeness values in
+  one-year-ahead models unless explicitly labeled as a retrospective
+  explanatory sensitivity analysis.
+- Imputation parameters must be learned on training data only and applied to
+  validation/test data.
+
+## 7. Implementation Plan From Here To Submission
+
+### 7.1 Phase 0: Freeze The V1 Scope
+
+Decision:
+
+- V1 is ECDC-only, EU/EEA, 2019-2023.
+- PAHO and China are deferred.
+- MODIS is decision-gated early.
+- Simulation is appendix only.
+
+Deliverables:
+
+- Update `PUBLICATION_MASTER_PLAN.md`.
+- Update `docs/AGENT_HANDOFF.md`.
+- Run schema validation and publication gate.
+
+QA:
+
+- Root plan is ASCII.
+- Root plan contains no claim that ECDC-only work is a global risk predictor.
+- PLOS NTD is not listed as an ECDC-only target.
+
+### 7.2 Phase 1: Rebuild And Freeze Reproducible Snapshot
+
+Deliverables:
 
 - `data/manual/international_country_cases.csv`
-- `data/processed/terraclimate_country_year.csv`
 - `data/processed/international_country_year.csv`
-- `data/processed/international_baseline_predictions.csv`
-- `data/processed/international_baseline_metrics.csv`
-- `data/processed/markov_simulation_summary.csv`
-- `reports/00_paper_readiness_and_results.md`
 - `reports/01_international_data_audit.md`
-- `reports/02_international_baselines.md`
-- `reports/04_markov_simulation_stress_test.md`
 - `reports/05_publication_readiness_gate.md`
-- `figures/international_baseline_mean_wis.png`
-- `figures/international_baseline_observed_vs_predicted.png`
+- `docs/data_dictionary.md`
+- `docs/reproducibility_manifest.md`
 
-### 4.4 Current Numerical Results To Preserve
+Implementation specs:
 
-From the latest QA pass:
+- Rebuild ECDC seed table from `tools/create_ecdc_case_table.py`.
+- Validate strict schema.
+- Rebuild covariate joins.
+- Reconcile annual totals.
+- Report surveillance metadata flags.
+- Report per-variable TerraClimate missingness.
+- Report raw analysis columns and final modeling features separately.
+- Add checksums for frozen processed CSVs.
+- Prepare Zenodo or OSF deposition plan before manuscript submission.
 
-- Rows: 142
-- Years: 2019-2023
-- TerraClimate joined: 142 of 142 rows
-- TerraClimate lag-1 features complete: 114 of 114 non-2019 rows
-- Baseline metric rows: 12
-- Quantile forecast rows: 1026
-- Simulation rows: 29
-- Tests: 23 passed
+Do not commit:
 
-ECDC annual reconciliation:
+- Raw large downloads.
+- NASA credentials.
+- Any user-provided secret file.
 
-| Year | Cases |
-|---|---:|
-| 2019 | 4,088 |
-| 2020 | 1,693 |
-| 2021 | 4,947 |
-| 2022 | 2,185 |
-| 2023 | 1,885 |
+Secret scan:
 
-Best baselines:
+```powershell
+rg -n "password\s*=|token\s*=|secret\s*=|api_key|BEGIN [A-Z ]*PRIVATE KEY" .
+```
 
-| Target year | Best model | Mean WIS | Coverage 90 | MAE | Brier any case |
-|---|---|---:|---:|---:|---:|
-| 2022 | empirical_negative_binomial_rate | 47.17 | 1.00 | 72.10 | 0.1584 |
-| 2023 | last_observed_country_rate | 42.86 | 0.5714 | 47.11 | 0.06055 |
+Manual review required:
 
-## 5. Publication Strategy
+- `nasa earthdata acc info.txt` must remain ignored and uncommitted.
 
-### 5.1 Journal Tiering
+### 7.3 Phase 2: Feature Ablation Benchmark
 
-Target 1: International Journal of Health Geographics
+Purpose:
 
-- Best fit for current ECDC + geospatial + climate + benchmark scope.
-- Manuscript angle:
-  - open benchmark
-  - geospatial public health surveillance
-  - remote-sensing covariate evaluation
-  - uncertainty-calibrated country-year forecasting
-  - limitations of sparse surveillance
-- Minimum before submission:
-  - feature ablations
-  - final figures and tables
-  - manuscript text
-  - reproducibility package
-  - clear "ECDC/EU-EEA only" scope unless PAHO/China are added
+- Answer whether public covariates add measurable value beyond surveillance
+  history.
 
-Target 2: PLOS Neglected Tropical Diseases
+Feature-set definitions:
 
-- Use only if the paper has stronger One Health and cross-region relevance.
-- Recommended upgrades before targeting:
-  - PAHO Americas HPS/HCPS rows
-  - China CDC HFRS rows or external-validation sensitivity
-  - clearer neglected-population relevance
-  - stronger reservoir/spillover framing
+- `surveillance_only`: country historical mean rate, last observed country
+  rate, regional mean, source system, syndrome, target year, pandemic-period
+  indicator.
+- `context`: `surveillance_only` plus lagged World Bank rurality and GDP.
+- `land_use`: `context` plus lagged FAOSTAT land-use shares.
+- `climate`: `context` plus lagged TerraClimate annual summaries.
+- `all_public`: `context` plus lagged FAOSTAT plus lagged TerraClimate.
+- `modis_optional`: `all_public` plus MODIS NDVI/EVI only if Section 7.4
+  passes.
 
-Target 3: Emerging Infectious Diseases
+Feature sets are nested. Every set is compared on the same rows and splits.
 
-- Use if manuscript emphasizes:
-  - surveillance limits
-  - public-health interpretation
-  - emerging/reemerging zoonotic disease relevance
-  - practical benchmark for public surveillance
-- Less ideal for a methods-heavy model benchmark unless the public-health
-  message is very sharp.
+Imputation:
 
-Fallback: Scientific Data
+- Continuous variables: training-set median.
+- Binary flags: training-set mode.
+- Categorical variables: explicit `missing` level if needed.
+- Save imputation parameters for each split.
+- Never impute using validation/test distributions.
 
-- Use if model skill is not strong enough for a modeling paper.
-- Manuscript becomes a Data Descriptor:
-  - dataset design
-  - provenance
-  - processing pipeline
-  - validation checks
-  - benchmark reference outputs
-  - limitations and reuse notes
+Feature reduction:
 
-### 5.2 Marketing And Positioning
+- Drop exact duplicates and constant features.
+- Drop features with more than 40 percent missingness before imputation unless
+  biologically essential and pre-registered.
+- For highly correlated continuous features, use VIF screening or pairwise
+  correlation thresholding.
+- Target final modeling matrix: normally 15-25 predictors before one-hot
+  encoding.
+- If more predictors are retained, require LASSO/ridge/elastic-net shrinkage
+  and label results exploratory.
 
-Core pitch:
+Evaluation:
 
-> Live signal trackers can tell people what is being reported now. This paper
-> asks a different question: what can be validated from free public data, with
-> known uncertainty, under sparse hantavirus surveillance?
+- Primary split: train 2019-2021, validation 2022, test 2023.
+- Primary sensitivity: leave-one-year-out CV.
+- Secondary sensitivity: leave-one-country-out CV for robustness only.
+- Bootstrap paired country-level WIS differences where sample size permits.
+- Diebold-Mariano tests only if the paired error series is large enough to be
+  meaningful; otherwise report paired differences and bootstrap intervals.
 
-Differentiators:
+Metrics:
 
-- Not a live map.
-- Not a subscription signal product.
-- Not a medical alert service.
-- Reproducible source-to-feature pipeline.
-- Public-data-only benchmark.
-- Explicit negative results.
-- Forecast distributions, not point-only risk scores.
-- QA gate prevents unsupported claims from entering the paper.
+- WIS.
+- Relative WIS = WIS / mean observed cases for that target-year/model.
+- 90 percent empirical coverage.
+- Mean 90 percent prediction interval width.
+- MAE.
+- Brier score for any-case threshold.
+- MASE using a last-observed-country-rate naive denominator where valid.
+- Calibration plot: empirical coverage versus nominal coverage.
+- Sharpness plot: interval width by model/year.
 
-Target audiences:
+Promotion rule:
 
-- health geographics researchers
-- infectious disease modelers
-- public-health surveillance analysts
-- climate-health researchers
-- One Health researchers
-- data descriptor and benchmark users
+- A covariate model can be emphasized only if it improves WIS or relative WIS
+  and does not degrade coverage or interval width in a way that makes the
+  improvement meaningless.
+- If covariates fail, report the negative result as a core contribution.
 
-## 6. End-To-End Implementation Plan
+### 7.4 Phase 3: MODIS Decision Gate
 
-The remaining work is divided into phases. Each phase has implementation
-specs, exact files, outputs, acceptance criteria, and blockers.
+Deadline:
 
-### Phase 0: Freeze The Publication Scope
+- Decide by Week 2 of the manuscript sprint.
 
-Goal:
+Implementation required before inclusion:
 
-Choose one manuscript scope before adding advanced models.
+- Use MOD13C2 Version 6.1.
+- Parse NDVI, EVI, VI QA, and valid-pixel fields.
+- Apply QA masking before aggregation.
+- Aggregate monthly country-level values, then annual and lag-1 summaries.
+- Record the number of valid pixels and total pixels per country-month.
+- Save exact product version, access date, granule list, and checksums.
 
-Decision options:
+Inclusion thresholds:
 
-1. ECDC-only benchmark, recommended.
-2. ECDC + PAHO + China multi-source benchmark, stronger but slower.
-3. Data Descriptor fallback, if model skill remains weak.
+- At least 95 percent valid-pixel coverage for at least 90 percent of
+  country-years after QA masking.
+- MODIS feature family improves WIS or relative WIS by at least 5 percent
+  against `all_public` on the fixed evaluation split.
+- MODIS does not materially worsen 90 percent coverage.
+- The download and aggregation pipeline can be rerun from documented inputs.
 
-Recommended decision now:
+If any threshold fails:
 
-- Proceed with ECDC-only IJHG-style benchmark.
-- Keep PAHO/China as optional extension only.
-- Remove MODIS vegetation claims unless MODIS aggregation is finished.
+- Remove NDVI/EVI/vegetation claims from the main manuscript.
+- Keep MODIS as future work only.
+- Use TerraClimate water-balance variables as a cautious proxy for ecological
+  moisture/productivity context, not as vegetation.
+
+### 7.5 Phase 4: Count Models
+
+Purpose:
+
+- Evaluate count-distribution models without overfitting 142 rows.
+
+Do not use unregularized country fixed effects with many covariates.
+
+Required model ladder:
+
+- Empirical Poisson rate baseline.
+- Empirical negative-binomial rate baseline.
+- Hierarchical shrinkage rate baseline.
+- Penalized Poisson or negative-binomial GLM with population offset.
+- Optional hierarchical/mixed count model if implementation is stable.
+
+Preferred implementation:
+
+- Python penalized GLM where feasible.
+- R `glmnet`, `glmmTMB`, `brms`, or `rstanarm` only if the environment and
+  reproducibility package can support it.
+
+Required specifications:
+
+- Offset: log population.
+- Candidate predictors come only from the selected feature set.
+- Regularization path: pre-specified lambda grid.
+- Hyperparameter selection: validation 2022 or leave-one-year-out CV, never
+  2023 test.
+- Coefficients are not interpreted causally.
+- If overdispersion or convergence fails, report instability and fall back to
+  empirical negative-binomial baseline.
+
+### 7.6 Phase 5: COVID-19 And Surveillance Sensitivity
+
+Rationale:
+
+- ECDC reported low totals in 2020 and 2023.
+- 2020-2021 public health systems may reflect pandemic-period reporting
+  disruption.
+- Belgium 2023 changed surveillance.
+
+Required sensitivity analyses:
+
+- Add `pandemic_period` indicator for 2020-2021.
+- Run primary metrics with and without 2020-2021 in model training where the
+  sample size permits.
+- Run analysis excluding Belgium 2023 and any non-comprehensive rows.
+- Report whether conclusions change.
+
+### 7.7 Phase 6: Power And Detectability Analysis
+
+Purpose:
+
+- Prevent reviewers from over-reading null covariate results.
 
 Implementation:
 
-- Create `manuscript/scope.md`.
-- Add final scope statement:
-  - countries: EU/EEA ECDC reporting countries
-  - years: 2019-2023
-  - label: annual reported hantavirus infection cases
-  - covariates: World Bank, FAOSTAT, TerraClimate
-  - optional covariates: MODIS only if implemented
-  - validation: one-year-ahead temporal validation
-  - simulation: appendix stress test only
+- Simulate country-year count panels with the observed country/year structure.
+- Use observed population offsets and baseline rates.
+- Inject covariate effects of increasing magnitude.
+- Run the planned feature-ablation pipeline.
+- Estimate the minimum effect size detectable with acceptable false-positive
+  and false-negative behavior.
 
-Acceptance criteria:
+Interpretation:
 
-- `manuscript/scope.md` exists.
-- `tools/check_publication_readiness.py` still passes.
-- No docs or manuscript text claim global prediction.
+- If the panel has low power, say so.
+- Use this to frame negative results as "not detectable at this scale" rather
+  than "climate does not matter."
 
-Blockers:
+### 7.8 Phase 7: Simulation
 
-- Reviewer may see ECDC-only as too narrow.
-- Response: frame as benchmark/methods paper and state extensibility to PAHO
-  and China CDC.
+Current simulation:
 
-### Phase 1: Rebuild And Freeze The Reproducible Data Snapshot
+- Markov-style incidence-state simulation exists as a sparse surveillance
+  stress test.
 
-Goal:
+V1 rule:
 
-Create a deterministic local data snapshot and metadata bundle for the exact
-manuscript results.
+- Keep simulation in appendix only.
+- Do not use simulation as validation evidence.
+- Do not add human-to-human spread simulation for ECDC v1.
 
-Existing commands:
+Optional upgraded simulation:
+
+- State space: zero, low, medium, high reported-incidence state per country.
+- Transition probabilities estimated from observed historical states with
+  smoothing.
+- Climate-anomaly scenario only if clearly defined as a stress test.
+- Anomaly baseline: historical TerraClimate distribution over available years,
+  with one-standard-deviation shifts documented.
+- Validation: compare simulated state frequencies with observed frequencies.
+
+If the simulation is too thin:
+
+- Remove it from the main text.
+- Mention as appendix or future work only.
+
+### 7.9 Phase 8: Figures And Tables
+
+Tables:
+
+- Table 1: Data sources, licenses, time coverage, access dates, variables.
+- Table 2: ECDC country-year summary, including UK/Brexit, Belgium 2023,
+  Cyprus 2023, and source-quality flags.
+- Table 3: Feature families, feature counts, missingness, imputation rules.
+- Table 4: Baseline and model metrics by target year.
+- Table 5: Feature ablation results with WIS, relative WIS, coverage, interval
+  width, MAE, Brier, and MASE.
+- Table 6: Sensitivity analyses: Belgium exclusion, pandemic-period handling,
+  leave-one-year-out CV.
+- Supplementary table: Full data dictionary and checksums.
+
+Figures:
+
+- Figure 1: Study design diagram.
+- Figure 2: EU/EEA incidence choropleth, 2023 or multi-panel by year.
+- Figure 3: Surveillance completeness/data-gap map.
+- Figure 4: Covariate coverage and missingness.
+- Figure 5: Forecast skill comparison with WIS and relative WIS.
+- Figure 6: Calibration and interval width.
+- Figure 7: Observed versus predicted incidence map with uncertainty layer.
+- Supplementary figure: Markov stress-test output, if retained.
+
+Figure QA:
+
+- Use a projection appropriate for Europe; document projection.
+- Use Natural Earth boundaries.
+- No misleading within-country precision.
+- Colorblind-safe palette.
+- Greyscale legibility.
+- 300 dpi minimum.
+- Width target: 180-190 mm for full-width figures unless journal instructions
+  specify otherwise.
+
+### 7.10 Phase 9: Manuscript
+
+Target length:
+
+- Abstract: 250 words.
+- Introduction: 800 words.
+- Methods: 2000 words.
+- Results: 1500 words.
+- Discussion: 1200 words.
+- Limitations: 500 words.
+- Data/code/ethics statements: 300 words.
+- Total target: 6000-6500 words.
+
+Required abstract details:
+
+- Exact time span: 2019-2023.
+- Exact unit: EU/EEA country-year.
+- Exact row count after final freeze.
+- Primary source: ECDC Annual Epidemiological Report.
+- Main metric: WIS and coverage.
+- Honest conclusion: whether public covariates improved or not.
+
+Required manuscript sections:
+
+- Background.
+- Related work and novelty.
+- Data sources and licenses.
+- Surveillance metadata and source-quality flags.
+- Covariate construction.
+- Benchmark task.
+- Model specifications.
+- Evaluation metrics.
+- Results.
+- Sensitivity analyses.
+- Limitations.
+- Data and code availability.
+- Ethics statement.
+
+Ethics statement:
+
+> This study uses aggregated, publicly available surveillance data at the
+> country-year level. No individual-level patient data were accessed. Ethical
+> review was not required for secondary analysis of publicly available
+> aggregate data under the applicable institutional policy.
+
+Author contributions:
+
+- Use CRediT taxonomy.
+
+Preprint policy:
+
+- Decide before journal submission whether to post on medRxiv, bioRxiv, or
+  arXiv.
+- Confirm the selected journal allows the chosen preprint server.
+
+### 7.11 Phase 10: Reproducibility Package
+
+Required tracked files:
+
+- Source code in `src/`.
+- CLI scripts in `tools/`.
+- Tests in `tests/`.
+- Schemas in `schemas/`.
+- Configs in `configs/`.
+- `README.md`.
+- `LICENSE` for code, preferably MIT or Apache 2.0.
+- `CITATION.cff`.
+- `docs/data_dictionary.md`.
+- `docs/reproducibility_manifest.md`.
+- `docs/reviewer_response_playbook.md`.
+
+Data deposition:
+
+- Small processed tables can be included in a Zenodo/OSF release if licenses
+  permit.
+- Large raw downloads are documented with source URLs, access dates, and
+  checksums.
+- Final release gets a DOI.
+- GitHub release tag matches manuscript version.
+
+Repository rule:
+
+- Generated `data/`, `reports/`, `figures/`, and credential files remain
+  ignored unless a deliberate publication snapshot is being created.
+
+## 8. Blocker Register And Responses
+
+| Blocker | Risk | Response |
+| --- | --- | --- |
+| Only five years of ECDC data | High risk for weak models | Frame as sparse public surveillance benchmark; use simple baselines, uncertainty, and power analysis |
+| 142 rows and many candidate features | Overfitting | Cap modeling features, VIF/correlation screening, penalized models |
+| Belgium 2023 not comprehensive | Bias | Flag as `quality_grade = C`; sensitivity excluding Belgium 2023 |
+| UK withdrawal after 2020 | Structural break | Exclude UK from primary panel or flag withdrawn if added |
+| Cyprus/other metadata caveats | Bias | Flag and sensitivity analysis |
+| COVID-19 period | Reporting disruption | Pandemic-period indicator and exclusion sensitivity |
+| Climate/land-use effects not detectable | Reviewer skepticism | Power analysis and negative-result framing |
+| TerraClimate endpoint migration | Reproducibility | Verify endpoint before data freeze; record checksums; fallback mirror documented |
+| FAO attribution | Licensing | Add FAOSTAT attribution |
+| MODIS QA complexity | Bad vegetation claims | Hard decision gate; remove vegetation claims if not passed |
+| Earthdata credentials fail | MODIS blocked | Stop and tell user exactly how to create/refresh Earthdata credentials; proceed without MODIS if not essential |
+| PAHO alerts are event-based | Label incompatibility | Defer to post-submission; use only as external stress test |
+| China data uses PLAD/county/HFRS | Scale and syndrome incompatibility | Defer; never pool with ECDC coefficients |
+| HantavirusMap already exists | Novelty challenge | Differentiate live signal tracker versus reproducible benchmark |
+| Zeimes et al. already mapped Europe | Novelty challenge | Differentiate spatial risk mapping versus temporal probabilistic benchmark |
+| Reviewer asks for county-level data | Granularity challenge | Cite CDC privacy restriction; explain public-data country-year scope |
+| Model coverage poor | Rejection risk | Report calibration honestly; do not promote miscalibrated models |
+| Impact factor target | Journal fit | Primary IJHG; fallbacks Scientific Data and BMC Public Health |
+
+## 9. Reviewer Response Playbook
+
+Likely question: What does this add beyond ECDC annual reports?
+
+Response:
+
+- ECDC reports authoritative totals; this paper provides a reproducible
+  benchmark linking those totals to public covariates and evaluating
+  probabilistic one-year-ahead predictions against transparent baselines.
+
+Likely question: How is this different from Zeimes et al. 2015?
+
+Response:
+
+- Zeimes et al. modeled spatial distribution/risk in Europe. This paper
+  provides a temporal country-year reported-incidence benchmark with frozen
+  public labels, uncertainty metrics, feature ablation, and reproducible
+  source joins.
+
+Likely question: Why country-year and not district/county?
+
+Response:
+
+- Publicly available cross-national human surveillance data are sparse and
+  privacy-limited. CDC explicitly withholds county-level U.S. data; ECDC
+  harmonized annual reports are country-level for this use case. The paper
+  benchmarks exactly what public data can support.
+
+Likely question: Why are complex models weak?
+
+Response:
+
+- Sparse surveillance, short time span, reporting heterogeneity, and
+  country-level aggregation make simple baselines difficult to beat. That is
+  a useful result because it redirects attention toward surveillance quality
+  and transparent uncertainty rather than opaque models.
+
+Likely question: Why not include PAHO or China?
+
+Response:
+
+- PAHO alerts and China CDC HFRS analyses differ in syndrome, source system,
+  geography, and reporting scale. Pooling them would create a false sense of
+  comparability. They are reserved for source-system-specific follow-up.
+
+Likely question: Is this forecast or retrospective validation?
+
+Response:
+
+- This is retrospective one-year-ahead evaluation. The word "prospective" is
+  avoided unless future predictions are issued before labels are released.
+
+## 10. Exact Next Tasks
+
+1. Rebuild ECDC case table with the new source-quality metadata columns.
+2. Run strict validation.
+3. Rebuild the processed country-year table.
+4. Rerun baselines so metrics include relative WIS and interval width.
+5. Regenerate reports and publication readiness gate.
+6. Add `docs/data_dictionary.md` and `docs/reproducibility_manifest.md` if not
+   already present.
+7. Implement feature ablation with nested feature sets and train-only
+   imputation.
+8. Add MASE and calibration plotting if not already implemented.
+9. Decide MODIS by the Week 2 gate.
+10. Implement choropleth/data-gap/prediction maps for IJHG.
+11. Add power analysis.
+12. Draft manuscript and reviewer response playbook.
+13. Create Zenodo/OSF archive and DOI.
+14. Run final pre-submission QA.
+
+## 11. QA Gates
+
+Required local commands:
 
 ```powershell
-python -m pip install -e ".[dev,geo]"
 python tools/create_ecdc_case_table.py --accessed-date 2026-05-12
 python tools/validate_international_cases.py --strict
-python tools/download_faostat_land_use.py
-python tools/create_terraclimate_manifest.py
-python tools/download_natural_earth_countries.py
-python tools/aggregate_terraclimate_country_year.py
 python tools/build_international_dataset.py
-python tools/create_mod13c2_manifest.py
 python tools/write_international_data_audit.py
 python tools/run_international_baselines.py
 python tools/plot_international_baselines.py
 python tools/run_markov_simulation.py
 python tools/write_paper_readiness_report.py
 python tools/check_publication_readiness.py
-python tools/validate_manual_data.py
-pytest
+python -m pytest
 python -m ruff check src tests tools
+git diff --check
 ```
 
-New implementation specs:
-
-1. Add `tools/write_reproducibility_manifest.py`.
-   - Inputs:
-     - tracked source files under `src/`, `tools/`, `tests/`, `schemas/`,
-       `configs/`, `metadata/`
-     - generated ignored outputs under `data/processed/`, `reports/`,
-       `figures/`
-   - Outputs:
-     - `metadata/reproducibility_manifest.csv`
-     - columns:
-       - `path`
-       - `exists`
-       - `size_bytes`
-       - `sha256`
-       - `generated_by`
-       - `tracked_in_git`
-       - `role`
-   - Exclude:
-     - secrets
-     - raw Earthdata credential file
-     - `.git/`
-     - caches
-
-2. Add `metadata/source_versions.yaml`.
-   - Include:
-     - ECDC report URL and accessed date
-     - World Bank API date
-     - FAOSTAT ZIP download date
-     - TerraClimate THREDDS URLs and years
-     - Natural Earth boundary URL and date
-     - MODIS CMR query date
-     - software versions
-
-3. Add `tools/write_data_dictionary.py`.
-   - Output:
-     - `docs/DATA_DICTIONARY.md`
-   - Include every column in:
-     - `international_country_cases.csv`
-     - `terraclimate_country_year.csv`
-     - `international_country_year.csv`
-     - `international_baseline_predictions.csv`
-     - `international_baseline_metrics.csv`
-     - `markov_simulation_summary.csv`
-
-Acceptance criteria:
-
-- Rebuild commands run clean.
-- `metadata/reproducibility_manifest.csv` exists.
-- `docs/DATA_DICTIONARY.md` exists.
-- No secrets appear in tracked files:
-  - `rg -n "password|token|secret|urs|earthdata" .`
-  - Manual review confirms `nasa earthdata acc info.txt` remains ignored.
-- `reports/05_publication_readiness_gate.md` says PASS.
-
-Blockers:
-
-- FAOSTAT or World Bank APIs may change values.
-- Response: pin generated manuscript snapshot by date and checksum; mention
-  source access dates.
-
-### Phase 2: Add Feature Ablation Benchmark
-
-Goal:
-
-Show what public data actually add beyond simple surveillance history.
-
-Current status:
-
-- Existing baselines run but do not produce a full feature-ablation table.
-- Gradient boosting uses lagged covariates when available.
-
-Implementation specs:
-
-1. Add feature-set definitions in
-   `src/hantavirus_predictor/models/feature_sets.py`.
-
-Feature sets:
-
-```text
-surveillance_only:
-  year, iso3, region, syndrome, source_system, population/log_population
-
-context:
-  surveillance_only
-  rural_population_pct_lag1
-  gdp_per_capita_current_usd_lag1
-
-land_use:
-  context
-  faostat_cropland_1000ha_lag1
-  faostat_forest_land_1000ha_lag1
-  faostat_perm_meadows_pastures_1000ha_lag1
-  faostat_agricultural_land_1000ha_lag1
-
-climate:
-  context
-  terraclimate_ppt_annual_sum_mm_lag1
-  terraclimate_tmin_annual_mean_c_lag1
-  terraclimate_tmax_annual_mean_c_lag1
-  terraclimate_vpd_annual_mean_kpa_lag1
-  terraclimate_soil_annual_mean_mm_lag1
-  terraclimate_def_annual_sum_mm_lag1
-
-all_public:
-  context + land_use + climate
-
-vegetation:
-  only if MODIS is implemented
-```
-
-2. Modify `src/hantavirus_predictor/models/international_baselines.py`.
-   - Add `feature_set` argument to the gradient boosting model.
-   - Keep simple rate baselines unchanged.
-   - Emit model names:
-     - `gradient_boosting_surveillance_only`
-     - `gradient_boosting_context`
-     - `gradient_boosting_land_use`
-     - `gradient_boosting_climate`
-     - `gradient_boosting_all_public`
-   - If MODIS is implemented:
-     - `gradient_boosting_vegetation`
-     - `gradient_boosting_all_public_plus_vegetation`
-
-3. Add `tools/run_feature_ablation_benchmarks.py`.
-   - Inputs:
-     - `data/processed/international_country_year.csv`
-   - Outputs:
-     - `data/processed/feature_ablation_predictions.csv`
-     - `data/processed/feature_ablation_metrics.csv`
-     - `reports/03_feature_ablation_benchmark.md`
-   - Metrics:
-     - WIS
-     - 90 percent interval coverage
-     - MAE
-     - Poisson deviance
-     - Brier score for any case
-   - Grouping:
-     - target year
-     - model
-     - feature set
-
-4. Add tests:
-   - `tests/test_feature_sets.py`
-   - `tests/test_feature_ablation_baselines.py`
-
-Test assertions:
-
-- Feature sets do not include current-year non-lagged covariates for forecasts.
-- Feature matrix contains no target leakage columns:
-  - `cases`
-  - `deaths`
-  - `incidence_per_100k`
-  - current-year TerraClimate values
-  - current-year FAOSTAT values
-- All feature-set model names appear in output.
-- Quantile forecasts have 0.05, 0.50, and 0.95 rows.
-- Missing covariate values are imputed using training data only.
-
-Acceptance criteria:
-
-- `reports/03_feature_ablation_benchmark.md` exists.
-- Climate feature set is included and evaluated.
-- Report clearly states whether climate improves WIS or calibration.
-- No advanced model is promoted if it fails coverage.
-
-Blockers:
-
-- Small sample may make covariate improvements unstable.
-- Response: report uncertainty, use negative result honestly, and emphasize
-  benchmark value.
-
-### Phase 3: Upgrade Count Models
-
-Goal:
-
-Add a stronger statistical count model suitable for a methods paper.
-
-Why:
-
-Current empirical negative-binomial baselines are useful but not enough as a
-final statistical model. A journal reviewer will expect a proper count model
-with exposure, overdispersion, and interpretable covariates.
-
-Recommended implementation:
-
-1. Add dependency:
-   - `statsmodels>=0.14`
-
-2. Add module:
-   - `src/hantavirus_predictor/models/count_models.py`
-
-3. Implement models:
-
-Model A: Poisson GLM
-
-- Target: `cases`
-- Offset: `log(population)`
-- Predictors:
-  - year trend
-  - region
-  - country fixed effect or shrinkage proxy
-  - source system
-  - lagged context covariates
-  - lagged land-use covariates
-  - lagged TerraClimate covariates
-- Output:
-  - predictive mean
-  - quantiles via parametric predictive distribution
-
-Model B: Negative-binomial GLM
-
-- Same target and predictors.
-- Estimate or tune overdispersion.
-- Output predictive count quantiles.
-- This is the likely main statistical model.
-
-Model C: Regularized negative-binomial or fallback ridge Poisson
-
-- Use if fixed effects are unstable.
-- Keep as sensitivity, not main if not robust.
-
-4. Optional later:
-   - Bayesian hierarchical negative-binomial model.
-   - Use only if implemented with reproducible diagnostics.
-   - Candidate dependency: PyMC or Stan, but do not add unless needed.
-
-Files:
-
-- `src/hantavirus_predictor/models/count_models.py`
-- `tools/run_count_model_benchmarks.py`
-- `reports/06_count_model_benchmarks.md`
-- `tests/test_count_models.py`
-
-Acceptance criteria:
-
-- Models produce quantile forecasts for 2022 and 2023.
-- Negative-binomial model is compared against all simple baselines.
-- WIS and coverage are reported.
-- Model is not promoted unless:
-  - WIS improves by at least 10 percent over best simple baseline, or
-  - it provides substantially better calibration/interpretable covariate
-    analysis without overclaiming predictive superiority.
-- Coefficient interpretation is cautious and non-causal.
-
-Blockers:
-
-- Small panel may cause unstable coefficients.
-- Response:
-  - simplify formula
-  - regularize
-  - group covariates into ablation sets
-  - keep empirical negative-binomial as main benchmark if GLM fails.
-
-### Phase 4: Decide MODIS Vegetation Branch
-
-Goal:
-
-Either implement quality-masked MODIS NDVI/EVI aggregation or remove vegetation
-claims from the paper.
-
-Decision gate:
-
-Implement MODIS only if it can be completed without weakening reproducibility.
-Otherwise, explicitly state:
-
-> Vegetation products are discovered in a manifest but not included in the
-> manuscript analyses because quality-masked aggregation was outside the final
-> benchmark scope.
-
-Implementation specs if proceeding:
-
-1. Confirm Earthdata credentials.
-   - Existing file:
-     - `nasa earthdata acc info.txt`
-   - Existing parser:
-     - `tools/check_earthdata_credentials.py`
-   - Must not print secrets.
-
-2. Extend MODIS ingest:
-   - `src/hantavirus_predictor/ingest/modis.py`
-   - Add download or streaming support for MOD13C2 granules.
-   - Use NASA CMR metadata for discovery.
-
-3. Add aggregation module:
-   - `src/hantavirus_predictor/ingest/modis_aggregate.py`
-
-4. Required inputs:
-   - `metadata/mod13c2_granule_manifest.csv`
-   - Natural Earth boundaries
-   - Earthdata credentials if protected download is required
-
-5. Required variables:
-   - NDVI
-   - EVI
-   - VI Quality
-   - pixel reliability or equivalent QA layers available in product
-
-6. Required feature outputs:
-   - `data/processed/mod13c2_country_year.csv`
-   - columns:
-     - `iso3`
-     - `country`
-     - `year`
-     - `mod13c2_ndvi_annual_mean_lag1`
-     - `mod13c2_evi_annual_mean_lag1`
-     - `mod13c2_ndvi_growing_season_mean_lag1`
-     - `mod13c2_evi_growing_season_mean_lag1`
-     - `mod13c2_valid_pixel_share_lag1`
-     - `mod13c2_joined`
-     - missingness flags
-
-7. QA rules:
-   - Apply valid range scaling.
-   - Mask poor-quality pixels.
-   - Report valid-pixel share.
-   - Exclude country-years with inadequate valid-pixel share or flag them.
-   - Never use current target-year vegetation values for a one-year-ahead
-     forecast.
-
-8. Add tests:
-   - `tests/test_modis_aggregation.py`
-   - Synthetic HDF/array test if real HDF testing is too heavy.
-
-Acceptance criteria:
-
-- At least 95 percent of non-2019 ECDC forecast rows have valid lag-1
-  vegetation features or documented QA missingness.
-- Valid-pixel share is reported.
-- Feature ablation includes vegetation.
-- Manuscript makes no vegetation claim unless vegetation ablation is reported.
-
-Blockers:
-
-- Earthdata auth may fail.
-- Human input needed if credentials stop working:
-  1. Log into https://urs.earthdata.nasa.gov/
-  2. Confirm the account is active.
-  3. Put the username and password in `nasa earthdata acc info.txt` at repo
-     root using the existing format.
-  4. Run `python tools/check_earthdata_credentials.py`.
-  5. Do not commit the credential file.
-
-- MODIS HDF handling may be heavy.
-- Response:
-  - use manifest-only and remove vegetation claims
-  - keep TerraClimate as the remote-sensing/environmental covariate family
-  - state MODIS as future work.
-
-### Phase 5: Optional PAHO And China CDC Source Expansion
-
-Goal:
-
-Improve generalizability and make PLOS NTD/EID more plausible.
-
-Decision:
-
-Do this only after ECDC + covariate + feature-ablation results are stable.
-
-PAHO implementation specs:
-
-1. Create `data/manual/paho_hantavirus_cases.csv`.
-2. Create schema:
-   - `schemas/paho_hantavirus_cases.schema.yaml`
-3. Create builder:
-   - `tools/create_paho_case_table.py`
-4. Create validator:
-   - `tools/validate_paho_cases.py`
-5. Required columns:
-   - `iso3`
-   - `country`
-   - `year`
-   - `cases`
-   - `deaths`
-   - `syndrome`
-   - `pathogen_or_virus`
-   - `reporting_system`
-   - `source_url`
-   - `source_title`
-   - `source_publication_date`
-   - `source_accessed_date`
-   - `quality_grade`
-   - `extraction_note`
-6. Required QA:
-   - every row has primary source URL
-   - source totals reconcile to PAHO/national source
-   - syndrome is HPS or HCPS where appropriate
-   - Americas source system is never treated as identical to ECDC
-
-China CDC implementation specs:
-
-1. Create `data/manual/china_hfrs_cases.csv`.
-2. Create schema:
-   - `schemas/china_hfrs_cases.schema.yaml`
-3. Create builder:
-   - `tools/create_china_hfrs_case_table.py`
-4. Create validator:
-   - `tools/validate_china_hfrs_cases.py`
-5. Required columns:
-   - same as PAHO, plus province fields if available
-6. Required QA:
-   - separate source system: `China CDC`
-   - syndrome: `HFRS`
-   - do not pool with ECDC without source effects
-   - use as external validation or sensitivity before main pooled inference
-
-Integration specs:
-
-1. Modify `tools/build_international_dataset.py` to accept multiple case-table
-   inputs.
-2. Add `source_system` and `quality_grade` effects to all baselines.
-3. Add validation splits:
-   - leave-source-system-out
-   - train ECDC, test PAHO/China, only as sensitivity
-   - train all but source system, test held-out source
-4. Update `tools/check_publication_readiness.py` to have two modes:
-   - `--scope ecdc`
-   - `--scope international`
-
-Acceptance criteria:
-
-- Source totals reconcile for every added source.
-- Source-system-specific missingness is reported.
-- No source-system pooling claim is made without sensitivity results.
-
-Blockers:
-
-- PAHO alert data may be event-based rather than full annual country series.
-- China CDC article may not provide country-year rows in a directly reusable
-  table.
-- Response:
-  - keep as context or external validation
-  - do not force incomplete signals into annual labels.
-
-### Phase 6: Simulation Upgrade
-
-Goal:
-
-Make the simulation useful without pretending simulated data are evidence.
-
-Current state:
-
-- Markov-style zero/low/high incidence-state simulation exists.
-- It is suitable as an appendix stress test.
-
-Recommended upgraded simulation:
-
-1. Keep existing state model.
-2. Add climate anomaly scenario stress test using TerraClimate.
-3. Do not simulate human-to-human spread except for an Andes-specific future
-   project with its own evidence base.
-
-Implementation specs:
-
-1. Add module:
-   - `src/hantavirus_predictor/simulations/climate_scenarios.py`
-
-2. Add tool:
-   - `tools/run_climate_scenario_stress_test.py`
-
-3. Inputs:
-   - `data/processed/international_country_year.csv`
-   - fitted benchmark model predictions
-   - TerraClimate lagged covariates
-
-4. Scenarios:
-   - precipitation +1 standard deviation
-   - vapor pressure deficit +1 standard deviation
-   - soil moisture +1 standard deviation
-   - climate water deficit +1 standard deviation
-   - combined wet scenario
-   - combined dry scenario
-
-5. Outputs:
-   - `data/processed/climate_scenario_summary.csv`
-   - `reports/07_climate_scenario_stress_test.md`
-
-6. Required columns:
-   - `scenario`
-   - `iso3`
-   - `country`
-   - `baseline_median_cases`
-   - `scenario_median_cases`
-   - `absolute_difference`
-   - `relative_difference`
-   - `q05_cases`
-   - `q95_cases`
-   - `interpretation_note`
-
-7. Interpretation:
-   - If model coefficients are unstable, scenario output is illustrative only.
-   - Do not claim causal effect.
-   - Do not include in main results if it distracts from the benchmark.
-
-Acceptance criteria:
-
-- Scenario report labels outputs as stress tests.
-- The paper does not use simulated rows to train or validate models.
-- The simulation section improves usefulness by showing uncertainty sensitivity.
-
-Blockers:
-
-- Current panel may be too small for reliable climate-response estimates.
-- Response:
-  - keep Markov state model as appendix
-  - omit climate scenarios from main manuscript
-  - include as future work.
-
-### Phase 7: Final Figure And Table Set
-
-Goal:
-
-Generate a complete, publication-quality visual and tabular package.
-
-Required tables:
-
-Table 1: Data sources and roles
-
-- ECDC surveillance labels
-- World Bank context
-- FAOSTAT land use
-- TerraClimate climate/water balance
-- Natural Earth boundaries
-- MODIS manifest or vegetation features, depending on branch
-- Optional PAHO/China sources
-
-Table 2: Data audit and missingness
-
-- rows by year
-- cases by year
-- countries by year
-- missingness by feature family
-- source reconciliation
-
-Table 3: Baseline benchmark metrics
-
-- target year
-- model
-- WIS
-- coverage
-- MAE
-- Brier any-case
-- deviance
-
-Table 4: Feature ablation metrics
-
-- feature set
-- target year
-- WIS
-- coverage
-- delta from surveillance-only
-- delta from best simple baseline
-
-Table 5: Sensitivity and simulation summary
-
-- Markov state transitions
-- scenario stress-test summary if included
-
-Required figures:
-
-Figure 1: Study design diagram
-
-- source data -> validated country-year table -> covariates -> forecasts ->
-  evaluation -> stress test
-
-Figure 2: ECDC reported cases by year and country
-
-- country rows, year columns, cases/incidence
-- avoid implying sub-country precision
-
-Figure 3: Covariate coverage and missingness
-
-- feature family coverage
-- TerraClimate lag completeness
-
-Figure 4: Forecast skill comparison
-
-- WIS by target year and model
-- include simple baselines and gradient boosting
-
-Figure 5: Observed vs predicted
-
-- best model for 2023
-- show uncertainty or quantile interval if possible
-
-Figure 6: Calibration/coverage
-
-- interval coverage by model
-- any-case Brier score
-
-Figure 7: Simulation appendix figure
-
-- Markov transition matrix or scenario uncertainty bands
-
-Implementation specs:
-
-1. Extend `tools/plot_international_baselines.py`.
-2. Add:
-   - `tools/plot_data_audit.py`
-   - `tools/plot_feature_ablation.py`
-   - `tools/plot_simulation_outputs.py`
-3. Outputs:
-   - `figures/figure_01_study_design.png`
-   - `figures/figure_02_ecdc_cases_heatmap.png`
-   - `figures/figure_03_covariate_coverage.png`
-   - `figures/figure_04_forecast_skill.png`
-   - `figures/figure_05_observed_vs_predicted.png`
-   - `figures/figure_06_calibration.png`
-   - `figures/figure_07_simulation_stress_test.png`
-4. Add high-resolution output:
-   - 300 dpi PNG
-   - optional PDF/SVG for journal submission
-
-Acceptance criteria:
-
-- Every figure has a caption in `manuscript/figure_captions.md`.
-- Every figure can be regenerated by a script.
-- No map suggests within-country precision.
-- Figure colors are interpretable in grayscale where possible.
-
-### Phase 8: Manuscript Draft
-
-Goal:
-
-Create a complete manuscript package.
-
-Recommended files:
-
-- `manuscript/README.md`
-- `manuscript/title_page.md`
-- `manuscript/abstract.md`
-- `manuscript/introduction.md`
-- `manuscript/methods.md`
-- `manuscript/results.md`
-- `manuscript/discussion.md`
-- `manuscript/limitations.md`
-- `manuscript/data_availability.md`
-- `manuscript/code_availability.md`
-- `manuscript/ethics_statement.md`
-- `manuscript/author_contributions.md`
-- `manuscript/conflicts_of_interest.md`
-- `manuscript/funding.md`
-- `manuscript/references.bib`
-- `manuscript/figure_captions.md`
-- `manuscript/tables/`
-- `manuscript/submission_checklist.md`
-- `manuscript/cover_letter_ijhg.md`
-
-Abstract spec:
-
-- Background:
-  - Hantavirus surveillance is sparse and heterogeneous.
-  - Live trackers provide signals but not validated forecast benchmarks.
-- Methods:
-  - ECDC country-year table, 2019-2023.
-  - Public covariates from World Bank, FAOSTAT, TerraClimate.
-  - One-year-ahead forecast benchmark.
-  - Quantile forecasts and WIS/coverage/Brier metrics.
-- Results:
-  - 142 rows, annual totals, covariate coverage, best baselines.
-  - State whether climate/land-use improved skill after feature ablation.
-- Conclusions:
-  - Open benchmark prevents false precision.
-  - Simple baselines are hard to beat.
-  - Public-data limitations define appropriate scope.
-
-Methods spec:
-
-1. Data sources.
-2. Case table construction.
-3. Covariate joins.
-4. TerraClimate zonal aggregation.
-5. Forecast task.
-6. Baseline models.
-7. Feature ablation.
-8. Evaluation metrics.
-9. Simulation stress test.
-10. Reproducibility and code.
-11. Ethics and limitations.
-
-Results spec:
-
-1. Source reconciliation.
-2. Covariate coverage.
-3. Baseline performance.
-4. Feature ablation.
-5. Statistical count model performance.
-6. Simulation stress test.
-7. Sensitivity analysis.
-
-Discussion spec:
-
-1. What public data can support.
-2. Why simple baselines matter.
-3. How this differs from live signal maps.
-4. Limits of ECDC-only data.
-5. Why county-level U.S. prediction is blocked.
-6. How to extend responsibly to PAHO and China CDC.
-7. What not to overclaim.
-
-Acceptance criteria:
-
-- Manuscript text matches generated outputs.
-- Every numeric claim appears in a generated report/table.
-- Every data-source claim has a citation.
-- No prohibited claim appears.
-- The abstract can stand alone without overclaiming.
-
-### Phase 9: Reproducibility Package
-
-Goal:
-
-Make the project usable by reviewers and future researchers.
-
-Implementation specs:
-
-1. Add `Makefile` or `justfile`.
-   - Targets:
-     - `make data`
-     - `make benchmarks`
-     - `make figures`
-     - `make reports`
-     - `make qa`
-     - `make manuscript`
-
-2. Add `environment.yml` or lock file if needed.
-   - Include geospatial dependencies.
-   - Keep `requirements.txt` and `pyproject.toml` synchronized.
-
-3. Add `docs/REPRODUCIBILITY.md`.
-   - Step-by-step build from fresh clone.
-   - Expected runtimes.
-   - Network requirements.
-   - Data sources.
-   - Known optional credentials.
-   - Expected output checksums.
-
-4. Add GitHub Actions.
-   - Lightweight CI:
-     - `pytest`
-     - `ruff`
-     - schema validation
-   - Do not run remote-heavy TerraClimate or MODIS downloads in CI unless
-     cached or explicitly scheduled.
-
-5. Add release checklist:
-   - GitHub release
-   - Zenodo DOI if desired
-   - citation metadata updated
-   - data availability statement
-   - exact commit hash in manuscript
-
-Acceptance criteria:
-
-- Fresh clone can run unit tests without private credentials.
-- Fresh clone can rebuild all public-data outputs with network access.
-- Remote-heavy steps are documented.
-- Generated outputs are ignored by git but reproducible.
-
-### Phase 10: Pre-Submission Audit
-
-Goal:
-
-Catch contradictions before submission.
-
-Required audit commands:
-
-```powershell
-git status --short --branch
-python tools/validate_international_cases.py --strict
-python tools/validate_manual_data.py
-python tools/build_international_dataset.py
-python tools/run_international_baselines.py
-python tools/run_feature_ablation_benchmarks.py
-python tools/run_count_model_benchmarks.py
-python tools/run_markov_simulation.py
-python tools/write_international_data_audit.py
-python tools/write_paper_readiness_report.py
-python tools/check_publication_readiness.py
-pytest
-python -m ruff check src tests tools
-rg -n "global prediction|county-level predictor|medical advice|clinical|outbreak oracle|human spread|vegetation" README.md docs manuscript src tools
-```
-
-Manual audit:
-
-1. Verify every manuscript number appears in generated outputs.
-2. Verify every source URL still resolves.
-3. Verify all generated figures match captions.
-4. Verify no raw restricted data are tracked.
-5. Verify no credentials are tracked.
-6. Verify limitations are explicit.
-7. Verify journal scope and formatting.
-8. Verify author details, conflicts, funding, and acknowledgments.
-9. Verify license compatibility for Natural Earth, ECDC, FAOSTAT, World Bank,
-   TerraClimate, and any NASA data.
-10. Verify data availability statement does not redistribute data in a way that
-    violates source terms.
-
-Acceptance criteria:
-
-- All automated checks pass.
-- All manual checks signed off in `manuscript/submission_checklist.md`.
-- Git working tree is clean except intentionally ignored generated outputs.
-
-## 7. Exact Software Backlog
-
-Priority order:
-
-1. `tools/write_reproducibility_manifest.py`
-2. `tools/write_data_dictionary.py`
-3. Feature-ablation benchmark modules and report.
-4. Negative-binomial GLM benchmark.
-5. Final plotting scripts.
-6. Manuscript folder and first full draft.
-7. Reproducibility docs and Makefile.
-8. Optional MODIS branch.
-9. Optional PAHO/China branch.
-10. Optional climate scenario stress test.
-
-Do not start:
-
-- PINN
-- graph neural network
-- time-series foundation model
-- deep learning ensemble
-- live dashboard
-- alerting service
-
-until all simple baselines, feature ablations, count models, and manuscript
-figures are complete.
-
-## 8. Exact Data Schema Requirements
-
-### 8.1 Case Table Schema
-
-Required core columns:
-
-- `iso3`
-- `country`
-- `year`
-- `cases`
-- `deaths`
-- `population`
-- `incidence_rate_per_100k_source`
-- `syndrome`
-- `pathogen_or_virus`
-- `reporting_system`
-- `source_url`
-- `source_title`
-- `source_accessed_date`
-- `quality_grade`
-- `extraction_note`
-
-Rules:
-
-- `iso3`, `year`, `syndrome`, `pathogen_or_virus`, and `reporting_system`
-  must define a unique primary key.
-- `cases` must be integer and non-negative.
-- `population` must be positive.
-- `source_url` must be present.
-- `quality_grade` must be documented.
-- Deaths may be missing when the source does not report country-year deaths.
-
-### 8.2 Processed Model Table Schema
-
-Required join keys:
-
-- `iso3`
-- `country`
-- `year`
-- `syndrome`
-- `source_system`
-
-Required target columns:
-
-- `cases`
-- `population`
-- `incidence_per_100k`
-
-Required context columns:
-
-- `rural_population_pct`
-- `gdp_per_capita_current_usd`
-- `rural_population_pct_lag1`
-- `gdp_per_capita_current_usd_lag1`
-
-Required land-use columns:
-
-- `faostat_cropland_1000ha`
-- `faostat_forest_land_1000ha`
-- `faostat_perm_meadows_pastures_1000ha`
-- `faostat_agricultural_land_1000ha`
-- lag-1 versions and missingness flags
-
-Required TerraClimate columns:
-
-- `terraclimate_ppt_annual_sum_mm`
-- `terraclimate_tmin_annual_mean_c`
-- `terraclimate_tmax_annual_mean_c`
-- `terraclimate_vpd_annual_mean_kpa`
-- `terraclimate_soil_annual_mean_mm`
-- `terraclimate_def_annual_sum_mm`
-- lag-1 versions and missingness flags
-
-Required provenance flags:
-
-- `faostat_land_use_joined`
-- `terraclimate_joined`
-- `mod13c2_joined`
-- missingness flags for every feature family
-
-Rules:
-
-- Forecast models must use lagged covariates only.
-- Current-year covariates may be reported descriptively but must not enter
-  one-year-ahead forecasts.
-- Target columns must never appear in feature matrices.
-
-## 9. Exact Modeling Rules
-
-### 9.1 Forecast Task
-
-Task:
-
-> For each country-year-source-system-syndrome row, predict next complete
-> calendar-year reported hantavirus cases using only data available at or before
-> the forecast date.
-
-Forecast date:
-
-- `target_year - 1-12-31`
-
-Horizon:
-
-- one year
-
-Required prediction format:
-
-- `forecast_date`
-- `target_year`
-- `target`
-- `horizon`
-- `location`
-- `iso3`
-- `country`
-- `syndrome`
-- `source_system`
-- `model`
-- `feature_set`
-- `quantile`
-- `value`
-
-Required quantiles:
-
-- 0.05
-- 0.50
-- 0.95
-
-Optional:
-
-- 0.10
-- 0.25
-- 0.75
-- 0.90
-
-### 9.2 Required Baselines
-
-Simple baselines:
-
-1. Country historical mean rate.
-2. Last observed country rate.
-3. Region/syndrome/source mean rate.
-4. Empirical negative-binomial rate.
-5. Hierarchical negative-binomial shrinkage rate.
-
-Tabular baseline:
-
-6. Gradient boosting with feature ablations.
-
-Statistical model:
-
-7. Negative-binomial GLM with population offset.
-
-Promotion rule:
-
-- A model can be emphasized only if it improves WIS and does not destroy
-  calibration.
-- If complex models do not beat simple baselines, the paper should say that.
-
-### 9.3 Required Metrics
-
-Primary:
-
-- Weighted interval score for central 90 percent interval.
-
-Secondary:
-
-- 90 percent empirical coverage.
-- MAE.
-- RMSE if added.
-- Poisson or negative-binomial deviance.
-- Brier score for any reported case.
-
-Calibration:
-
-- coverage by year
-- coverage by model
-- optional reliability curve for any-case probability
-
-### 9.4 Validation Splits
-
-Current ECDC seed:
-
-- Train: 2019-2021
-- Validation: 2022
-- Test: 2023
-
-Rolling origin:
-
-- train through 2020, test 2021
-- train through 2021, test 2022
-- train through 2022, test 2023
-
-Do not overclaim:
-
-- The ECDC-only panel has only five years.
-- Rolling-origin checks are useful but limited.
-- Leave-country-out is optional sensitivity, not a strong final claim unless
-  source expansion or more years are added.
-
-## 10. Human Inputs Needed Before Actual Submission
-
-No human input is needed to continue implementation and manuscript drafting
-right now, assuming the current public data sources remain reachable and the
-local Earthdata credential file remains valid.
-
-Human input will be required before journal submission:
-
-1. Author list and order.
-2. Affiliations.
-3. Corresponding author details.
-4. ORCID IDs.
-5. Funding statement.
-6. Conflict-of-interest statement.
-7. Ethics/IRB determination wording.
-8. Acknowledgments.
-9. Target journal confirmation.
-10. APC/payment plan if the selected journal charges publication fees.
-11. Journal account access for submission.
-12. Approval of preprint posting, if desired.
-
-Human input may be required earlier only if:
-
-- Earthdata credentials fail and MODIS is still required.
-- A source blocks access or changes licensing.
-- A journal-specific submission requirement needs author-only information.
-- A collaborator provides restricted data.
-
-If restricted data are introduced:
-
-- Stop implementation.
-- Create a data-use and IRB checklist.
-- Do not commit restricted data.
-- Do not train or publish from restricted data until rights are documented.
-
-## 11. Blocker Register And Responses
-
-| Blocker | Risk | Response | Publication effect |
-|---|---|---|---|
-| HantavirusMap already exists | Live tracker novelty is gone | Do not build a tracker; publish validated benchmark | Strengthens differentiation |
-| CDC county data unavailable | U.S. county predictor blocked | Use ECDC country-year; keep U.S. county work restricted-data only | Avoids privacy overclaim |
-| ECDC has only 5 years | Weak for complex models | Simple baselines, WIS, coverage, cautious claims | Methods/data benchmark rather than deep learning paper |
-| TerraClimate aggregation heavy | Reproducibility risk | Implemented via OPeNDAP + Natural Earth; checksum/report | Climate covariates allowed |
-| MODIS QA complexity | Bad NDVI/EVI claims possible | Implement QA-masked aggregation or remove vegetation | Vegetation claim is optional |
-| PAHO event alerts incomplete | Inconsistent labels | Add only full country-year/provenance rows | Optional extension |
-| China source differs | Non-comparable source system | Treat as separate source/external validation | Optional extension |
-| Model skill weak | Rejection risk for prediction paper | Emphasize benchmark, negative results, Scientific Data fallback | Still publishable if framed honestly |
-| Simulation overclaim | Synthetic data mistaken for evidence | Label as stress test only | Appendix/supporting result |
-| Journal mismatch | Desk rejection | Target IJHG first for ECDC-only; PLOS NTD/EID only if expanded | Scope controls journal |
-| API changes | Reproducibility drift | Source versions, manifests, checksums, dates | Auditable snapshot |
-| Secrets in repo | Security risk | Keep credentials ignored; audit with `rg` | Mandatory before release |
-
-## 12. Final Submission Package Checklist
-
-Before submission, the repo must contain:
-
-- `PUBLICATION_MASTER_PLAN.md`
-- `docs/REPRODUCIBILITY.md`
-- `docs/DATA_DICTIONARY.md`
-- `metadata/reproducibility_manifest.csv`
-- `metadata/source_versions.yaml`
-- `reports/01_international_data_audit.md`
-- `reports/02_international_baselines.md`
-- `reports/03_feature_ablation_benchmark.md`
-- `reports/05_publication_readiness_gate.md`
-- `reports/06_count_model_benchmarks.md`
-- `manuscript/` full draft
-- final figures
-- final tables
-- cover letter
-- submission checklist
-
-Before submission, these must pass:
-
-- `pytest`
-- `python -m ruff check src tests tools`
-- `python tools/validate_international_cases.py --strict`
-- `python tools/check_publication_readiness.py`
-- all manuscript number checks
-- all source URL checks
-- secret scan
-- clean git status except intentional ignored generated files
-
-## 13. Exact Next 10 Tasks
-
-Do these in order:
-
-1. Add reproducibility manifest writer.
-2. Add data dictionary writer.
-3. Add feature-ablation benchmark and report.
-4. Add negative-binomial GLM benchmark.
-5. Add final plotting scripts and manuscript tables.
-6. Create `manuscript/` and draft the ECDC-only IJHG manuscript.
-7. Add `docs/REPRODUCIBILITY.md` and a `Makefile`.
-8. Run full QA and update `reports/05_publication_readiness_gate.md`.
-9. Decide MODIS branch: implement QA-masked NDVI/EVI or remove vegetation from
-   all claims.
-10. Decide PAHO/China branch: implement with provenance or keep manuscript
-    ECDC-only.
-
-## 14. Bottom Line
-
-The publishable idea is not another hantavirus map.
-
-The publishable idea is an auditable benchmark that shows what free public data
-can and cannot support for hantavirus reported-incidence forecasting. The paper
-will be strongest if it is honest about sparse surveillance, strict about
-source provenance, and willing to report that simple baselines can beat complex
-models.
-
-The current repo is past the toy stage and passes the ECDC-only public-data
-benchmark gate. The remaining work is manuscript-grade rigor: feature
-ablations, a stronger count model, final figures/tables, reproducibility
-packaging, and journal-specific writing.
+Manual QA checklist:
+
+- ECDC totals equal 4088, 1693, 4947, 2185, 1885.
+- Belgium 2023 is flagged not comprehensive.
+- UK/Brexit handling is explicit.
+- TerraClimate lag-1 missingness is reported per variable.
+- Baseline metrics include WIS, relative WIS, coverage, interval width, MAE,
+  Brier score, and later MASE.
+- Any under-coverage is discussed.
+- MODIS is either implemented with QA or removed from claims.
+- PLOS NTD is not presented as an ECDC-only target.
+- HantavirusMap is acknowledged as a tracker competitor and differentiated.
+- Zeimes/Kallio/Reusken/Kazasidis/Glass/Allen/Forecast Hub literature is
+  cited.
+- Source licenses and attribution are documented.
+- Ethics statement is present.
+- No credentials or API keys are committed.
+
+## 12. Submission Package Checklist
+
+Before submission:
+
+- Manuscript PDF/DOCX.
+- Cover letter tailored to IJHG.
+- Title page.
+- Abstract with exact row count and time span.
+- Figures at journal resolution.
+- Supplementary tables.
+- Reproducibility archive DOI.
+- GitHub release tag.
+- Data availability statement.
+- Code availability statement.
+- Ethics statement.
+- Funding statement.
+- Competing interests statement.
+- CRediT author contribution statement.
+- Reviewer response playbook.
+- Preprint decision documented.
+
+## 13. Bottom Line
+
+This project is publishable if it stops trying to be larger than the public
+data support. The strongest paper is not a dramatic outbreak predictor. It is
+an audited benchmark showing, with maps and calibrated uncertainty, what free
+public surveillance plus public environmental covariates can and cannot do for
+EU/EEA hantavirus reported incidence.
+
+The novelty is defensible:
+
+- not another live map;
+- not another static ecological suitability map;
+- not an overfit deep-learning demo;
+- an open, source-audited, uncertainty-calibrated benchmark with strong
+  baselines and negative results retained.
+
+The acceptance strategy is:
+
+1. Target International Journal of Health Geographics first.
+2. Prepare Scientific Data as the strongest fallback if model skill is weak
+   but the reproducible dataset and benchmark are clean.
+3. Use BMC Public Health as a practical fallback if the surveillance and
+   public-health-informatics framing is stronger than the geospatial methods.
+4. Defer PLOS NTD, PAHO, China, and global claims until a separate
+   source-system-stratified expansion exists.

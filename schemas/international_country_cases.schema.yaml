@@ -39,6 +39,22 @@ required_columns:
   reporting_system:
     type: string
     example: "ECDC TESSy annual report"
+  eu_eea_status:
+    type: enum
+    allowed:
+      - eu_member
+      - eea_non_eu
+      - withdrawn
+      - not_applicable
+    rule: "Use withdrawn for structural source exits such as UK post-Brexit rows if ever retained."
+  surveillance_completeness:
+    type: enum
+    allowed:
+      - comprehensive
+      - not_comprehensive
+      - unspecified
+      - not_reported
+    rule: "Use ECDC source metadata where available; do not infer comprehensive surveillance from zero cases."
   year:
     type: integer
     rule: "Calendar year unless the source only reports an epidemiological year."

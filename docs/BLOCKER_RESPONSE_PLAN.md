@@ -1,5 +1,8 @@
 # Blocker Response Plan
 
+Authoritative update: `PUBLICATION_MASTER_PLAN.md` at repo root supersedes this
+older blocker note where they disagree.
+
 This plan responds to the blocker notes in:
 
 - `potential blockers.txt`

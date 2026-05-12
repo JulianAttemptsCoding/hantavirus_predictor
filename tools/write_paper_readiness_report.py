@@ -123,7 +123,9 @@ def build_report(cases: pd.DataFrame, metrics: pd.DataFrame, simulation: pd.Data
                     "model",
                     "n",
                     "mean_wis",
+                    "relative_wis_observed_mean",
                     "coverage_90",
+                    "mean_interval_width_90",
                     "mae",
                     "brier_any_case",
                 ]
@@ -157,7 +159,7 @@ def build_report(cases: pd.DataFrame, metrics: pd.DataFrame, simulation: pd.Data
         "2. Add TerraClimate and MODIS country-year lags before making climate/vegetation claims.",
         "3. Use the Markov simulation as a scenario stress-test appendix for sparse surveillance dynamics, not as extra validation data.",
         "4. Add PAHO/China CDC only with full provenance and explicit syndrome/source-system strata.",
-        "5. Promote complex models only if they beat the best simple baseline under WIS and coverage.",
+        "5. Promote complex models only if they beat the best simple baseline under WIS, relative WIS, interval width, and coverage.",
     ]
     return "\n".join(lines) + "\n"
 

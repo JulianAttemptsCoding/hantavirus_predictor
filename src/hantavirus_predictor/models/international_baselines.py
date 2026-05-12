@@ -247,8 +247,15 @@ def generate_baseline_forecasts(data: pd.DataFrame, target_years: list[int]) -> 
                     "target_year": target_year,
                     "model": model_name,
                     "n": len(group),
+                    "mean_observed": float(group["observed"].mean()),
                     "mean_wis": float(np.mean(wis)),
+                    "relative_wis_observed_mean": (
+                        float(np.mean(wis) / group["observed"].mean())
+                        if group["observed"].mean() > 0
+                        else np.nan
+                    ),
                     "coverage_90": interval_coverage(group["observed"], group["q05"], group["q95"]),
+                    "mean_interval_width_90": float(np.mean(group["q95"] - group["q05"])),
                     "mae": float(np.mean(np.abs(group["observed"] - group["q50"]))),
                     "poisson_deviance": float(
                         np.mean(poisson_deviance(group["observed"], group["mean"]))

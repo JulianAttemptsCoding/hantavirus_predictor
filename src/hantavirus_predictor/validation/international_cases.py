@@ -19,6 +19,8 @@ REQUIRED_COLUMNS = {
     "pathogen_or_virus",
     "case_definition",
     "reporting_system",
+    "eu_eea_status",
+    "surveillance_completeness",
     "year",
     "cases",
     "deaths",
@@ -40,6 +42,20 @@ ALLOWED_SYNDROMES = {
 }
 
 ALLOWED_QUALITY_GRADES = {"A", "B", "C", "D"}
+
+ALLOWED_EU_EEA_STATUS = {
+    "eu_member",
+    "eea_non_eu",
+    "withdrawn",
+    "not_applicable",
+}
+
+ALLOWED_SURVEILLANCE_COMPLETENESS = {
+    "comprehensive",
+    "not_comprehensive",
+    "unspecified",
+    "not_reported",
+}
 
 ALLOWED_SOURCE_TYPES = {
     "surveillance_report",
@@ -110,6 +126,18 @@ def validate_file(path: Path) -> ValidationResult:
             if quality_grade not in ALLOWED_QUALITY_GRADES:
                 messages.append(f"row {row_number}: quality_grade must be A, B, C, or D")
 
+            eu_eea_status = row["eu_eea_status"].strip()
+            if eu_eea_status not in ALLOWED_EU_EEA_STATUS:
+                allowed = ", ".join(sorted(ALLOWED_EU_EEA_STATUS))
+                messages.append(f"row {row_number}: eu_eea_status must be one of: {allowed}")
+
+            surveillance_completeness = row["surveillance_completeness"].strip()
+            if surveillance_completeness not in ALLOWED_SURVEILLANCE_COMPLETENESS:
+                allowed = ", ".join(sorted(ALLOWED_SURVEILLANCE_COMPLETENESS))
+                messages.append(
+                    f"row {row_number}: surveillance_completeness must be one of: {allowed}"
+                )
+
             source_type = row["source_type"].strip()
             if source_type not in ALLOWED_SOURCE_TYPES:
                 allowed = ", ".join(sorted(ALLOWED_SOURCE_TYPES))
@@ -121,6 +149,8 @@ def validate_file(path: Path) -> ValidationResult:
                 "pathogen_or_virus",
                 "case_definition",
                 "reporting_system",
+                "eu_eea_status",
+                "surveillance_completeness",
                 "source_url",
                 "source_title",
                 "accessed_date",

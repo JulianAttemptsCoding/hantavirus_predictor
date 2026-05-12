@@ -1,5 +1,8 @@
 # Paper Implementation Plan And Blocker Register
 
+Authoritative update: `PUBLICATION_MASTER_PLAN.md` at repo root supersedes this
+older planning note for journal targeting, claim boundaries, and next tasks.
+
 Last revised: 2026-05-12
 
 ## Final Goal

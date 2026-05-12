@@ -20,6 +20,8 @@ def _valid_row():
         "pathogen_or_virus": "Andes virus or unspecified New World hantavirus",
         "case_definition": "national confirmed HPS case definition",
         "reporting_system": "PAHO/WHO alert citing national source",
+        "eu_eea_status": "not_applicable",
+        "surveillance_completeness": "comprehensive",
         "year": "2025",
         "cases": "66",
         "deaths": "21",
@@ -49,6 +51,8 @@ def test_validate_international_cases_rejects_mixed_or_unsourced_rows(tmp_path):
     row["syndrome"] = "unknown"
     row["source_url"] = ""
     row["deaths"] = "99"
+    row["eu_eea_status"] = "maybe"
+    row["surveillance_completeness"] = "partialish"
     _write_rows(path, [row])
 
     result = validate_file(path)
@@ -58,3 +62,5 @@ def test_validate_international_cases_rejects_mixed_or_unsourced_rows(tmp_path):
     assert any("syndrome" in message for message in result.messages)
     assert any("source_url" in message for message in result.messages)
     assert any("deaths cannot exceed cases" in message for message in result.messages)
+    assert any("eu_eea_status" in message for message in result.messages)
+    assert any("surveillance_completeness" in message for message in result.messages)

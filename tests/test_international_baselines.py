@@ -22,4 +22,10 @@ def test_generate_baseline_forecasts_outputs_quantiles_and_metrics():
     bundle = generate_baseline_forecasts(data, [2021])
 
     assert set(bundle.predictions["quantile"]) == {0.05, 0.5, 0.95}
-    assert {"mean_wis", "coverage_90", "brier_any_case"}.issubset(bundle.metrics.columns)
+    assert {
+        "mean_wis",
+        "relative_wis_observed_mean",
+        "coverage_90",
+        "mean_interval_width_90",
+        "brier_any_case",
+    }.issubset(bundle.metrics.columns)

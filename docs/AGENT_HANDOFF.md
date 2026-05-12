@@ -29,17 +29,21 @@ python -m ruff check src tests tools
 
 ## Read Order
 
-1. `docs/PROJECT_STATE.md`
-2. `docs/SOURCE_ARCHIVE_AUDIT.md`
-3. `docs/RESEARCH_CLAIMS_AUDIT.md`
-4. `docs/PAPER_IMPLEMENTATION_PLAN_AND_BLOCKERS.md`
-5. `docs/PUBLICATION_FIRST_DIFFERENTIATION_PLAN.md`
-6. `docs/INTERNATIONAL_PUBLICATION_AND_MARKETING_PLAN.md`
-7. `docs/DATA_REQUIREMENTS.md`
-8. `docs/PUBLICATION_ROADMAP.md`
-9. `docs/BLOCKER_RESPONSE_PLAN.md`
-10. `configs/data_catalog.yaml`
-11. `configs/modeling_plan.yaml`
+1. `PUBLICATION_MASTER_PLAN.md`
+2. `docs/PROJECT_STATE.md`
+3. `docs/data_dictionary.md`
+4. `docs/reproducibility_manifest.md`
+5. `docs/reviewer_response_playbook.md`
+6. `docs/SOURCE_ARCHIVE_AUDIT.md`
+7. `docs/RESEARCH_CLAIMS_AUDIT.md`
+8. `docs/PAPER_IMPLEMENTATION_PLAN_AND_BLOCKERS.md`
+9. `docs/PUBLICATION_FIRST_DIFFERENTIATION_PLAN.md`
+10. `docs/INTERNATIONAL_PUBLICATION_AND_MARKETING_PLAN.md`
+11. `docs/DATA_REQUIREMENTS.md`
+12. `docs/PUBLICATION_ROADMAP.md`
+13. `docs/BLOCKER_RESPONSE_PLAN.md`
+14. `configs/data_catalog.yaml`
+15. `configs/modeling_plan.yaml`
 
 ## Rules For Future Agents
 
@@ -49,17 +53,21 @@ python -m ruff check src tests tools
 - Treat international country-year modeling as the primary publication track.
 - Do not pool HFRS and HPS/HCPS without explicit syndrome and source-system strata.
 - Do not skip simple baselines.
+- Do not call the current ECDC-only work prospective forecasting; it is retrospective one-year-ahead evaluation.
+- Do not target PLOS NTD for the ECDC-only paper. Use IJHG first, then Scientific Data or BMC Public Health.
+- Do not describe the raw processed table column count as the modeling feature count.
 - Do not hide negative results. For this project, a rigorous "complex models do not help with public data" paper may still be publishable.
 - Keep raw data out of git. Commit schemas, manifests, checksums, and scripts.
 
 ## Immediate Next Tasks
 
-1. Treat TerraClimate as implemented for the ECDC country-year path; rerun it with the first-command block when rebuilding local ignored data.
-2. Add feature ablation tables that compare context only, FAOSTAT, TerraClimate, and all public covariates.
-3. Decide whether MODIS aggregation is feasible locally; if yes, implement QA-masked NDVI/EVI country-year features. If not, remove vegetation claims from the manuscript.
-4. Extend `data/manual/international_country_cases.csv` with PAHO and China CDC rows only after covariate QA.
-5. Keep simulation as reservoir-spillover/scenario stress testing, not generic human spread.
-6. Only then evaluate PINN, TimesFM, or graph models.
+1. Rebuild the ECDC country-year table and processed dataset after schema changes.
+2. Rerun baselines so metrics include relative WIS and 90 percent interval width.
+3. Add feature ablation tables that compare surveillance-only, context, FAOSTAT, TerraClimate, and all public covariates.
+4. Decide MODIS early using the hard gate in `PUBLICATION_MASTER_PLAN.md`; if it fails, remove vegetation claims from the manuscript.
+5. Keep PAHO and China CDC deferred unless a source-system-stratified expansion is explicitly requested.
+6. Keep simulation as reported-incidence stress testing, not generic human spread.
+7. Only then evaluate PINN, TimesFM, graph models, or other complex methods.
 
 ## Expected First Milestone
 

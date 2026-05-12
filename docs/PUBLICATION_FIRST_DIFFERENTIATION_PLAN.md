@@ -1,5 +1,8 @@
 # Publication-First Differentiation Plan
 
+Authoritative update: `PUBLICATION_MASTER_PLAN.md` at repo root supersedes this
+older differentiation note for title, journal targeting, and claim boundaries.
+
 Last checked: 2026-05-12
 
 ## Executive Decision

@@ -1,5 +1,9 @@
 # International Publication and Marketing Plan
 
+Authoritative update: `PUBLICATION_MASTER_PLAN.md` at repo root supersedes this
+older planning note for the ECDC-only manuscript. In particular, PLOS NTD is
+deferred unless a PAHO/LMIC source-system expansion is completed.
+
 ## Direct Answer
 
 The repository was U.S.-first, not truly international. The stronger publication path is now:

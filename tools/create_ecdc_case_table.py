@@ -24,6 +24,24 @@ from hantavirus_predictor.validation.international_cases import REQUIRED_COLUMNS
 
 OUTPUT = ROOT / "data" / "manual" / "international_country_cases.csv"
 
+EEA_NON_EU = {"ISL", "LIE", "NOR"}
+
+
+def _eu_eea_status(iso3: str) -> str:
+    return "eea_non_eu" if iso3 in EEA_NON_EU else "eu_member"
+
+
+def _surveillance_completeness(iso3: str, year: int) -> str:
+    if year == 2023 and iso3 == "BEL":
+        return "not_comprehensive"
+    if year == 2023 and iso3 == "CYP":
+        return "unspecified"
+    return "comprehensive"
+
+
+def _quality_grade(iso3: str, year: int) -> str:
+    return "C" if _surveillance_completeness(iso3, year) != "comprehensive" else "B"
+
 
 def _fetch_populations(iso3_codes: list[str]) -> dict[tuple[str, int], int]:
     values = fetch_indicator(iso3_codes, "SP.POP.TOTL", 2019, 2023)
@@ -70,6 +88,8 @@ def build_rows(accessed_date: str) -> list[dict[str, str]]:
                     "definition, or unspecified definition depending on country."
                 ),
                 "reporting_system": REPORTING_SYSTEM,
+                "eu_eea_status": _eu_eea_status(country.iso3),
+                "surveillance_completeness": _surveillance_completeness(country.iso3, year),
                 "year": str(year),
                 "cases": str(cases),
                 "deaths": deaths,
@@ -78,10 +98,12 @@ def build_rows(accessed_date: str) -> list[dict[str, str]]:
                 "source_title": SOURCE_TITLE,
                 "accessed_date": accessed_date,
                 "source_type": "annual_report",
-                "quality_grade": "B",
+                "quality_grade": _quality_grade(country.iso3, year),
                 "notes": (
                     "Manually transcribed from ECDC Table 1; population denominator "
-                    f"joined from World Bank SP.POP.TOTL. {rate_note} {death_note}"
+                    f"joined from World Bank SP.POP.TOTL. {rate_note} {death_note} "
+                    "United Kingdom rows are excluded because the 2023 ECDC table "
+                    "marks 2020 onwards as not applicable after EU withdrawal."
                 ),
             }
         )
@@ -105,6 +127,8 @@ def main() -> int:
         "pathogen_or_virus",
         "case_definition",
         "reporting_system",
+        "eu_eea_status",
+        "surveillance_completeness",
         "year",
         "cases",
         "deaths",
