@@ -16,6 +16,7 @@ python tools/create_terraclimate_manifest.py
 python tools/create_mod13c2_manifest.py
 python tools/write_international_data_audit.py
 python tools/run_international_baselines.py
+python tools/plot_international_baselines.py
 python tools/validate_manual_data.py
 pytest
 python -m ruff check src tests tools

@@ -12,6 +12,7 @@ authors = [
   { name = "JulianAttemptsCoding" }
 ]
 dependencies = [
+  "matplotlib>=3.8",
   "numpy>=1.24",
   "pandas>=2.0",
   "pyyaml>=6.0",

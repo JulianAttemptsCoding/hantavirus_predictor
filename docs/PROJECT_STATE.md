@@ -39,6 +39,7 @@ Ready:
 - Earthdata credential parser for local untracked credential files
 - frozen first temporal split config
 - historical, persistence, empirical negative-binomial, hierarchical shrinkage, and gradient-boosting baseline runner
+- first-pass baseline skill and observed-vs-predicted figure script
 - generated local audit and baseline reports
 - shared forecast metrics tests
 - future-agent handoff
@@ -77,6 +78,7 @@ python tools/create_terraclimate_manifest.py
 python tools/create_mod13c2_manifest.py
 python tools/write_international_data_audit.py
 python tools/run_international_baselines.py
+python tools/plot_international_baselines.py
 python tools/validate_manual_data.py
 pytest
 python -m ruff check src tests tools
@@ -94,8 +96,8 @@ Expected today:
 1. Implement TerraClimate country-year raster aggregation from the manifest in `metadata/terraclimate_source_manifest.csv`.
 2. Implement MODIS MOD13C2 quality-masked country-year aggregation from `metadata/mod13c2_granule_manifest.csv`.
 3. Add PAHO Americas rows and China CDC rows only with complete source provenance.
-4. Add calibration plots and manuscript-ready figures.
-5. Upgrade empirical count baselines to a dependency-approved negative-binomial GLM or Bayesian hierarchical model.
+4. Upgrade empirical count baselines to a dependency-approved negative-binomial GLM or Bayesian hierarchical model.
+5. Expand baseline figures into manuscript-ready calibration panels.
 6. Keep deep learning blocked until simple baselines and covariates are complete.
 
 ## Marketing Position
