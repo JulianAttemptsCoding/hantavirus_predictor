@@ -12,6 +12,59 @@ HantavirusMap already occupies the public-facing signal-tracker lane: live map, 
 
 The paper should be framed as an open research benchmark and validation study, not as a live public-health dashboard.
 
+## Marketable Core Package
+
+### One-sentence pitch
+
+> The Open Hantavirus Risk Benchmark is a reproducible, uncertainty-calibrated benchmark for country-level reported hantavirus incidence that tests what public surveillance, climate, vegetation, and land-use data can and cannot forecast.
+
+### One-paragraph public summary
+
+Hantavirus surveillance is sparse, delayed, and inconsistent across countries. Public signal maps are useful for awareness, but they do not answer a peer-review question: how much predictive skill is actually possible from public data, and where do simple baselines outperform more complex models? This project builds an audited country-year benchmark with source provenance, syndrome/source-system strata, environmental covariates, calibrated forecast distributions, and scenario simulations that make uncertainty visible instead of hiding it behind a risk score.
+
+### What makes it relevant
+
+- Hantaviruses are climate- and ecology-sensitive zoonoses, but public human case data are sparse.
+- Health agencies and researchers need realistic benchmarks before operational alert systems can be trusted.
+- The project turns a negative result into a contribution: if public data cannot support fine-scale forecasts, the benchmark shows that rigorously.
+- The benchmark is reusable: new agencies, countries, covariates, or partner datasets can plug into the same schema and validation framework.
+
+### What makes it marketable
+
+- It has a clear name: **Open Hantavirus Risk Benchmark**.
+- It has a clear enemy: false precision in sparse zoonotic forecasting.
+- It has a clear promise: transparent uncertainty and source provenance.
+- It has a clean contrast with HantavirusMap: HantavirusMap tracks signals; this project validates forecasts.
+- It has useful artifacts beyond the paper: schema, validators, source manifests, baseline leaderboard, figures, and simulation stress tests.
+
+### Taglines
+
+- "Forecasting limits made visible."
+- "A benchmark before a warning system."
+- "Reported incidence, calibrated uncertainty, no false precision."
+- "A reproducible test bed for hantavirus risk modeling."
+
+### Audiences
+
+Primary scientific audience:
+
+- infectious-disease modelers
+- zoonotic disease ecologists
+- One Health researchers
+- climate-health and health-geography researchers
+- surveillance-methods reviewers
+
+Practical audience:
+
+- public-health surveillance teams
+- regional or national health agencies
+- labs holding non-public subnational data
+- funders interested in climate-sensitive disease early warning
+
+Public audience:
+
+- keep limited and careful; this is not a public alert product.
+
 ## What HantavirusMap Already Does
 
 Observed from `https://hantavirusmap.com/` and its About/Outbreak pages on 2026-05-12:
@@ -38,6 +91,89 @@ The defensible contribution is not "another hantavirus map." It is:
 5. Climate, vegetation, land-use, and reporting-context covariate evaluation with pre-registered lags.
 6. Scenario stress tests, such as Markov incidence-state simulations, clearly labeled as synthetic sensitivity analysis.
 7. A reusable benchmark package that other researchers can rerun, extend, and cite.
+
+## Journal Positioning
+
+### Best first target: International Journal of Health Geographics
+
+Why it fits:
+
+- The journal explicitly covers GIS/geospatial health applications, remote sensing, spatial epidemiology, spatiotemporal statistics, and surveillance services.
+- The benchmark can be framed around country-level spatial health data infrastructure, remote-sensing covariates, and forecast validation.
+- It is a better first target than a live-alert framing because the paper is methodological and geospatial.
+
+How to pitch:
+
+> We provide a reproducible country-year benchmark and validation framework for reported hantavirus incidence, integrating surveillance provenance, country-level covariates, remote-sensing source manifests, uncertainty-calibrated baselines, and scenario stress tests.
+
+### Second target: PLOS Neglected Tropical Diseases
+
+Why it can fit:
+
+- Strong if the manuscript emphasizes One Health, zoonotic spillover, neglected populations, public-health relevance, and LMIC applicability.
+- Needs a careful argument because the current ECDC-only seed is high-income-region heavy.
+
+How to pitch:
+
+> This benchmark helps quantify what public surveillance can and cannot support for a neglected zoonotic disease, with an upgrade path for Latin American and Asian HPS/HFRS data.
+
+Risk:
+
+- An ECDC-only paper may be too Europe/high-income focused unless expanded with PAHO/China CDC or positioned as a methods benchmark with clear global extension.
+
+### Third target: Emerging Infectious Diseases
+
+Why it can fit:
+
+- Good if the paper emphasizes surveillance, emergence, public-health interpretation, and the limits of current public data.
+
+Risk:
+
+- EID may prefer stronger public-health findings or outbreak/surveillance conclusions over a benchmark-methods paper.
+
+### Do not target first
+
+- Nature Communications, Lancet Planetary Health, or PLOS Computational Biology until the covariate and validation results are much stronger.
+- Any venue expecting a real-time operational system.
+
+## Title, Abstract, And Cover-Letter Strategy
+
+### Recommended title
+
+> An open benchmark for country-level reported hantavirus incidence forecasting under sparse international surveillance
+
+### Subtitle option
+
+> Calibrated baselines, environmental covariates, and simulation stress tests without false precision
+
+### Abstract spine
+
+Background:
+
+- Hantavirus surveillance is sparse and heterogeneous.
+- Public signal trackers exist, but forecast validation benchmarks are missing.
+
+Methods:
+
+- Construct a source-provenance country-year table.
+- Join population, rurality, GDP, land use, and planned climate/vegetation covariates.
+- Evaluate baselines under temporal validation.
+- Add Markov/reservoir-spillover simulations as scenario stress tests.
+
+Results:
+
+- Report row counts and exact source reconciliation.
+- Show baseline performance and calibration.
+- Show whether environmental covariates improve forecasts.
+- Report where complex models fail to beat simple baselines.
+
+Conclusion:
+
+- The paper provides a reusable benchmark and shows the practical limits of public surveillance for hantavirus forecasting.
+
+### Cover-letter hook
+
+> Unlike live signal maps, this manuscript asks what can be validated from public surveillance. The result is a reusable benchmark that helps prevent false precision in climate-sensitive zoonotic disease forecasting.
 
 ## Recommended Manuscript Title
 
@@ -186,6 +322,126 @@ Current status:
 - A first Markov zero/low/high incidence-state simulation exists.
 - It should be treated as an appendix until more source systems are added.
 
+## Spread Simulation Decision
+
+### Important biological correction
+
+Do not market this as a generic human "spread simulation." Human-to-human transmission is not the normal mechanism for most hantaviruses, and reviewers will punish a paper that implies COVID-style spread dynamics. The defensible simulation target is:
+
+> environmental suitability -> reservoir infection/activity -> reported human spillover -> surveillance observation.
+
+Use "spillover simulation," "reservoir-spillover scenario model," or "reported-incidence state simulation." Avoid "human spread simulator" unless modeling a specific virus/context where human-to-human transmission is documented and sourced.
+
+### Simulation should answer one of three paper-relevant questions
+
+1. **Surveillance dynamics question**
+   - How persistent are zero, low, and high reported-incidence states?
+   - Current Markov state model supports this.
+   - Good for an appendix now.
+
+2. **Reservoir-spillover scenario question**
+   - If climate/vegetation anomalies change reservoir suitability, how does the distribution of reported human cases shift?
+   - Requires TerraClimate/MODIS aggregation first.
+   - Best long-term simulation contribution.
+
+3. **Benchmark stress-test question**
+   - Under underreporting, reporting delays, or source-system changes, which metrics and baselines remain stable?
+   - Useful for methods reviewers.
+   - Does not require pretending simulations are real data.
+
+### Recommended simulation architecture
+
+Layer 1: latent environmental suitability
+
+- Country-year climate and vegetation anomalies.
+- Land-use context.
+- Optional ENSO/regional climate indicators.
+
+Layer 2: reservoir pressure
+
+- Latent reservoir activity/infection pressure.
+- Autoregressive persistence.
+- Climate/vegetation lag effects.
+- Region/syndrome/source-system random effects.
+
+Layer 3: human spillover/reporting
+
+- Reported cases as overdispersed counts.
+- Population offset.
+- Reporting-capacity covariates such as GDP/rurality.
+- Underreporting multiplier scenarios.
+
+Layer 4: surveillance observation
+
+- Reporting delays.
+- missingness.
+- source-system differences.
+- thresholded alert states.
+
+Minimum model family:
+
+- Hidden Markov model or Markov-switching negative-binomial state model.
+
+Better later model family:
+
+- Hierarchical Bayesian state-space model with latent reservoir pressure and observation model.
+
+Do not start with:
+
+- agent-based human-to-human transmission
+- county-level maps without labels
+- neural simulator
+- synthetic data used to enlarge training data
+
+### What the simulation adds to the paper
+
+Useful additions:
+
+- An interpretable state-transition view of incidence persistence.
+- Scenario stress tests for underreporting and environmental anomalies.
+- A reviewer-friendly explanation of why forecast intervals need to be wide.
+- A way to test whether a model is robust to sparse surveillance artifacts.
+
+Not useful:
+
+- Generating fake cases to make sample size look bigger.
+- Showing dramatic outbreak animations.
+- Claiming operational forecasts without prospective validation.
+
+### Simulation figure plan
+
+Figure S1:
+
+- Markov zero/low/high transition matrix.
+
+Figure S2:
+
+- Simulated next-year reported-case distributions under baseline, 2x underreporting correction, and high environmental-suitability scenarios.
+
+Figure S3:
+
+- Metric stress test: WIS and coverage under different reporting multipliers.
+
+Main-text figure only if mature:
+
+- A simple schematic of the reservoir-spillover observation process.
+
+### Simulation go/no-go
+
+Use in main paper only if:
+
+- It is calibrated to observed country-year data.
+- It improves interpretation of uncertainty or validation limits.
+- It is clearly separated from empirical validation.
+
+Keep in supplement if:
+
+- It is only the current zero/low/high Markov state model.
+
+Remove if:
+
+- Reviewers could interpret it as unsupported synthetic validation.
+
 ## Recommended Paper Structure
 
 ### Abstract
@@ -237,6 +493,16 @@ Minimum result panels:
 6. Markov stress-test transition matrix and scenario outputs.
 7. Negative result panel: where ML does not beat persistence.
 
+Recommended figures:
+
+1. **Benchmark schematic:** source systems -> schema -> covariates -> baselines -> validation.
+2. **Data audit:** countries/years/source systems and reconciliation.
+3. **Forecast skill:** WIS, coverage, and MAE by baseline and year.
+4. **Calibration:** observed versus predicted and interval coverage.
+5. **Environmental covariate ablation:** baseline versus climate/vegetation/land-use feature sets.
+6. **Simulation stress test:** transition matrix and scenario distributions.
+7. **Limitations panel:** what public data can and cannot support.
+
 ### Discussion
 
 Core message:
@@ -261,6 +527,55 @@ Do not submit until all of these are true:
   - PAHO/China CDC rows are added with complete provenance and source-system strata.
 - Claims avoid live-map, alerting, or public-health authority language.
 
+## Marketing And Release Plan
+
+### Pre-submission
+
+- README headline should say "research benchmark," not "map" or "tracker."
+- Add a static image of the benchmark workflow, not a live risk map.
+- Publish a model-card style limitations table.
+- Include a small leaderboard table for baselines.
+- Add clear "not for public-health warning" language.
+
+### Preprint launch
+
+- Title the post around the benchmark problem: "How much can public hantavirus surveillance actually forecast?"
+- Lead with the negative/realistic finding if simple baselines are hard to beat.
+- Share the data audit and reproducibility scripts.
+- Avoid alarmist maps or country rankings.
+
+### GitHub release
+
+- Tag a release only when scripts rebuild all non-sensitive outputs.
+- Include generated reports, source manifests, and frozen configs.
+- Put raw restricted or credentialed data outside the release.
+
+### Outreach targets
+
+- infectious disease modeling groups
+- One Health surveillance researchers
+- climate-health modelers
+- ECDC/PAHO-adjacent surveillance analysts
+- labs with restricted subnational hantavirus data
+
+### Messaging guardrails
+
+Say:
+
+- "reported incidence"
+- "country-year benchmark"
+- "uncertainty-calibrated"
+- "source-provenance first"
+- "scenario stress test"
+
+Do not say:
+
+- "real-time risk map"
+- "outbreak oracle"
+- "human spread predictor"
+- "validated warning system"
+- "case counts are complete"
+
 ## Competitive Positioning Against HantavirusMap
 
 | Dimension | HantavirusMap | This project |
@@ -282,7 +597,8 @@ Do not submit until all of these are true:
 5. Decide whether the first paper is ECDC-only.
 6. If not ECDC-only, extract PAHO and China CDC rows with complete provenance.
 7. Upgrade the count model to a proper negative-binomial GLM or Bayesian hierarchical model.
-8. Re-run Markov stress tests with source/syndrome strata once more data exist.
+8. Expand the simulation from current incidence-state Markov model to reservoir-spillover scenario stress test.
+9. Write a manuscript skeleton with figure captions before adding advanced models.
 
 ## Go/No-Go Recommendation Today
 
