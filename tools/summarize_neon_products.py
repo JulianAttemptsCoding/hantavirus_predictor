@@ -25,7 +25,9 @@ def fetch_json(url: str) -> dict:
 def summarize_product(product_id: str) -> dict:
     url = f"https://data.neonscience.org/api/v0/products/{product_id}"
     data = fetch_json(url)["data"]
-    months = sorted({m for site in data.get("siteCodes", []) for m in site.get("availableMonths", [])})
+    months = sorted(
+        {m for site in data.get("siteCodes", []) for m in site.get("availableMonths", [])}
+    )
     sites = sorted(site["siteCode"] for site in data.get("siteCodes", []))
     return {
         "product_id": product_id,
@@ -57,4 +59,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-

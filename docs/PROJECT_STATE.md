@@ -31,15 +31,22 @@ Ready:
 - international country-case schema
 - international case-source matrix
 - international manual-data validator
+- reproducible ECDC 2019-2023 country-year seed table builder
+- World Bank population, rurality, and GDP context join
+- processed international country-year CSV builder
+- frozen first temporal split config
+- historical, persistence, empirical negative-binomial, hierarchical shrinkage, and gradient-boosting baseline runner
+- generated local audit and baseline reports
 - shared forecast metrics tests
 - future-agent handoff
 
 Not ready yet:
 
-- `data/manual/international_country_cases.csv`
-- extracted ECDC country-year case table
-- World Bank/TerraClimate/MODIS/FAOSTAT ingestion code
-- international baseline models
+- TerraClimate country-year feature ingestion
+- MODIS MOD13C2 NDVI/EVI ingestion, which needs Earthdata credentials or exported inputs
+- FAOSTAT land-use ingestion
+- PAHO Americas and China CDC extension rows
+- full Bayesian hierarchical model or dependency-approved negative-binomial GLM
 - manuscript figures
 
 ## Main Documents
@@ -60,7 +67,11 @@ Run these from the repository root:
 
 ```powershell
 python -m pip install -e ".[dev]"
-python tools/validate_international_cases.py
+python tools/create_ecdc_case_table.py --accessed-date 2026-05-12
+python tools/validate_international_cases.py --strict
+python tools/build_international_dataset.py
+python tools/write_international_data_audit.py
+python tools/run_international_baselines.py
 python tools/validate_manual_data.py
 pytest
 python -m ruff check src tests tools
@@ -70,20 +81,18 @@ Expected today:
 
 - `pytest` passes.
 - `ruff` passes for `src`, `tests`, and `tools`.
-- non-strict `validate_international_cases.py` may report the manual country-case table missing.
-- strict `validate_international_cases.py --strict` should fail until real source rows are extracted.
+- `validate_international_cases.py --strict` passes after rebuilding the ECDC seed table.
+- `validate_manual_data.py` still reports optional restricted county/state files missing.
 
 ## Next Exact Work Package
 
-1. Create `data/manual/international_country_cases.csv` from ECDC country-year rows.
-2. Run `python tools/validate_international_cases.py --strict`.
-3. Reconcile extracted totals to the ECDC annual report.
-4. Write `reports/01_international_data_audit.md`.
-5. Add World Bank population and rurality ingestion.
-6. Add TerraClimate country-year climate features.
-7. Add MODIS MOD13C2 NDVI/EVI features.
-8. Add FAOSTAT land-use covariates.
-9. Implement international baselines before any deep learning.
+1. Add TerraClimate country-year climate features.
+2. Add FAOSTAT land-use covariates.
+3. Stop for `EARTHDATA_USERNAME` and `EARTHDATA_PASSWORD` before MODIS MOD13C2 download unless the user provides an exported MOD13C2 country-year table.
+4. Add PAHO Americas rows and China CDC rows only with complete source provenance.
+5. Add calibration plots and manuscript-ready figures.
+6. Upgrade empirical count baselines to a dependency-approved negative-binomial GLM or Bayesian hierarchical model.
+7. Keep deep learning blocked until simple baselines and covariates are complete.
 
 ## Marketing Position
 

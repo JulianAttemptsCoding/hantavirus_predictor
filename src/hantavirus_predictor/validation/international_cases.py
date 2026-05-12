@@ -41,6 +41,15 @@ ALLOWED_SYNDROMES = {
 
 ALLOWED_QUALITY_GRADES = {"A", "B", "C", "D"}
 
+ALLOWED_SOURCE_TYPES = {
+    "surveillance_report",
+    "annual_report",
+    "epidemiological_alert",
+    "peer_reviewed_article",
+    "ministry_dashboard",
+    "restricted_partner_extract",
+}
+
 
 @dataclass(frozen=True)
 class ValidationResult:
@@ -61,6 +70,14 @@ def _parse_int(value: str, field_name: str, row_number: int, messages: list[str]
         messages.append(f"row {row_number}: {field_name} must be nonnegative")
         return None
     return parsed
+
+
+def _parse_optional_int(
+    value: str, field_name: str, row_number: int, messages: list[str]
+) -> int | None:
+    if value == "":
+        return None
+    return _parse_int(value, field_name, row_number, messages)
 
 
 def validate_file(path: Path) -> ValidationResult:
@@ -93,9 +110,15 @@ def validate_file(path: Path) -> ValidationResult:
             if quality_grade not in ALLOWED_QUALITY_GRADES:
                 messages.append(f"row {row_number}: quality_grade must be A, B, C, or D")
 
+            source_type = row["source_type"].strip()
+            if source_type not in ALLOWED_SOURCE_TYPES:
+                allowed = ", ".join(sorted(ALLOWED_SOURCE_TYPES))
+                messages.append(f"row {row_number}: source_type must be one of: {allowed}")
+
             for required_text in (
                 "country",
                 "region",
+                "pathogen_or_virus",
                 "case_definition",
                 "reporting_system",
                 "source_url",
@@ -112,7 +135,7 @@ def validate_file(path: Path) -> ValidationResult:
                 messages.append(f"row {row_number}: year is outside expected range")
 
             cases = _parse_int(row["cases"].strip(), "cases", row_number, messages)
-            deaths = _parse_int(row["deaths"].strip(), "deaths", row_number, messages)
+            deaths = _parse_optional_int(row["deaths"].strip(), "deaths", row_number, messages)
             population = _parse_int(row["population"].strip(), "population", row_number, messages)
             if cases is not None and deaths is not None and deaths > cases:
                 messages.append(f"row {row_number}: deaths cannot exceed cases")
@@ -131,8 +154,7 @@ def validate_file(path: Path) -> ValidationResult:
     duplicates = [key for key, count in keys.items() if count > 1]
     for key in duplicates:
         messages.append(
-            "duplicate key iso3/year/syndrome/pathogen_or_virus/reporting_system: "
-            + "|".join(key)
+            "duplicate key iso3/year/syndrome/pathogen_or_virus/reporting_system: " + "|".join(key)
         )
 
     if messages:

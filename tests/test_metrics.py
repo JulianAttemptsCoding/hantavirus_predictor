@@ -2,8 +2,10 @@ import numpy as np
 import pytest
 
 from hantavirus_predictor.metrics import (
+    brier_score,
     interval_coverage,
     interval_score,
+    poisson_deviance,
     weighted_interval_score,
 )
 
@@ -32,3 +34,12 @@ def test_interval_coverage():
     coverage = interval_coverage([1, 2, 5], [0, 2, 6], [2, 3, 8])
     assert coverage == pytest.approx(2 / 3)
 
+
+def test_brier_score():
+    score = brier_score([0, 1], [0.25, 0.75])
+    assert score == pytest.approx(0.0625)
+
+
+def test_poisson_deviance_is_zero_for_perfect_mean():
+    deviance = poisson_deviance([0, 3], [1e-9, 3])
+    np.testing.assert_allclose(deviance, [2e-9, 0], rtol=1e-5, atol=1e-12)

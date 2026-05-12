@@ -8,9 +8,14 @@ Start here after opening the repo.
 git status --short --branch
 python -m pip install -e ".[dev]"
 python tools/summarize_neon_products.py
-python tools/validate_international_cases.py
+python tools/create_ecdc_case_table.py --accessed-date 2026-05-12
+python tools/validate_international_cases.py --strict
+python tools/build_international_dataset.py
+python tools/write_international_data_audit.py
+python tools/run_international_baselines.py
 python tools/validate_manual_data.py
 pytest
+python -m ruff check src tests tools
 ```
 
 ## Read Order
@@ -39,22 +44,21 @@ pytest
 
 ## Immediate Next Tasks
 
-1. Fill `data/manual/international_country_cases.csv` with ECDC country-year rows.
-2. Run `python tools/validate_international_cases.py --strict`.
-3. Reconcile extracted totals to official source totals and write `reports/01_international_data_audit.md`.
-4. Join World Bank population denominators and reporting-context covariates.
-5. Add TerraClimate, MODIS MOD13C2, and FAOSTAT country-year covariates.
-6. Implement historical, persistence, negative-binomial, hierarchical, and gradient-boosting baselines.
-7. Add WIS, log score/deviance, coverage, Brier score for pre-registered thresholds, and calibration plots.
-8. Write a preregistered temporal and leave-country validation split file before tuning models.
-9. Keep U.S./NEON as mechanistic support and fallback manuscript.
-10. Only then evaluate PINN, TimesFM, or graph models.
+1. Add TerraClimate country-year climate features.
+2. Add MODIS MOD13C2 NDVI/EVI features after Earthdata credentials or a credentialed export path exist.
+3. Add FAOSTAT land-use covariates.
+4. Extend `data/manual/international_country_cases.csv` with PAHO and China CDC rows only when provenance is complete.
+5. Add calibration plots from `data/processed/international_baseline_predictions.csv`.
+6. Implement a proper negative-binomial GLM or Bayesian hierarchical model if dependencies are approved.
+7. Keep U.S./NEON as mechanistic support and fallback manuscript.
+8. Only then evaluate PINN, TimesFM, or graph models.
 
 ## Expected First Milestone
 
-Deliver a reproducible report:
+Delivered locally by tracked scripts:
 
 `reports/01_international_data_audit.md`
+`reports/02_international_baselines.md`
 
 Minimum contents:
 
@@ -64,3 +68,5 @@ Minimum contents:
 - Climate, vegetation, and land-use covariate missingness.
 - Missingness and duplicate report.
 - Exact train/validation/test split proposal.
+
+Generated `data/` and `reports/` files are ignored by git. Rebuild them with the first-command block.

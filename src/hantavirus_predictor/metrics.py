@@ -10,7 +10,9 @@ def _as_float_array(values: ArrayLike) -> np.ndarray:
     return np.asarray(values, dtype=float)
 
 
-def interval_score(y_true: ArrayLike, lower: ArrayLike, upper: ArrayLike, alpha: float) -> np.ndarray:
+def interval_score(
+    y_true: ArrayLike, lower: ArrayLike, upper: ArrayLike, alpha: float
+) -> np.ndarray:
     """Return interval score for a central ``1 - alpha`` prediction interval."""
     if not 0 < alpha < 1:
         raise ValueError("alpha must be between 0 and 1")
@@ -35,6 +37,29 @@ def interval_coverage(y_true: ArrayLike, lower: ArrayLike, upper: ArrayLike) -> 
     return float(np.mean((lo <= y) & (y <= hi)))
 
 
+def brier_score(y_true: ArrayLike, probability: ArrayLike) -> float:
+    """Return mean Brier score for binary outcomes."""
+    y = _as_float_array(y_true)
+    p = _as_float_array(probability)
+    if np.any((p < 0) | (p > 1)):
+        raise ValueError("probabilities must be between 0 and 1")
+    return float(np.mean((p - y) ** 2))
+
+
+def poisson_deviance(y_true: ArrayLike, y_pred: ArrayLike) -> np.ndarray:
+    """Return Poisson deviance per observation for nonnegative count predictions."""
+    y = _as_float_array(y_true)
+    mu = _as_float_array(y_pred)
+    if np.any(y < 0):
+        raise ValueError("observed counts must be nonnegative")
+    if np.any(mu <= 0):
+        raise ValueError("predicted means must be positive")
+
+    with np.errstate(divide="ignore", invalid="ignore"):
+        log_term = np.where(y == 0, 0.0, y * np.log(y / mu))
+    return 2.0 * (log_term - (y - mu))
+
+
 def weighted_interval_score(
     y_true: ArrayLike,
     median: ArrayLike,
@@ -57,4 +82,3 @@ def weighted_interval_score(
     for lo, hi, alpha in zip(lower_bounds, upper_bounds, alphas):
         wis = wis + (alpha / 2.0) * interval_score(y, lo, hi, alpha)
     return wis / (len(alphas) + 0.5)
-

@@ -27,7 +27,7 @@ def _valid_row():
         "source_url": "https://www.paho.org/",
         "source_title": "PAHO epidemiological alert",
         "accessed_date": "2026-05-12",
-        "source_type": "public alert",
+        "source_type": "epidemiological_alert",
         "quality_grade": "B",
         "notes": "Example test row.",
     }

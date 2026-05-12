@@ -1,0 +1,23 @@
+international_country_year:
+  primary_temporal_split:
+    train_years: [2019, 2020, 2021]
+    validation_years: [2022]
+    test_years: [2023]
+    rationale: >
+      The current ECDC seed table spans 2019-2023. This first frozen split keeps
+      the most recent complete year as test data and uses 2022 for model
+      selection while additional sources are being added.
+  rolling_origin:
+    - train_years: [2019, 2020]
+      test_years: [2021]
+    - train_years: [2019, 2020, 2021]
+      test_years: [2022]
+    - train_years: [2019, 2020, 2021, 2022]
+      test_years: [2023]
+  leave_country_out:
+    unit: iso3
+    minimum_training_years: 3
+    note: >
+      Use after a second source system is added or after the ECDC panel grows;
+      current seed table is enough to exercise code paths but not to claim
+      robust spatial generalisation.

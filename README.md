@@ -23,7 +23,11 @@ python -m venv .venv
 .\\.venv\\Scripts\\Activate.ps1
 python -m pip install -e ".[dev]"
 python tools/summarize_neon_products.py
-python tools/validate_international_cases.py
+python tools/create_ecdc_case_table.py --accessed-date 2026-05-12
+python tools/validate_international_cases.py --strict
+python tools/build_international_dataset.py
+python tools/write_international_data_audit.py
+python tools/run_international_baselines.py
 pytest
 ```
 
@@ -38,8 +42,9 @@ pytest
   implementation specs, and audience positioning.
 - `docs/BLOCKER_RESPONSE_PLAN.md` - response to the blockers in the root text files.
 - `docs/AGENT_HANDOFF.md` - next-agent instructions.
-- `src/hantavirus_predictor/` - small, tested utilities for shared metadata and metrics.
-- `tools/` - setup and validation scripts.
+- `src/hantavirus_predictor/` - tested utilities for source metadata, ingestion, features,
+  metrics, and first-pass baselines.
+- `tools/` - setup, validation, data-build, audit, and benchmark scripts.
 - `source_material/llm_archives/extracted/` - extracted LLM packages for reference only.
 
 ## Non-Negotiable Scientific Guardrails
@@ -52,12 +57,15 @@ pytest
 
 ## Current Data State
 
-The publication track is ready for data extraction, but the primary manual table
-is intentionally not filled yet:
+The first ECDC seed milestone is reproducible:
 
-- `data/manual/international_country_cases.csv` is ignored by git until sourced data are extracted.
-- `python tools/validate_international_cases.py` is allowed to report it missing during setup.
-- `python tools/validate_international_cases.py --strict` should pass only after the country-year source table is created.
+- `tools/create_ecdc_case_table.py` creates the ignored manual ECDC country-year table.
+- `tools/build_international_dataset.py` joins World Bank population, rurality, and GDP context.
+- `tools/write_international_data_audit.py` writes `reports/01_international_data_audit.md`.
+- `tools/run_international_baselines.py` writes quantile forecasts, metrics, and
+  `reports/02_international_baselines.md`.
+
+Generated `data/` and `reports/` outputs are ignored by git; tracked scripts rebuild them.
 
 ## GitHub
 
