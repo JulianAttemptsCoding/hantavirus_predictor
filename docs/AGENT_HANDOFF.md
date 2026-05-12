@@ -16,14 +16,15 @@ pytest
 ## Read Order
 
 1. `instructions.txt`
-2. `docs/SOURCE_ARCHIVE_AUDIT.md`
-3. `docs/RESEARCH_CLAIMS_AUDIT.md`
-4. `docs/INTERNATIONAL_PUBLICATION_AND_MARKETING_PLAN.md`
-5. `docs/DATA_REQUIREMENTS.md`
-6. `docs/PUBLICATION_ROADMAP.md`
-7. `docs/BLOCKER_RESPONSE_PLAN.md`
-8. `configs/data_catalog.yaml`
-9. `configs/modeling_plan.yaml`
+2. `docs/PROJECT_STATE.md`
+3. `docs/SOURCE_ARCHIVE_AUDIT.md`
+4. `docs/RESEARCH_CLAIMS_AUDIT.md`
+5. `docs/INTERNATIONAL_PUBLICATION_AND_MARKETING_PLAN.md`
+6. `docs/DATA_REQUIREMENTS.md`
+7. `docs/PUBLICATION_ROADMAP.md`
+8. `docs/BLOCKER_RESPONSE_PLAN.md`
+9. `configs/data_catalog.yaml`
+10. `configs/modeling_plan.yaml`
 
 ## Rules For Future Agents
 

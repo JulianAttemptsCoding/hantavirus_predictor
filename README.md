@@ -23,6 +23,7 @@ python -m venv .venv
 .\\.venv\\Scripts\\Activate.ps1
 python -m pip install -e ".[dev]"
 python tools/summarize_neon_products.py
+python tools/validate_international_cases.py
 pytest
 ```
 
@@ -30,6 +31,7 @@ pytest
 
 - `docs/SOURCE_ARCHIVE_AUDIT.md` - what is inside the three ZIP packages and what is reusable.
 - `docs/RESEARCH_CLAIMS_AUDIT.md` - checked claims, citations, and project decisions.
+- `docs/PROJECT_STATE.md` - current checkpoint, QA status, and next work package.
 - `docs/DATA_REQUIREMENTS.md` - exact data inventory and what must be provided manually.
 - `docs/PUBLICATION_ROADMAP.md` - spec-by-spec plan from this repo to journal submission.
 - `docs/INTERNATIONAL_PUBLICATION_AND_MARKETING_PLAN.md` - international pivot, QA,
@@ -48,10 +50,19 @@ pytest
 - Do not train primarily on synthetic trajectories unless the manuscript frames them as priors or regularizers, not evidence.
 - Do not advance a PINN, graph neural network, or time-series foundation model unless it beats SARIMAX, GAM/GLMM, and gradient-boosted baselines under strict temporal and spatial validation.
 
+## Current Data State
+
+The publication track is ready for data extraction, but the primary manual table
+is intentionally not filled yet:
+
+- `data/manual/international_country_cases.csv` is ignored by git until sourced data are extracted.
+- `python tools/validate_international_cases.py` is allowed to report it missing during setup.
+- `python tools/validate_international_cases.py --strict` should pass only after the country-year source table is created.
+
 ## GitHub
 
-Intended remote:
+Remote:
 
 ```powershell
-git remote add origin https://github.com/JulianAttemptsCoding/hantavirus_predictor.git
+origin https://github.com/JulianAttemptsCoding/hantavirus_predictor.git
 ```
