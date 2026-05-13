@@ -1,0 +1,66 @@
+# Author Statements — EID Submission
+
+## Ethics Statement
+
+This study used aggregate, publicly available surveillance data at the country-year
+level. No individual-level, clinical, address-level, or restricted human-subject
+data were accessed. All data are freely available from ECDC, World Bank, FAOSTAT,
+TerraClimate, and Natural Earth. Institutional review was not required for secondary
+analysis of publicly available aggregate data.
+
+## Funding Statement
+
+No external funding was received for this work.
+
+## Competing Interests
+
+The author declares no competing interests.
+
+## AI Disclosure
+
+Artificial intelligence assistance was used for manuscript planning, language
+editing, and pre-submission quality checks. The author verified all analyses,
+references, and claims and accepts responsibility for the final manuscript. No
+AI-generated figures were used.
+
+## Data and Code Availability Statement
+
+All analysis code, processed public-data tables, data dictionaries, and
+reproducibility scripts are archived at [AUTHOR: INSERT DOI after Zenodo deposit].
+To obtain your DOI:
+1. Go to https://zenodo.org and log in (free account).
+2. Create new upload → upload a zip of this repository.
+3. Set access to Open Access, license MIT, resource type Software.
+4. Reserve DOI before publishing if you want to add it to the manuscript first.
+5. Publish → copy the DOI (format: 10.5281/zenodo.XXXXXXX).
+6. Replace [AUTHOR: INSERT DOI] in manuscript_eid.md and cover_letter_eid.md.
+
+Source data were obtained from:
+- ECDC Annual Epidemiological Reports (https://www.ecdc.europa.eu)
+- World Bank Open Data (https://data.worldbank.org)
+- FAOSTAT (https://www.fao.org/faostat)
+- TerraClimate (https://www.climatologylab.org/terraclimate.html)
+- Natural Earth (https://www.naturalearthdata.com)
+
+No individual-level, clinical, address-level, or restricted data were used.
+
+## CRediT Author Contributions
+
+Julian Juan: Conceptualization, Data curation, Formal analysis, Investigation,
+Methodology, Software, Validation, Visualization, Writing – original draft,
+Writing – review and editing.
+
+## Author Biography
+
+Julian Juan is an independent researcher interested in reproducible infectious-
+disease surveillance, probabilistic evaluation, and public-health modeling.
+
+## ORCID
+
+[AUTHOR: INSERT YOUR ORCID — obtain free account at https://orcid.org]
+Format example: 0000-0000-0000-0000
+
+## Keywords
+
+hantavirus; zoonoses; disease surveillance; EU/EEA; probabilistic forecasting;
+calibration; public health communication

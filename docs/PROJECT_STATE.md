@@ -16,7 +16,7 @@ Primary publication path:
 
 Primary journal path:
 
-- International Journal of Health Geographics first
+- Emerging Infectious Diseases (EID, CDC) first — Research article, free, ~8-week target
 - Scientific Data or BMC Public Health fallback
 - PLOS NTD deferred unless a PAHO/LMIC source-system-specific expansion exists
 
@@ -62,9 +62,9 @@ Ready:
   MASE, calibration, and interval-width figures
 - exploratory penalized Poisson count model with population offset and
   validation-selected ridge penalty
-- IJHG-ready Natural Earth map generator with projection documentation
+- Natural Earth map generator with projection documentation (EID Figure 1)
 - sensitivity and simulation-based detectability report
-- tracked manuscript skeleton with figure captions, table shells, IJHG cover
+- tracked manuscript skeleton with figure captions, table shells, EID cover
   letter, availability/ethics statements, CRediT template, reviewer-response
   draft, and archive instructions
 - shared forecast metrics tests

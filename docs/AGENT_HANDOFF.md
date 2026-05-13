@@ -21,7 +21,7 @@ python tools/run_international_baselines.py
 python tools/plot_international_baselines.py
 python tools/run_feature_ablation.py
 python tools/run_count_models.py
-python tools/create_ijhg_maps.py
+python tools/create_eid_figures.py
 python tools/run_sensitivity_power.py
 python tools/run_markov_simulation.py
 python tools/write_paper_readiness_report.py
@@ -59,7 +59,7 @@ python -m ruff check src tests tools
 - Do not pool HFRS and HPS/HCPS without explicit syndrome and source-system strata.
 - Do not skip simple baselines.
 - Do not call the current ECDC-only work prospective forecasting; it is retrospective one-year-ahead evaluation.
-- Do not target PLOS NTD for the ECDC-only paper. Use IJHG first, then Scientific Data or BMC Public Health.
+- Do not target PLOS NTD for the ECDC-only paper. Use EID (Emerging Infectious Diseases, CDC) first, then Scientific Data or BMC Public Health.
 - Do not describe the raw processed table column count as the modeling feature count.
 - Do not hide negative results. For this project, a rigorous "complex models do not help with public data" paper may still be publishable.
 - Keep raw data out of git. Commit schemas, manifests, checksums, and scripts.
@@ -67,12 +67,12 @@ python -m ruff check src tests tools
 
 ## Immediate Next Tasks
 
-1. Review regenerated feature ablation, IJHG map, sensitivity, and detectability outputs.
-2. Keep the penalized Poisson GLM exploratory unless it beats simple baselines without unacceptable coverage loss.
-3. Keep MODIS out of manuscript claims unless quality-masked aggregation passes the hard gate in `PUBLICATION_MASTER_PLAN.md`.
-4. Keep PAHO and China CDC deferred unless a source-system-stratified expansion is explicitly requested.
-5. Expand the tracked manuscript draft after authorship, funding, ethics wording, and target-journal details are confirmed.
-6. Only then evaluate PINN, TimesFM, graph models, or other complex methods.
+1. See `docs/submission_eid/` for the full EID-ready submission package.
+2. Target journal is now Emerging Infectious Diseases (EID, CDC) Research article.
+3. Keep the penalized Poisson GLM exploratory — it does not beat simple baselines.
+4. Keep MODIS out of manuscript claims — QA-masked aggregation not implemented.
+5. Keep PAHO and China CDC deferred — ECDC-only EU/EEA frame is the EID story.
+6. Do not add complex ML — EID rewards calibration-aware negative results, not complexity.
 
 ## Expected First Milestone
 

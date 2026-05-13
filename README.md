@@ -14,7 +14,7 @@ The live project should target:
 
 1. An ECDC/EU-EEA country-year reported-incidence benchmark as the primary publication path.
 2. Retrospective one-year-ahead evaluation, not true prospective forecasting.
-3. International Journal of Health Geographics as the first journal target, with Scientific Data or BMC Public Health as fallbacks.
+3. Emerging Infectious Diseases (EID, CDC) as the first journal target, with Scientific Data or BMC Public Health as fallbacks.
 4. Explicit syndrome and surveillance strata before any non-ECDC expansion.
 5. U.S./NEON rodent serology as mechanistic support and a fallback reservoir-risk paper.
 6. County-level U.S. human prediction only after a state health department, CDC, or IRB-approved partner provides data.

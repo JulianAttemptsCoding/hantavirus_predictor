@@ -96,30 +96,28 @@ that complex models are exploratory.
 
 ### 1.3 Journal Targeting
 
-Primary target: International Journal of Health Geographics.
+Primary target: Emerging Infectious Diseases (EID, CDC).
 
 Why it fits:
 
-- The journal explicitly covers GIS-enabled surveillance, remote sensing,
-  spatial epidemiology, and spatio-temporal statistics in health.
-- The 2024 journal impact factor shown on the journal page is 3.2.
-- The paper can be framed around public geospatial health surveillance,
-  uncertainty, and reproducible open covariate joins.
+- EID publishes disease surveillance, modeling, epidemiologic studies, and
+  observational studies as Research articles.
+- No author fees; DOAJ lists ~8-week submission-to-publication time.
+- The paper's core story — sparse EU/EEA public data does not support
+  covariate-driven prediction — is exactly the kind of calibration-aware
+  negative result EID rewards when framed around public-health utility.
+- EID is free and fast; no APC required.
 
-What IJHG will expect:
+What EID requires:
 
-- Maps, not only tables.
-- Explicit geospatial methods.
-- Area-appropriate projections and clear boundaries.
-- A real public health/geographic insight, even if the result is that simple
-  baselines and surveillance quality dominate the signal.
+- 3,500-word Research article with unstructured 150-word abstract.
+- Microsoft Word format, 12-pt Times New Roman, double-spaced, line-numbered.
+- ≤50 references in NLM numbered style.
+- ≥300 dpi separate figure files.
+- Full title page with author details, ORCID, summary sentence, keywords.
+- Findings explained in public-health terms.
 
-Required IJHG figures:
-
-- EU/EEA incidence choropleth by year or 2023 snapshot.
-- Data-gap and surveillance-quality map.
-- Predicted versus observed incidence map for the best model.
-- Uncertainty map or hatching layer showing high interval width.
+See full EID submission package in `docs/submission_eid/`.
 
 Strong fallback: Scientific Data.
 

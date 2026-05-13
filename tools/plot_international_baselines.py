@@ -49,7 +49,7 @@ def _plot_skill(metrics: pd.DataFrame, output: Path) -> None:
     ax.tick_params(axis="x", rotation=35, labelsize=8)
     ax.legend(title="Target year")
     fig.tight_layout()
-    fig.savefig(output / "international_baseline_mean_wis.png", dpi=200)
+    fig.savefig(output / "international_baseline_mean_wis.png", dpi=300)
     plt.close(fig)
 
 
@@ -74,7 +74,7 @@ def _plot_observed_vs_predicted(wide: pd.DataFrame, output: Path) -> None:
     ax.set_ylabel("Observed cases")
     ax.set_title(f"{test_year} observed vs predicted: {model}")
     fig.tight_layout()
-    fig.savefig(output / "international_baseline_observed_vs_predicted.png", dpi=200)
+    fig.savefig(output / "international_baseline_observed_vs_predicted.png", dpi=300)
     plt.close(fig)
 
 
