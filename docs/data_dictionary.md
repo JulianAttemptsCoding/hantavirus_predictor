@@ -162,6 +162,7 @@ Files:
 Builder:
 
 - `python tools/run_feature_ablation.py`
+- `python tools/run_count_models.py`
 
 Feature sets:
 

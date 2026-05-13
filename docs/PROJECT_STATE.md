@@ -60,6 +60,8 @@ Ready:
 - generated local audit and baseline reports
 - nested feature ablation runner with train-only imputation, feature screening,
   MASE, calibration, and interval-width figures
+- exploratory penalized Poisson count model with population offset and
+  validation-selected ridge penalty
 - IJHG-ready Natural Earth map generator with projection documentation
 - sensitivity and simulation-based detectability report
 - tracked manuscript skeleton with figure captions, table shells, IJHG cover
@@ -111,6 +113,7 @@ python tools/write_international_data_audit.py
 python tools/run_international_baselines.py
 python tools/plot_international_baselines.py
 python tools/run_feature_ablation.py
+python tools/run_count_models.py
 python tools/create_ijhg_maps.py
 python tools/run_sensitivity_power.py
 python tools/check_publication_readiness.py

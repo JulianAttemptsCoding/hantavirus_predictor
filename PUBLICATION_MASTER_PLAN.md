@@ -430,6 +430,8 @@ Current implemented components:
 - Nested feature ablation with train-only imputation, feature screening, WIS,
   relative WIS, coverage, interval width, MAE, Brier score, MASE, and
   calibration outputs.
+- Exploratory penalized Poisson GLM with population offset and
+  validation-selected ridge penalty.
 - IJHG map generator using Natural Earth and ETRS89 / LAEA Europe
   (`EPSG:3035`) for incidence, surveillance metadata, predicted versus
   observed incidence, and uncertainty maps.

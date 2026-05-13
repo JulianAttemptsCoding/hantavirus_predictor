@@ -37,6 +37,7 @@ python tools/write_international_data_audit.py
 python tools/run_international_baselines.py
 python tools/plot_international_baselines.py
 python tools/run_feature_ablation.py
+python tools/run_count_models.py
 python tools/create_ijhg_maps.py
 python tools/run_sensitivity_power.py
 python tools/run_markov_simulation.py

@@ -123,6 +123,11 @@ rows and COVID-era training years where sample size permits. A simulation
 screen indicates that covariate detectability is sensitive to effect size and
 small sample structure; it is used to frame power, not to validate model skill.
 
+An exploratory penalized Poisson GLM with a population offset was added after
+feature ablation. The best 2023 count-model feature set was `land_use`
+(mean WIS 159.37; relative WIS 2.37; 90 percent coverage 0.32), which did not
+meet the calibration requirements for promotion over simple baselines.
+
 ## Discussion
 
 The core finding is that sparse, country-level public surveillance makes

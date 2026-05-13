@@ -20,6 +20,7 @@ python tools/write_international_data_audit.py
 python tools/run_international_baselines.py
 python tools/plot_international_baselines.py
 python tools/run_feature_ablation.py
+python tools/run_count_models.py
 python tools/create_ijhg_maps.py
 python tools/run_sensitivity_power.py
 python tools/run_markov_simulation.py
@@ -67,7 +68,7 @@ python -m ruff check src tests tools
 ## Immediate Next Tasks
 
 1. Review regenerated feature ablation, IJHG map, sensitivity, and detectability outputs.
-2. Decide whether a penalized count model is stable enough to add; keep empirical baselines as the main result if not.
+2. Keep the penalized Poisson GLM exploratory unless it beats simple baselines without unacceptable coverage loss.
 3. Keep MODIS out of manuscript claims unless quality-masked aggregation passes the hard gate in `PUBLICATION_MASTER_PLAN.md`.
 4. Keep PAHO and China CDC deferred unless a source-system-stratified expansion is explicitly requested.
 5. Expand the tracked manuscript draft after authorship, funding, ethics wording, and target-journal details are confirmed.

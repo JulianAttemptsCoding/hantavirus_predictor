@@ -22,6 +22,13 @@ surveillance can support. More granular human data are often privacy-limited;
 CDC explicitly withholds U.S. county-level hantavirus data to protect
 identities. We do not make county-level human-risk claims.
 
+## Concern: Why not promote the count model?
+
+We include a penalized Poisson GLM with a population offset as an exploratory
+count-model upgrade. It is not promoted when it fails the pre-specified rule:
+improve WIS or relative WIS over simple baselines without unacceptable
+coverage loss.
+
 ## Concern: Climate and land-use results are weak.
 
 That is a core result, not a failure to hide. Sparse annual country-level

@@ -52,3 +52,9 @@
 | --- | --- |
 | Log-rate effect per SD of lagged precipitation | Simulated covariate signal |
 | Detectability rate | Share of simulations with at least 5 percent WIS improvement |
+
+## Table 7. Penalized Count Model
+
+| Model | Offset | Tuning | Promotion status |
+| --- | --- | --- | --- |
+| Penalized Poisson GLM | `log(population / 100000)` | 2022 validation WIS | Exploratory unless WIS and coverage beat simple baselines |
