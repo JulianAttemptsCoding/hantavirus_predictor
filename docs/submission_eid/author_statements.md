@@ -26,14 +26,14 @@ AI-generated figures were used.
 ## Data and Code Availability Statement
 
 All analysis code, processed public-data tables, data dictionaries, and
-reproducibility scripts are archived at [AUTHOR: INSERT DOI after Zenodo deposit].
+reproducibility scripts are archived at https://doi.org/10.5281/zenodo.20150542.
 To obtain your DOI:
 1. Go to https://zenodo.org and log in (free account).
 2. Create new upload → upload a zip of this repository.
 3. Set access to Open Access, license MIT, resource type Software.
 4. Reserve DOI before publishing if you want to add it to the manuscript first.
 5. Publish → copy the DOI (format: 10.5281/zenodo.XXXXXXX).
-6. Replace [AUTHOR: INSERT DOI] in manuscript_eid.md and cover_letter_eid.md.
+6. DOI https://doi.org/10.5281/zenodo.20150542 already inserted in all files.
 
 Source data were obtained from:
 - ECDC Annual Epidemiological Reports (https://www.ecdc.europa.eu)
@@ -57,8 +57,7 @@ disease surveillance, probabilistic evaluation, and public-health modeling.
 
 ## ORCID
 
-[AUTHOR: INSERT YOUR ORCID — obtain free account at https://orcid.org]
-Format example: 0000-0000-0000-0000
+0009-0003-7234-2245
 
 ## Keywords
 

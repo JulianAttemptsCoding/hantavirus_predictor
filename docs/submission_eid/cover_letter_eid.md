@@ -1,10 +1,10 @@
 # Cover Letter — Emerging Infectious Diseases
 
-**NOTE TO AUTHOR:** Convert to Word format. Replace [DATE] and [DOI] before submission.
+**NOTE TO AUTHOR:** Convert to Word format before submission.
 
 ---
 
-[DATE: INSERT SUBMISSION DATE]
+May 13, 2026
 
 To the Editors,
 *Emerging Infectious Diseases*
@@ -49,7 +49,7 @@ clinical, address-level, or restricted data were used; institutional review was
 not required.
 
 All analysis code, processed public-data tables, and reproducibility scripts are
-publicly archived at [AUTHOR: INSERT DOI after Zenodo deposit]. Source data
+publicly archived at https://doi.org/10.5281/zenodo.20150542. Source data
 are from ECDC, World Bank, FAOSTAT, TerraClimate, and Natural Earth — all
 publicly accessible with no access restrictions.
 
@@ -61,4 +61,4 @@ Sincerely,
 Julian Juan
 Independent researcher
 bubgaming3@gmail.com
-ORCID: [AUTHOR: INSERT ORCID]
+ORCID: 0009-0003-7234-2245

@@ -1,10 +1,9 @@
 # EID Manuscript — Full Draft
 
-**NOTE TO AUTHOR:** Convert to Microsoft Word (12-pt Times New Roman, double-
-spaced, left-justified, line-numbered) before submitting to EID. Use pandoc:
-  `pandoc manuscript_eid.md -o manuscript_eid.docx`
-Then enable line numbering in Word (Layout → Page Setup → Line Numbers →
-Continuous). Replace all [AUTHOR: ...] placeholders before submission.
+**NOTE TO AUTHOR:** All ORCID and DOI placeholders are filled in.
+Convert to Microsoft Word (12-pt Times New Roman, double-spaced, left-justified,
+line-numbered) — use `python tools/build_eid_docx.py` or copy into Word.
+Enable line numbering in Word: Layout → Page Setup → Line Numbers → Continuous.
 
 ---
 
@@ -19,7 +18,7 @@ Public Surveillance Benchmark for Reported Hantavirus Incidence, EU/EEA, 2019–
 
 **Affiliation:** Independent researcher
 
-**ORCID:** [AUTHOR: INSERT ORCID — obtain free at https://orcid.org]
+**ORCID:** 0009-0003-7234-2245
 
 **Corresponding author:**
 Julian Juan
@@ -293,8 +292,7 @@ main negative result depended on potentially anomalous training data.
 This study used aggregate, country-year public surveillance data. No individual-
 level, clinical, address-level, or restricted human-subject data were used;
 institutional review was not required. All analysis code, processed public-data
-tables, and data dictionaries are archived at [AUTHOR: INSERT DOI after Zenodo
-deposit — see docs/submission_eid/author_statements.md for instructions].
+tables, and data dictionaries are archived at https://doi.org/10.5281/zenodo.20150542.
 
 ### Results
 
@@ -434,6 +432,9 @@ calibration context. The social amplification of risk literature documents how
 overconfident quantitative claims can amplify public concern disproportionately
 to epidemiologic probability (7); transparent calibration benchmarks provide
 practitioners with the evidence needed to resist this amplification.
+
+The value of this benchmark is not that it produces a deployable predictor.
+Its value is that it makes false precision visible.
 
 The data limitations identified by this benchmark point toward productive
 directions for surveillance improvement. Subnational data — at the regional or
