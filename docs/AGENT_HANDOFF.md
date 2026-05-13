@@ -30,20 +30,21 @@ python -m ruff check src tests tools
 ## Read Order
 
 1. `PUBLICATION_MASTER_PLAN.md`
-2. `docs/PROJECT_STATE.md`
-3. `docs/data_dictionary.md`
-4. `docs/reproducibility_manifest.md`
-5. `docs/reviewer_response_playbook.md`
-6. `docs/SOURCE_ARCHIVE_AUDIT.md`
-7. `docs/RESEARCH_CLAIMS_AUDIT.md`
-8. `docs/PAPER_IMPLEMENTATION_PLAN_AND_BLOCKERS.md`
-9. `docs/PUBLICATION_FIRST_DIFFERENTIATION_PLAN.md`
-10. `docs/INTERNATIONAL_PUBLICATION_AND_MARKETING_PLAN.md`
-11. `docs/DATA_REQUIREMENTS.md`
-12. `docs/PUBLICATION_ROADMAP.md`
-13. `docs/BLOCKER_RESPONSE_PLAN.md`
-14. `configs/data_catalog.yaml`
-15. `configs/modeling_plan.yaml`
+2. `NEXT_AGENT_PROMPT.md`
+3. `docs/PROJECT_STATE.md`
+4. `docs/data_dictionary.md`
+5. `docs/reproducibility_manifest.md`
+6. `docs/reviewer_response_playbook.md`
+7. `docs/SOURCE_ARCHIVE_AUDIT.md`
+8. `docs/RESEARCH_CLAIMS_AUDIT.md`
+9. `docs/PAPER_IMPLEMENTATION_PLAN_AND_BLOCKERS.md`
+10. `docs/PUBLICATION_FIRST_DIFFERENTIATION_PLAN.md`
+11. `docs/INTERNATIONAL_PUBLICATION_AND_MARKETING_PLAN.md`
+12. `docs/DATA_REQUIREMENTS.md`
+13. `docs/PUBLICATION_ROADMAP.md`
+14. `docs/BLOCKER_RESPONSE_PLAN.md`
+15. `configs/data_catalog.yaml`
+16. `configs/modeling_plan.yaml`
 
 ## Rules For Future Agents
 
@@ -58,6 +59,7 @@ python -m ruff check src tests tools
 - Do not describe the raw processed table column count as the modeling feature count.
 - Do not hide negative results. For this project, a rigorous "complex models do not help with public data" paper may still be publishable.
 - Keep raw data out of git. Commit schemas, manifests, checksums, and scripts.
+- Use `NEXT_AGENT_PROMPT.md` as the exact active work order and QA gate list.
 
 ## Immediate Next Tasks
 
