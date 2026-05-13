@@ -58,6 +58,13 @@ Ready:
 - audited root publication plan
 - data dictionary, reproducibility manifest, and reviewer response playbook
 - generated local audit and baseline reports
+- nested feature ablation runner with train-only imputation, feature screening,
+  MASE, calibration, and interval-width figures
+- IJHG-ready Natural Earth map generator with projection documentation
+- sensitivity and simulation-based detectability report
+- tracked manuscript skeleton with figure captions, table shells, IJHG cover
+  letter, availability/ethics statements, CRediT template, reviewer-response
+  draft, and archive instructions
 - shared forecast metrics tests
 - future-agent handoff
 
@@ -66,7 +73,7 @@ Not ready yet:
 - MODIS MOD13C2 quality-masked country-year HDF aggregation
 - PAHO Americas and China CDC extension rows
 - full Bayesian hierarchical model or dependency-approved negative-binomial GLM
-- manuscript text and final journal-specific figure set
+- final author-approved manuscript text and submission metadata
 
 ## Main Documents
 
@@ -103,6 +110,9 @@ python tools/create_mod13c2_manifest.py
 python tools/write_international_data_audit.py
 python tools/run_international_baselines.py
 python tools/plot_international_baselines.py
+python tools/run_feature_ablation.py
+python tools/create_ijhg_maps.py
+python tools/run_sensitivity_power.py
 python tools/check_publication_readiness.py
 python tools/validate_manual_data.py
 pytest

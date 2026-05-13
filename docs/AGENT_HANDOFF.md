@@ -19,6 +19,9 @@ python tools/create_mod13c2_manifest.py
 python tools/write_international_data_audit.py
 python tools/run_international_baselines.py
 python tools/plot_international_baselines.py
+python tools/run_feature_ablation.py
+python tools/create_ijhg_maps.py
+python tools/run_sensitivity_power.py
 python tools/run_markov_simulation.py
 python tools/write_paper_readiness_report.py
 python tools/check_publication_readiness.py
@@ -63,13 +66,12 @@ python -m ruff check src tests tools
 
 ## Immediate Next Tasks
 
-1. Rebuild the ECDC country-year table and processed dataset after schema changes.
-2. Rerun baselines so metrics include relative WIS and 90 percent interval width.
-3. Add feature ablation tables that compare surveillance-only, context, FAOSTAT, TerraClimate, and all public covariates.
-4. Decide MODIS early using the hard gate in `PUBLICATION_MASTER_PLAN.md`; if it fails, remove vegetation claims from the manuscript.
-5. Keep PAHO and China CDC deferred unless a source-system-stratified expansion is explicitly requested.
-6. Keep simulation as reported-incidence stress testing, not generic human spread.
-7. Only then evaluate PINN, TimesFM, graph models, or other complex methods.
+1. Review regenerated feature ablation, IJHG map, sensitivity, and detectability outputs.
+2. Decide whether a penalized count model is stable enough to add; keep empirical baselines as the main result if not.
+3. Keep MODIS out of manuscript claims unless quality-masked aggregation passes the hard gate in `PUBLICATION_MASTER_PLAN.md`.
+4. Keep PAHO and China CDC deferred unless a source-system-stratified expansion is explicitly requested.
+5. Expand the tracked manuscript draft after authorship, funding, ethics wording, and target-journal details are confirmed.
+6. Only then evaluate PINN, TimesFM, graph models, or other complex methods.
 
 ## Expected First Milestone
 
@@ -77,7 +79,10 @@ Delivered locally by tracked scripts:
 
 `reports/01_international_data_audit.md`
 `reports/02_international_baselines.md`
+`reports/03_feature_ablation.md`
 `reports/05_publication_readiness_gate.md`
+`reports/06_ijhg_maps.md`
+`reports/07_sensitivity_power.md`
 
 Minimum contents:
 

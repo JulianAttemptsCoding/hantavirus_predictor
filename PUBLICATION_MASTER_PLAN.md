@@ -427,8 +427,17 @@ Current implemented components:
 - International country-year processed table builder.
 - World Bank, FAOSTAT, TerraClimate, Natural Earth, and MODIS manifest code.
 - Simple baseline forecast models.
+- Nested feature ablation with train-only imputation, feature screening, WIS,
+  relative WIS, coverage, interval width, MAE, Brier score, MASE, and
+  calibration outputs.
+- IJHG map generator using Natural Earth and ETRS89 / LAEA Europe
+  (`EPSG:3035`) for incidence, surveillance metadata, predicted versus
+  observed incidence, and uncertainty maps.
+- Sensitivity and simulation-based detectability analysis for flagged
+  surveillance rows and COVID-era training-year checks.
 - First-pass Markov incidence-state simulation.
 - Data audit, baseline, paper-readiness, and publication-gate reports.
+- Tracked manuscript skeleton under `docs/manuscript/`.
 - Tests for validation, features, metrics, sources, and simulation.
 
 Current audit-pass code additions:

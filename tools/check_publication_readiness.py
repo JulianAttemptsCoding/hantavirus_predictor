@@ -13,7 +13,12 @@ DEFAULT_CASES = ROOT / "data" / "processed" / "international_country_year.csv"
 DEFAULT_METRICS = ROOT / "data" / "processed" / "international_baseline_metrics.csv"
 DEFAULT_PREDICTIONS = ROOT / "data" / "processed" / "international_baseline_predictions.csv"
 DEFAULT_SIMULATION = ROOT / "data" / "processed" / "markov_simulation_summary.csv"
+DEFAULT_ABLATION = ROOT / "data" / "processed" / "feature_ablation_metrics.csv"
+DEFAULT_ABLATION_SCREENING = ROOT / "data" / "processed" / "feature_ablation_feature_screening.csv"
+DEFAULT_SENSITIVITY = ROOT / "data" / "processed" / "sensitivity_metrics.csv"
+DEFAULT_POWER = ROOT / "data" / "processed" / "power_detectability.csv"
 DEFAULT_OUTPUT = ROOT / "reports" / "05_publication_readiness_gate.md"
+DEFAULT_MAP_REPORT = ROOT / "reports" / "06_ijhg_maps.md"
 
 ECDC_TOTALS = {
     2019: 4088,
@@ -72,6 +77,11 @@ def build_gate_report(
     metrics: pd.DataFrame,
     predictions: pd.DataFrame,
     simulation: pd.DataFrame,
+    ablation: pd.DataFrame | None = None,
+    screening: pd.DataFrame | None = None,
+    sensitivity: pd.DataFrame | None = None,
+    power: pd.DataFrame | None = None,
+    map_report_exists: bool = False,
 ) -> tuple[str, bool]:
     annual = cases.groupby("year", as_index=False)["cases"].sum()
     annual["expected_ecdc_total"] = annual["year"].map(ECDC_TOTALS)
@@ -89,6 +99,17 @@ def build_gate_report(
         "empirical_negative_binomial_rate",
         "hierarchical_negative_binomial_rate",
         "gradient_boosting_rate",
+    }
+    ablation = pd.DataFrame() if ablation is None else ablation
+    screening = pd.DataFrame() if screening is None else screening
+    sensitivity = pd.DataFrame() if sensitivity is None else sensitivity
+    power = pd.DataFrame() if power is None else power
+    required_feature_sets = {
+        "surveillance_only",
+        "context",
+        "land_use",
+        "climate",
+        "all_public",
     }
 
     checks = pd.DataFrame(
@@ -163,6 +184,50 @@ def build_gate_report(
                     "Coverage is descriptive at this stage and must be discussed rather "
                     f"than hidden. Best-model coverage: {_coverage_note(best)}."
                 ),
+            },
+            {
+                "area": "Feature ablation outputs",
+                "status": _status(
+                    not ablation.empty
+                    and required_feature_sets.issubset(set(ablation["feature_set"]))
+                    and {"primary_validation_2022", "primary_test_2023"}.issubset(
+                        set(ablation["split"])
+                    )
+                    and {
+                        "mean_wis",
+                        "relative_wis_observed_mean",
+                        "coverage_90",
+                        "mean_interval_width_90",
+                        "mae",
+                        "brier_any_case",
+                        "mase_last_observed_rate",
+                    }.issubset(ablation.columns)
+                ),
+                "evidence": f"{len(ablation)} feature-ablation metric rows.",
+            },
+            {
+                "area": "Model feature dimensions",
+                "status": _status(
+                    not screening.empty
+                    and "final_model_features_before_one_hot" in screening.columns
+                    and screening["final_model_features_before_one_hot"].between(1, 25).all()
+                ),
+                "evidence": (
+                    f"{len(screening)} screening rows with raw and final feature counts."
+                ),
+            },
+            {
+                "area": "Sensitivity and power analyses",
+                "status": _status(not sensitivity.empty and not power.empty),
+                "evidence": (
+                    f"{len(sensitivity)} sensitivity metric rows and {len(power)} "
+                    "detectability rows."
+                ),
+            },
+            {
+                "area": "IJHG map package",
+                "status": _status(map_report_exists),
+                "evidence": "Natural Earth map notes exist with projection and palette details.",
             },
             {
                 "area": "Simulation appendix",
@@ -241,6 +306,11 @@ def main() -> int:
     parser.add_argument("--metrics", default=str(DEFAULT_METRICS))
     parser.add_argument("--predictions", default=str(DEFAULT_PREDICTIONS))
     parser.add_argument("--simulation", default=str(DEFAULT_SIMULATION))
+    parser.add_argument("--ablation", default=str(DEFAULT_ABLATION))
+    parser.add_argument("--ablation-screening", default=str(DEFAULT_ABLATION_SCREENING))
+    parser.add_argument("--sensitivity", default=str(DEFAULT_SENSITIVITY))
+    parser.add_argument("--power", default=str(DEFAULT_POWER))
+    parser.add_argument("--map-report", default=str(DEFAULT_MAP_REPORT))
     parser.add_argument("--output", default=str(DEFAULT_OUTPUT))
     args = parser.parse_args()
 
@@ -248,7 +318,27 @@ def main() -> int:
     metrics = pd.read_csv(args.metrics)
     predictions = pd.read_csv(args.predictions)
     simulation = pd.read_csv(args.simulation)
-    report, passed = build_gate_report(cases, metrics, predictions, simulation)
+    ablation = pd.read_csv(args.ablation) if Path(args.ablation).exists() else pd.DataFrame()
+    screening = (
+        pd.read_csv(args.ablation_screening)
+        if Path(args.ablation_screening).exists()
+        else pd.DataFrame()
+    )
+    sensitivity = (
+        pd.read_csv(args.sensitivity) if Path(args.sensitivity).exists() else pd.DataFrame()
+    )
+    power = pd.read_csv(args.power) if Path(args.power).exists() else pd.DataFrame()
+    report, passed = build_gate_report(
+        cases,
+        metrics,
+        predictions,
+        simulation,
+        ablation=ablation,
+        screening=screening,
+        sensitivity=sensitivity,
+        power=power,
+        map_report_exists=Path(args.map_report).exists(),
+    )
     output = Path(args.output)
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(report, encoding="utf-8")

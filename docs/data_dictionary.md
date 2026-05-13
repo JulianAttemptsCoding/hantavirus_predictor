@@ -142,7 +142,58 @@ Generated reports:
 - `reports/00_paper_readiness_and_results.md`
 - `reports/01_international_data_audit.md`
 - `reports/02_international_baselines.md`
+- `reports/03_feature_ablation.md`
 - `reports/04_markov_simulation_stress_test.md`
 - `reports/05_publication_readiness_gate.md`
+- `reports/06_ijhg_maps.md`
+- `reports/07_sensitivity_power.md`
 
 Reports are ignored by git and should be regenerated for each audit.
+
+## Feature Ablation Outputs
+
+Files:
+
+- `data/processed/feature_ablation_predictions.csv`
+- `data/processed/feature_ablation_metrics.csv`
+- `data/processed/feature_ablation_calibration.csv`
+- `data/processed/feature_ablation_feature_screening.csv`
+
+Builder:
+
+- `python tools/run_feature_ablation.py`
+
+Feature sets:
+
+- `surveillance_only`
+- `context`
+- `land_use`
+- `climate`
+- `all_public`
+
+Required metric columns:
+
+- `mean_wis`
+- `relative_wis_observed_mean`
+- `coverage_90`
+- `mean_interval_width_90`
+- `mae`
+- `brier_any_case`
+- `mase_last_observed_rate`
+
+The screening file reports raw candidate feature counts separately from final
+modeling feature counts before one-hot encoding.
+
+## Sensitivity And Map Outputs
+
+Sensitivity files:
+
+- `data/processed/sensitivity_metrics.csv`
+- `data/processed/power_detectability.csv`
+
+Builders:
+
+- `python tools/run_sensitivity_power.py`
+- `python tools/create_ijhg_maps.py`
+
+Map outputs are generated under `figures/` and remain ignored by git.
