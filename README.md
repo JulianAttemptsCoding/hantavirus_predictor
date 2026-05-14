@@ -1,7 +1,7 @@
-# Hantavirus Predictor
+# EU/EEA Hantavirus Surveillance Benchmark
 
-Research-grade setup for an international hantavirus surveillance, reservoir,
-and reported-incidence benchmark project.
+Research-grade setup for an EU/EEA hantavirus reported-incidence surveillance
+benchmark and EID submission package.
 
 This repository is not an operational public-health predictor. It is a
 rigor-first handoff for future agents to build a publishable paper without

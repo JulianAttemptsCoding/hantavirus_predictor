@@ -33,20 +33,29 @@ git push origin v0.1.0-eid-submission
 7. Copy the DOI (format: 10.5281/zenodo.XXXXXXX).
 8. Publish.
 
-## Step 4: Insert DOI into manuscript and cover letter
+Current DOI inserted in the submission package: https://doi.org/10.5281/zenodo.20150542
 
-Replace `[AUTHOR: INSERT DOI...]` in:
-- `docs/submission_eid/manuscript_eid.md` (Methods — Ethics and reproducibility section)
+## Step 4: Verify DOI in manuscript and cover letter
+
+Confirm the inserted DOI resolves before submission:
+
+```powershell
+python -c "import urllib.request; print(urllib.request.urlopen('https://doi.org/10.5281/zenodo.20150542').geturl())"
+```
+
+If you publish a newer Zenodo version, replace the DOI in:
+- `docs/submission_eid/manuscript_eid.md`
 - `docs/submission_eid/cover_letter_eid.md`
 - `docs/submission_eid/author_statements.md`
 
-## Step 5: Insert ORCID
+## Step 5: Verify ORCID
 
 If you don't have an ORCID:
 1. Go to https://orcid.org → Register (free).
 2. Copy your 16-digit ORCID (format: 0000-0000-0000-0000).
 
-Replace `[AUTHOR: INSERT ORCID...]` in:
+Current ORCID inserted in the submission package: 0009-0003-7234-2245.
+If that is wrong, replace it in:
 - `docs/submission_eid/manuscript_eid.md` (Title Page)
 - `docs/submission_eid/cover_letter_eid.md`
 - `docs/submission_eid/author_statements.md`
@@ -93,7 +102,7 @@ Section: cover letter dropdown → select appropriate section
 - [ ] Figure files separate (Figure_1.tif and Figure_2.tif, both 600 dpi ✓)
 - [ ] Cover letter complete with DOI and ORCID
 - [ ] AI disclosure included in acknowledgments ✓
-- [ ] No "Available from:" in references (all have "Available at:" ✓)
+- [ ] Website references use EID-style citation dates and concise URL lines
 - [ ] Ethics statement complete ✓
 - [ ] Funding statement complete ✓
 - [ ] Competing interests complete ✓

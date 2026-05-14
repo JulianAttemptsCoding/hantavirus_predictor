@@ -1,9 +1,5 @@
 # Cover Letter — Emerging Infectious Diseases
 
-**NOTE TO AUTHOR:** Convert to Word format before submission.
-
----
-
 May 13, 2026
 
 To the Editors,

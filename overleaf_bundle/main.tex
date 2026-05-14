@@ -1,0 +1,391 @@
+\documentclass[11pt]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{placeins}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue,
+  urlcolor=blue,
+  citecolor=blue
+}
+
+\title{Country-level reported hantavirus incidence in the EU/EEA, 2019--2023: an open benchmark with public covariates and probabilistic evaluation}
+\author{Anonymised for double-anonymous review}
+\date{}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+\textbf{Background:} Annual surveillance reports provide authoritative hantavirus case totals in Europe, but they do not by themselves define a reproducible benchmark for evaluating whether public climate, land-use, and demographic covariates improve country-level prediction over simple surveillance history. Public discussion of rare but severe infections can also amplify risk beyond the available evidence; therefore, transparent uncertainty and source-quality reporting are essential.
+\textbf{Aim:} To create an open EU/EEA country-year benchmark for reported hantavirus incidence and evaluate retrospective one-year-ahead probabilistic predictions under sparse public surveillance.
+\textbf{Methods:} We extracted ECDC Annual Epidemiological Report data for 2019--2023, yielding 142 country-year rows. Labels were linked to World Bank demographic context, FAOSTAT land-use summaries, TerraClimate climate and water-balance variables, and Natural Earth country boundaries. Empirical baselines, nested feature-ablation models, and an exploratory penalized Poisson model were evaluated with weighted interval score (WIS), relative WIS, empirical 90\% coverage, interval width, mean absolute error, Brier score for any reported case, and mean absolute scaled error where valid.
+\textbf{Results:} Rebuilt annual totals matched ECDC exactly: 4,088, 1,693, 4,947, 2,185, and 1,885 cases for 2019--2023. The best simple baselines had lower WIS than covariate-augmented models. In 2023, the last-observed country-rate baseline had mean WIS 42.86 and coverage 0.57, whereas the best ablation model had mean WIS 318.55 and coverage 0.68. The best penalized Poisson model had mean WIS 159.37 but coverage 0.32.
+\textbf{Conclusion:} At the EU/EEA country-year scale, simple surveillance history remained difficult to beat. The benchmark is most useful as a reproducible, uncertainty-aware surveillance evaluation showing what current public data can and cannot support.
+\end{abstract}
+
+\section*{Keywords}
+hantavirus; surveillance; EU/EEA; ECDC; probabilistic evaluation; weighted interval score; public data; zoonoses
+
+\section{Introduction}
+
+Hantaviruses are rodent-borne zoonotic viruses that can cause severe human disease, with clinical syndromes differing by viral group and region. The World Health Organization describes hantaviruses as viruses carried by rodents, usually transmitted to humans through contact with infected rodents or their urine, droppings, or saliva; it also notes that, in Europe and Asia, hantaviruses are associated with haemorrhagic fever with renal syndrome, whereas in the Americas they can cause hantavirus cardiopulmonary syndrome \cite{who_hantavirus_2026}. The same WHO summary is important for scientific communication: human-to-human transmission is documented for Andes virus in the Americas, but not for European and Asian hantaviruses \cite{who_hantavirus_2026}. Thus, a European surveillance benchmark should not borrow outbreak language or person-to-person transmission assumptions from unrelated Andes virus events.
+
+That distinction matters because public attention to rare but severe infections can become sensational. The appropriate response is not to minimize hantavirus disease, which can be clinically serious, but to match claims to the surveillance evidence. ECDC reported 1,885 EU/EEA hantavirus infection cases in 2023, corresponding to 0.4 cases per 100,000 population, and noted that Finland and Germany accounted for 60.5\% of reported cases \cite{ecdc_2023_hantavirus}. The United States also illustrates the rarity and privacy limits of public surveillance: CDC reported 890 laboratory-confirmed hantavirus disease cases from 1993 through 2023 and provides public data by state only because county-level data cannot be provided without risking identification \cite{cdc_cases_2026}. These facts support a restrained framing: the problem is not to build a dramatic outbreak oracle, but to evaluate what sparse public surveillance can support.
+
+Prior hantavirus work has shown that environmental and reservoir dynamics matter. Kallio and colleagues linked cyclic human epidemics to rodent host dynamics \cite{kallio_2009}. Reusken and Heyman reviewed reservoir, viral, and anthropogenic factors driving hantavirus emergence in Europe \cite{reusken_heyman_2013}. Zeimes and colleagues modelled the spatial distribution of European human cases using landscape and environmental variables \cite{zeimes_2015}. More recently, Kazasidis and colleagues developed high-resolution early warning work for Puumala infection risk in Germany \cite{kazasidis_2024}. These studies justify environmental context, but they do not answer a narrower surveillance-methods question: with only public country-year EU/EEA labels, do public covariates improve one-year-ahead retrospective evaluation over simple surveillance baselines?
+
+This study addresses that question by building a frozen, auditable, open benchmark from ECDC country-year reports for 2019--2023. The contribution is deliberately conservative. We do not claim prospective forecasting, causal climate effects, operational alerting, individual risk prediction, county-level human prediction, or global generalisation. Instead, we evaluate probabilistic country-year predictions using metrics developed for epidemic forecast evaluation, including weighted interval score (WIS), empirical coverage, and interval width \cite{bracher_2021}. The goal is to make negative results visible: if simple baselines are hard to beat, that is useful evidence about the current limits of public annual surveillance.
+
+\section{Methods}
+
+\subsection{Study design}
+
+We conducted a retrospective one-year-ahead evaluation of EU/EEA country-year reported hantavirus infection incidence. The primary data source was the ECDC Annual Epidemiological Report for 2023, which includes country-year values for 2019--2023 \cite{ecdc_2023_hantavirus}. The source report states that 2023 data were retrieved from TESSy on 6 November 2024 \cite{ecdc_2023_hantavirus}. The benchmark was implemented as a reproducible pipeline in Python, with generated data, reports, and figures rebuilt from tracked scripts.
+
+\subsection{Outcome}
+
+The primary outcome was annual reported hantavirus infection cases by country and year. Incidence was computed as
+\[
+\mathrm{incidence}_{i} = \frac{\mathrm{cases}_{i}}{\mathrm{population}_{i}} \times 100{,}000,
+\]
+where \(i\) indexes a country-year row and population came from World Bank denominators joined by ISO3 and year.
+
+\subsection{Data inclusion and source-quality metadata}
+
+The final processed table contained 142 country-year rows and 97 raw audit columns. These 97 columns are not the modelling feature count. The manuscript reports final model feature counts separately after screening.
+
+The pipeline reconciled ECDC annual totals exactly for 2019--2023. Belgium 2023 was flagged as \texttt{not\_comprehensive} and quality grade C because ECDC did not calculate a rate after a surveillance-system change. Cyprus 2023 was flagged as \texttt{unspecified} and quality grade C. United Kingdom rows were excluded from the primary panel because ECDC reports no UK data from 2020 onward following EU withdrawal. All other current rows were marked comprehensive and quality grade B.
+
+\subsection{Public covariates}
+
+World Bank covariates included population, rural population percentage, and GDP per capita. FAOSTAT covariates included land area and land-use classes, transformed into lagged shares where appropriate. TerraClimate covariates included annual precipitation, climatic water deficit, soil moisture, maximum temperature, minimum temperature, and vapor pressure deficit summaries, with lag-1 versions used for prediction. Natural Earth 1:50m Admin 0 country boundaries were used for maps.
+
+MODIS MOD13C2 was not included as a modelling feature. A MODIS manifest exists, but quality-masked country-year NDVI/EVI aggregation did not pass the pre-specified inclusion gate. Therefore, this paper does not make vegetation, NDVI, or EVI claims.
+
+\subsection{Forecast splits}
+
+The primary split trained on 2019--2021, used 2022 as validation, and used 2023 as test. Leave-one-year-out analyses were generated as sensitivity checks. Predictors for year \(t\) used only information available from year \(t-1\) or earlier where lagged covariates were required.
+
+\subsection{Baseline models}
+
+Simple baselines were designed to be difficult to beat:
+
+\begin{itemize}
+  \item country historical mean rate;
+  \item last-observed country rate;
+  \item region-syndrome mean rate;
+  \item empirical negative-binomial rate;
+  \item hierarchical negative-binomial rate with shrinkage toward regional rate;
+  \item gradient-boosting rate model.
+\end{itemize}
+
+For a predicted rate \(r_i\), expected count was
+\[
+\mu_i = \frac{r_i}{100{,}000} \times \mathrm{population}_i.
+\]
+
+Poisson predictive intervals used \(Y_i \sim \mathrm{Poisson}(\mu_i)\). Negative-binomial baselines estimated overdispersion from training counts:
+\[
+\alpha = \max\left(\frac{s^2 - \bar{y}}{\bar{y}^2}, 10^{-6}\right), \quad
+k = \frac{1}{\alpha}, \quad
+p = \frac{k}{k+\mu_i}.
+\]
+Quantiles were then obtained from \(Y_i \sim \mathrm{NegBin}(k,p)\).
+
+\subsection{Feature ablation}
+
+Nested feature sets were evaluated to test whether public covariates added value beyond surveillance history:
+
+\begin{itemize}
+  \item \texttt{surveillance\_only}: target year, pandemic-period indicator, historical country rate, last country rate, prior observation count, zero-case share, regional historical rate, and overall historical rate.
+  \item \texttt{context}: surveillance features plus World Bank rurality and GDP.
+  \item \texttt{land\_use}: context plus FAOSTAT land-use shares.
+  \item \texttt{climate}: land-use set plus TerraClimate lag-1 climate and water-balance variables.
+  \item \texttt{all\_public}: climate set plus source-quality metadata.
+\end{itemize}
+
+Imputation parameters were learned on training rows only. Continuous features used train-set medians; binary flags used train-set modes; categorical variables used an explicit missing level. Features were removed when high-missingness, constant, duplicated, or highly correlated. The pairwise correlation threshold was 0.95. Final model feature counts were kept at or below 25 before one-hot encoding.
+
+\subsection{Penalized count model}
+
+After ablation, we fitted an exploratory penalized Poisson generalized linear model with population offset:
+\[
+\log(\mu_i)=\log\left(\frac{\mathrm{population}_i}{100{,}000}\right)+\beta_0+X_i\beta.
+\]
+The objective minimized the Poisson negative log-likelihood plus ridge penalty on non-intercept coefficients:
+\[
+\sum_i(\mu_i-y_i\eta_i)+\frac{\lambda}{2}\sum_j\beta_j^2,
+\]
+where \(\eta_i\) is the linear predictor. The penalty was selected using 2022 validation WIS. Coefficients were not interpreted causally.
+
+\subsection{Evaluation metrics}
+
+For a central \(1-\alpha\) interval \([l,u]\), interval score was
+\[
+IS_{\alpha}(y,l,u)=(u-l)+\frac{2}{\alpha}(l-y)\mathbf{1}(y<l)+\frac{2}{\alpha}(y-u)\mathbf{1}(y>u).
+\]
+With one 90\% interval and median \(m\), WIS was
+\[
+WIS_i=\frac{0.5|y_i-m_i|+(\alpha/2)IS_{\alpha,i}}{1+0.5}, \quad \alpha=0.1.
+\]
+We also reported relative WIS, empirical 90\% coverage, mean 90\% interval width, mean absolute error (MAE), Brier score for any reported case, Poisson deviance, and mean absolute scaled error (MASE) where the last-observed-rate denominator was valid.
+
+\subsection{Sensitivity and detectability}
+
+Sensitivity analyses included excluding non-comprehensive or unspecified surveillance rows, including a 2020--2021 pandemic-period indicator, excluding 2020--2021 training rows where sample size permitted, and leave-one-year-out splits. A simulation-based detectability screen preserved the observed country-year structure and population offsets while injecting standardized precipitation effects into simulated count rates. The simulation was used only to assess detectability, not to validate causal climate effects.
+
+\subsection{Mapping}
+
+Maps used Natural Earth 1:50m Admin 0 boundaries and ETRS89 / LAEA Europe (\texttt{EPSG:3035}). Colour palettes were colourblind-safe. All maps show country-level fills only and should not be interpreted as within-country risk maps.
+
+\section{Results}
+
+\subsection{Data audit}
+
+The rebuilt ECDC case table contained 142 rows. Annual totals matched the ECDC report exactly for each year from 2019 through 2023 (Table~\ref{tab:reconciliation}). There were no missing population, rurality, GDP, FAOSTAT land-use, or TerraClimate current-year joins. TerraClimate lag-1 variables were complete for all 114 non-2019 forecast rows. Death values were missing for 114 rows because the extracted ECDC table did not provide country death counts for 2019--2022; deaths were not modelled.
+
+\begin{table}[htbp]
+\centering
+\caption{ECDC annual case reconciliation and row counts.}
+\label{tab:reconciliation}
+\begin{tabular}{rrrrr}
+\toprule
+Year & Rows & Rebuilt cases & ECDC total & Difference \\
+\midrule
+2019 & 28 & 4088 & 4088 & 0 \\
+2020 & 28 & 1693 & 1693 & 0 \\
+2021 & 29 & 4947 & 4947 & 0 \\
+2022 & 29 & 2185 & 2185 & 0 \\
+2023 & 28 & 1885 & 1885 & 0 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Source-quality flags identified 140 quality grade B rows and 2 quality grade C rows. Belgium 2023 was the only \texttt{not\_comprehensive} row, and Cyprus 2023 was the only \texttt{unspecified} row. These flags were retained for sensitivity analysis and manuscript interpretation.
+
+\subsection{Baseline evaluation}
+
+Simple baselines were strong (Table~\ref{tab:baseline}). In 2022, the empirical negative-binomial rate baseline had the lowest WIS (47.17) and perfect empirical 90\% coverage, but its mean interval width was 694.21 cases, indicating wide intervals. In 2023, the last-observed country-rate baseline had the lowest WIS (42.86) and low Brier score (0.061), but empirical coverage was only 0.57. Thus, the strongest simple baselines exposed a sharpness-calibration trade-off.
+
+\begin{table}[htbp]
+\centering
+\caption{Best simple baseline by target year.}
+\label{tab:baseline}
+\begin{tabular}{llrrrrr}
+\toprule
+Year & Model & WIS & Relative WIS & Coverage & Width & MAE \\
+\midrule
+2022 & Empirical negative-binomial rate & 47.17 & 0.626 & 1.000 & 694.21 & 72.10 \\
+2023 & Last-observed country rate & 42.86 & 0.637 & 0.571 & 14.61 & 47.11 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.90\linewidth]{figures/international_baseline_mean_wis.png}
+\caption{Mean weighted interval score for simple baseline models. Lower values indicate better probabilistic accuracy.}
+\label{fig:baseline_wis}
+\end{figure}
+
+\subsection{Feature ablation}
+
+Feature ablation did not support promotion of covariate-augmented models over simple baselines (Table~\ref{tab:ablation}). In validation year 2022, the \texttt{all\_public} feature set improved over the ablation model's own surveillance-only version, reducing WIS from 94.42 to 74.46. However, this remained worse than the best simple empirical baseline. In test year 2023, the best ablation feature set was \texttt{land\_use}, with WIS 318.55, relative WIS 4.73, and coverage 0.68. This was worse than simple baselines and under the nominal 0.90 coverage target.
+
+\begin{table}[htbp]
+\centering
+\caption{Primary feature-ablation results. Feature counts are final model features before one-hot encoding.}
+\label{tab:ablation}
+\scriptsize
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{llrrrrrr}
+\toprule
+Split & Feature set & Features & WIS & Relative WIS & Coverage & Width & MAE \\
+\midrule
+2022 validation & surveillance only & 7 & 94.42 & 1.253 & 0.690 & 298.01 & 131.78 \\
+2022 validation & context & 9 & 94.11 & 1.249 & 0.724 & 303.11 & 133.92 \\
+2022 validation & land use & 14 & 93.81 & 1.245 & 0.759 & 305.73 & 134.05 \\
+2022 validation & climate & 19 & 75.62 & 1.004 & 0.759 & 271.64 & 112.47 \\
+2022 validation & all public & 20 & 74.46 & 0.988 & 0.759 & 264.92 & 109.89 \\
+2023 test & surveillance only & 7 & 326.98 & 4.857 & 0.643 & 314.50 & 370.06 \\
+2023 test & context & 9 & 333.07 & 4.947 & 0.679 & 322.47 & 381.25 \\
+2023 test & land use & 14 & 318.55 & 4.732 & 0.679 & 325.87 & 367.44 \\
+2023 test & climate & 19 & 348.18 & 5.172 & 0.679 & 293.20 & 395.44 \\
+2023 test & all public & 20 & 331.35 & 4.922 & 0.643 & 282.80 & 374.73 \\
+\bottomrule
+\end{tabular}
+}
+\end{table}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.82\linewidth]{figures/03_feature_ablation_wis.png}
+\caption{Feature-ablation WIS under the primary validation and test targets. Lower values are better.}
+\label{fig:ablation_wis}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.82\linewidth]{figures/03_feature_ablation_coverage.png}
+\caption{Empirical 90\% interval coverage for nested feature sets. The nominal target is 0.90.}
+\label{fig:ablation_coverage}
+\end{figure}
+
+\subsection{Penalized count model}
+
+The exploratory penalized Poisson GLM also did not meet the promotion rule. The best count model used the \texttt{land\_use} feature set with alpha 0.01, WIS 159.37, relative WIS 2.37, and coverage 0.32 (Table~\ref{tab:count}). It improved over the ablation model in WIS for 2023 but remained worse than the strongest simple baseline and was poorly calibrated.
+
+\begin{table}[htbp]
+\centering
+\caption{Penalized Poisson GLM results for 2023.}
+\label{tab:count}
+\begin{tabular}{lrrrrrr}
+\toprule
+Feature set & Alpha & WIS & Relative WIS & Coverage & Width & MAE \\
+\midrule
+surveillance only & 0.01 & 250.67 & 3.723 & 0.321 & 35.32 & 260.68 \\
+context & 0.01 & 275.80 & 4.097 & 0.321 & 37.11 & 286.54 \\
+land use & 0.01 & 159.37 & 2.367 & 0.321 & 28.82 & 167.64 \\
+climate & 10.00 & 274.56 & 4.078 & 0.250 & 35.50 & 285.00 \\
+all public & 10.00 & 262.78 & 3.903 & 0.214 & 35.14 & 273.04 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Maps}
+
+The 2023 incidence map shows heterogeneous country-level reported incidence, not within-country risk (Figure~\ref{fig:incidence_map}). The surveillance completeness map highlights that most 2023 rows were comprehensive, with Belgium flagged as not comprehensive and Cyprus flagged as unspecified (Figure~\ref{fig:surveillance_map}). Predicted-observed and uncertainty maps further show that model output should be interpreted with caution because uncertainty and under-coverage remain material.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.80\linewidth]{figures/ijhg_incidence_choropleth_2023.png}
+\caption{Country-level ECDC reported hantavirus incidence per 100,000 population, 2023. Boundaries are Natural Earth 1:50m Admin 0 countries projected to ETRS89 / LAEA Europe. The map does not imply within-country precision.}
+\label{fig:incidence_map}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.80\linewidth]{figures/ijhg_surveillance_completeness_2023.png}
+\caption{ECDC surveillance completeness metadata for 2023. Belgium is flagged not comprehensive; Cyprus is flagged unspecified.}
+\label{fig:surveillance_map}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.92\linewidth]{figures/ijhg_predicted_observed_incidence_2023.png}
+\caption{Observed and predicted median 2023 incidence for the best 2023 ablation model by WIS. Values are country-level reported incidence per 100,000 population.}
+\label{fig:predicted_observed_map}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.80\linewidth]{figures/ijhg_uncertainty_interval_width_2023.png}
+\caption{Width of the 90\% prediction interval for 2023, expressed per 100,000 population. Wider intervals indicate lower sharpness and must be interpreted together with coverage.}
+\label{fig:uncertainty_map}
+\end{figure}
+
+\subsection{Sensitivity and detectability}
+
+Sensitivity analyses did not change the main conclusion that complex or covariate-rich models should not be promoted over simple baselines. Excluding flagged surveillance rows and COVID-era training years reduced already-small samples and reinforced the need for caution.
+
+The detectability simulation showed that injected covariate effects became easier to detect as effect size increased, but the simulation should not be interpreted as evidence that precipitation causally drives observed incidence in this panel. Its role is to show that sparse country-year structure constrains what can be detected reliably.
+
+\section{Discussion}
+
+This study provides an open, reproducible benchmark for EU/EEA country-year reported hantavirus incidence from 2019 to 2023. Its central result is negative but useful: at this aggregation level and time span, simple surveillance-history baselines remained difficult to beat. Public climate and land-use covariates did not produce a stable, well-calibrated improvement over strong empirical baselines, and the exploratory penalized count model was not sufficiently calibrated for promotion.
+
+This finding should be read as a surveillance-data result, not as a biological claim that climate, land use, vegetation, or reservoir dynamics do not matter. Prior work supports the relevance of rodent host dynamics, landscape context, and environmental conditions \cite{kallio_2009,reusken_heyman_2013,zeimes_2015,kazasidis_2024}. The present result is narrower: with only five annual ECDC years and country-level public covariates, the marginal predictive value of covariates was not robust enough to beat simple baselines.
+
+The result also has communication value. Hantavirus disease can be severe, but public-facing risk claims should be anchored to region, virus, route of transmission, and surveillance scale. WHO distinguishes Andes virus human-to-human transmission in the Americas from European and Asian hantavirus epidemiology \cite{who_hantavirus_2026}. ECDC reports low annual EU/EEA rates in 2023 \cite{ecdc_2023_hantavirus}. A benchmark that explicitly reports uncertainty, under-coverage, and data-quality flags is a counterweight to sensational framing.
+
+For surveillance practice, the benchmark suggests that improving completeness, timeliness, and harmonisation of public data may be more valuable than adding more coarse covariates to short annual panels. Country-year aggregation is useful for open comparison and reproducibility, but reservoir and exposure processes occur at finer spatial and temporal scales. Future source-system-specific work could evaluate subnational surveillance where legally shareable, add rodent reservoir data, or extend the benchmark to other regions only with syndrome and source-system strata.
+
+\section{Limitations}
+
+The benchmark contains only five annual reporting years. This short panel limits temporal validation, power, and model complexity. The unit of analysis is country-year, which masks within-country heterogeneity. Reporting systems and case ascertainment differ across countries. Belgium 2023 was not comprehensive, Cyprus 2023 had an unspecified completeness caveat, and 2020--2021 may reflect COVID-era public health system disruption. Validation is retrospective one-year-ahead evaluation, not prospective forecasting. MODIS vegetation features were excluded because QA-masked aggregation did not pass the pre-specified gate. PAHO and China CDC data were not pooled because their source systems, syndromes, and spatial scales differ from ECDC labels.
+
+\section{Conclusions}
+
+An ECDC-only EU/EEA country-year benchmark for reported hantavirus incidence can be rebuilt reproducibly and reconciles exactly to annual ECDC totals. However, simple empirical baselines were difficult to beat, and richer public covariate models did not provide stable calibrated gains. The publishable contribution is therefore an open, source-audited, uncertainty-aware surveillance benchmark that defines what current public country-year data can and cannot support.
+
+\section*{Data availability}
+
+The study uses aggregated public surveillance and public covariate sources. Generated data are not committed to git by default but can be regenerated from tracked scripts. A DOI archive should be created on Zenodo, OSF, or Figshare before journal submission after repository owner, archive account, and release license are confirmed.
+
+\section*{Code availability}
+
+The analysis code is maintained in the project repository. The final manuscript should include the public GitHub URL and release tag after the archive package is finalized.
+
+\section*{Ethics statement}
+
+This study uses aggregated, publicly available surveillance data at the country-year level. No individual-level patient data were accessed. Ethical review was not required for secondary analysis of publicly available aggregate data.
+
+\section*{Funding}
+
+No external funding was received.
+
+\section*{Competing interests}
+
+The author declares no competing interests.
+
+\section*{Acknowledgements}
+
+The author acknowledges ECDC, World Bank, FAO/FAOSTAT, TerraClimate, and Natural Earth as public data providers. No endorsement by these organisations is implied.
+
+\section*{Author contributions}
+
+For the non-anonymised submission materials, the author performed conceptualisation, data curation, formal analysis, methodology, software, validation, visualisation, and writing.
+
+\FloatBarrier
+
+\sloppy
+\begin{thebibliography}{99}
+
+\bibitem{ecdc_2023_hantavirus}
+European Centre for Disease Prevention and Control. Hantavirus infection. In: ECDC. Annual Epidemiological Report for 2023. Stockholm: ECDC; 2025. Available from: \url{https://www.ecdc.europa.eu/en/publications-data/hantavirus-infection-annual-epidemiological-report-2023}
+
+\bibitem{who_hantavirus_2026}
+World Health Organization. Hantavirus fact sheet. 6 May 2026. Available from: \url{https://www.who.int/news-room/fact-sheets/detail/hantavirus}
+
+\bibitem{cdc_cases_2026}
+Centers for Disease Control and Prevention. Reported cases of hantavirus disease. Updated 23 Apr 2026. Available from: \url{https://www.cdc.gov/hantavirus/data-research/cases/index.html}
+
+\bibitem{kallio_2009}
+Kallio ER, Begon M, Henttonen H, Koskela E, Mappes T, Vaheri A, et al. Cyclic hantavirus epidemics in humans: predicted by rodent host dynamics. Epidemics. 2009;1(2):101--107.
+
+\bibitem{reusken_heyman_2013}
+Reusken C, Heyman P. Factors driving hantavirus emergence in Europe. Curr Opin Virol. 2013;3(1):92--99. doi:10.1016/j.coviro.2013.01.002.
+
+\bibitem{zeimes_2015}
+Zeimes CB, Quoilin S, Henttonen H, Lyytikainen O, Vapalahti O, Reynes JM, et al. Landscape and regional environmental analysis of the spatial distribution of hantavirus human cases in Europe. Front Public Health. 2015;3:54. doi:10.3389/fpubh.2015.00054.
+
+\bibitem{kazasidis_2024}
+Kazasidis O, Geduhn A, Jacob J. High-resolution early warning system for human Puumala hantavirus infection risk in Germany. Sci Rep. 2024;14:9602. doi:10.1038/s41598-024-60144-0.
+
+\bibitem{glass_2000}
+Glass GE, Cheek JE, Patz JA, Shields TM, Doyle TJ, Thoroughman DA, et al. Using remotely sensed data to identify areas at risk for hantavirus pulmonary syndrome. Emerg Infect Dis. 2000;6(3):238--247.
+
+\bibitem{allen_2006}
+Allen LJS, McCormack RK, Jonsson CB. Mathematical models for hantavirus infection in rodents. Bull Math Biol. 2006;68:511--524.
+
+\bibitem{bracher_2021}
+Bracher J, Ray EL, Gneiting T, Reich NG. Evaluating epidemic forecasts in an interval format. PLoS Comput Biol. 2021;17(2):e1008618. doi:10.1371/journal.pcbi.1008618.
+
+\bibitem{terraclimate}
+Abatzoglou JT, Dobrowski SZ, Parks SA, Hegewisch KC. TerraClimate, a high-resolution global dataset of monthly climate and climatic water balance from 1958--2015. Sci Data. 2018;5:170191. doi:10.1038/sdata.2017.191.
+
+\bibitem{naturalearth}
+Natural Earth. Natural Earth data. Available from: \url{https://www.naturalearthdata.com/}
+
+\end{thebibliography}
+
+\end{document}

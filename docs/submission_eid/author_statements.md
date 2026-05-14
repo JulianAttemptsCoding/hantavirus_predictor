@@ -27,13 +27,6 @@ AI-generated figures were used.
 
 All analysis code, processed public-data tables, data dictionaries, and
 reproducibility scripts are archived at https://doi.org/10.5281/zenodo.20150542.
-To obtain your DOI:
-1. Go to https://zenodo.org and log in (free account).
-2. Create new upload → upload a zip of this repository.
-3. Set access to Open Access, license MIT, resource type Software.
-4. Reserve DOI before publishing if you want to add it to the manuscript first.
-5. Publish → copy the DOI (format: 10.5281/zenodo.XXXXXXX).
-6. DOI https://doi.org/10.5281/zenodo.20150542 already inserted in all files.
 
 Source data were obtained from:
 - ECDC Annual Epidemiological Reports (https://www.ecdc.europa.eu)

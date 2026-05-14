@@ -1,12 +1,3 @@
-# EID Manuscript — Full Draft
-
-**NOTE TO AUTHOR:** All ORCID and DOI placeholders are filled in.
-Convert to Microsoft Word (12-pt Times New Roman, double-spaced, left-justified,
-line-numbered) — use `python tools/build_eid_docx.py` or copy into Word.
-Enable line numbering in Word: Layout → Page Setup → Line Numbers → Continuous.
-
----
-
 ## TITLE PAGE
 
 **Title:**
@@ -24,10 +15,10 @@ Public Surveillance Benchmark for Reported Hantavirus Incidence, EU/EEA, 2019–
 Julian Juan
 Email: bubgaming3@gmail.com
 
-**Word count (abstract):** 135
+**Word count (abstract):** 138
 
 **Word count (text, excluding abstract, acknowledgments, references, tables,
-figure legends):** ~3,350
+figure legends):** 3,284
 
 **One-sentence summary:**
 Simple surveillance-history baselines outperformed covariate-rich models,
@@ -64,51 +55,40 @@ health communication, not operational local risk prediction.
 
 Hantaviruses are single-stranded RNA viruses transmitted to humans primarily
 through contact with infected rodent excreta, including urine, feces, and
-saliva (1). No hantavirus vaccine is licensed for human use globally, and
-treatment is primarily supportive. In Europe and Asia, the principal clinical
-syndrome caused by hantavirus infection is hemorrhagic fever with renal syndrome
-(HFRS). European HFRS is driven principally by Puumala virus, whose reservoir
-is the bank vole (*Myodes glareolus*), in northern and central Europe, and
-Dobrava-Belgrade virus in southeastern Europe (2). In the Americas, hantaviruses
-cause hantavirus pulmonary syndrome (HPS) and hantavirus cardiopulmonary syndrome
-(HCPS), with Sin Nombre virus (reservoir: deer mouse, *Peromyscus maniculatus*)
-and Andes virus as the primary agents (1). Andes virus is exceptional among
-hantaviruses: limited person-to-person transmission has been reported in
-Argentina and Chile, an epidemiologic feature not documented for European
-hantaviruses (3). Human-to-human transmission is not documented for Puumala,
-Dobrava-Belgrade, or other EU/EEA hantaviruses.
+saliva (1,3). In Europe and Asia, the principal clinical syndrome caused by
+hantavirus infection is hemorrhagic fever with renal syndrome (HFRS). European
+HFRS is driven principally by Puumala virus, whose reservoir is the bank vole
+(*Myodes glareolus*), in northern and central Europe, and Dobrava-Belgrade virus
+in southeastern Europe (2). In the Americas, hantaviruses cause hantavirus
+pulmonary syndrome (HPS) and hantavirus cardiopulmonary syndrome (HCPS). Andes
+virus is exceptional among hantaviruses: limited person-to-person transmission
+has been reported in Argentina and Chile, an epidemiologic feature not documented
+for European hantaviruses (3).
 
 Hantavirus infection is reportable in the EU/EEA under the EU case definition
 for hantavirus infection. In 2023, ECDC reported 1,885 confirmed and probable
 cases from 28 EU/EEA countries, a population-weighted incidence of approximately
 0.4 per 100,000 population; Finland and Germany accounted for most reported
-cases (4). Annual case counts in Europe are strongly cyclic, reflecting the
-multi-year population dynamics of rodent reservoir hosts and the influence of
-mast seeding events that drive bank vole population peaks (5). This cyclicity
-makes hantavirus incidence partially predictable in qualitative terms — outbreak
-years tend to follow mast-seeding years — but quantitative country-level
-prediction from publicly available data remains uncertain.
+cases (4). Annual European counts are cyclic, reflecting multi-year rodent
+reservoir dynamics and mast seeding events that drive bank vole population
+peaks (5). This cyclicity makes qualitative risk recognizable, but quantitative
+country-level prediction from public annual data remains uncertain.
 
 Public attention to hantavirus can exceed what sparse annual surveillance data
 can resolve. In May 2026, WHO reported a cluster of Andes virus infection
-associated with cruise ship travel, generating widespread public inquiry about
-hantavirus transmission in Europe; ECDC and WHO emphasized that Andes virus
-reservoir species (*Oligoryzomys longicaudatus* and related sigmodontine rodents)
-are not present in Europe and that sustained EU/EEA transmission of Andes virus
-is biologically implausible (3,6). Events of this type — rare zoonotic clusters
-amplified by international travel news — illustrate the risk of overconfident
+associated with cruise ship travel (6). ECDC assessed risk to the general
+population in Europe as very low and noted that the natural reservoir for Andes
+virus is not present in Europe (7). Events of this type illustrate how rare
+zoonotic clusters amplified by international travel news can invite overconfident
 interpretation of limited surveillance data. The social amplification of risk
-framework describes how information about rare events can generate perceived
-risk disproportionate to epidemiologic probability, and how transparent,
-calibrated communication can moderate this amplification (7). Probabilistic
-benchmarks that explicitly quantify what sparse public annual data can and cannot
-support are therefore a practical tool not only for surveillance researchers but
-also for public health communicators who must convey uncertainty during periods
-of heightened attention to rare disease events.
+framework describes how rare-event information can generate perceived risk
+disproportionate to epidemiologic probability (8). Probabilistic benchmarks that
+quantify what sparse public annual data can and cannot support are therefore
+useful for surveillance researchers and public health communicators.
 
-Despite a substantial literature on European hantavirus spatial risk mapping (8),
-rodent host dynamics and virus–host coevolution (9), and environmental and
-ecological drivers of hantavirus emergence (10), the predictive limits of public
+Despite a substantial literature on European hantavirus spatial risk mapping (9),
+rodent host dynamics and virus-host coevolution (10), and environmental and
+ecological drivers of hantavirus emergence (11), the predictive limits of public
 country-year surveillance data have rarely been benchmarked with probabilistic
 metrics that jointly assess forecast sharpness and calibration. Most published
 hantavirus risk models either use within-country subnational data, focus on
@@ -153,12 +133,9 @@ remaining 140 rows were grade B. Grade-C rows were included in primary analyses
 and excluded in one sensitivity scenario.
 
 The primary outcome was annual reported cases per country-year. Country-year
-reported incidence per 100,000 population was computed as:
-
-  incidence_it = cases_it / population_it × 100,000
-
-where i denotes country and t denotes year. Population denominators were taken
-from World Bank Open Data for the matching country-year.
+reported incidence per 100,000 population was computed from reported cases and
+World Bank population denominators. Exact formulas for incidence, forecast
+distributions, and evaluation metrics are provided in the Appendix.
 
 #### Public covariates
 
@@ -167,23 +144,23 @@ alpha-3 country codes and year.
 
 *World Bank Open Data* provided country-year total population, rural population
 fraction, and GDP per capita in purchasing power parity terms (constant 2017
-international dollars). Data were available for all 142 rows.
+international dollars) (12). Data were available for all 142 rows.
 
 *FAOSTAT* provided country-year land-use shares including forest area fraction,
 cropland fraction, and permanent meadows and pastures fraction, aggregated to
-matched country-year records. Data were available for all 142 rows.
+matched country-year records (13). Data were available for all 142 rows.
 
 *TerraClimate* provided country-year summaries of mean temperature, total
 precipitation, maximum temperature, minimum temperature, soil moisture, and
 Palmer Drought Severity Index (PDSI), aggregated to country boundaries using
-Natural Earth polygons and spatial averaging (11). Lag-1 versions (prior
+Natural Earth polygons and spatial averaging (14). Lag-1 versions (prior
 calendar year) of six climate variables were computed to capture the seasonal
 mast and rodent dynamics that precede hantavirus exposure in the following year
 and to avoid temporal leakage of target-year climate information into forecasts.
 Lag-1 features were available for 114 non-2019 country-year rows.
 
 *Natural Earth* provided 1:50m resolution Admin-0 country boundary shapefiles
-used for spatial aggregation and mapping (12).
+used for spatial aggregation and mapping (15).
 
 *MODIS MOD13C2 Collection 6.1* NDVI and EVI were targeted as vegetation
 covariates because vegetation conditions influence rodent food supply. However,
@@ -250,11 +227,7 @@ surveillance value, not for causal attribution.
 
 *Penalized Poisson count model (exploratory).* A ridge-penalized Poisson
 generalized linear model with a log population offset was fitted for each
-covariate block:
-
-  log(μᵢₜ) = log(populationᵢₜ / 100,000) + β₀ + Xᵢₜβ
-
-The ridge penalty was applied to non-intercept coefficients; the penalty
+covariate block. The ridge penalty was applied to non-intercept coefficients; the penalty
 parameter α was selected on 2022 validation WIS from the set {0.01, 0.1, 1, 10}.
 This model was evaluated exploratorily, and coefficients were not interpreted
 causally.
@@ -262,15 +235,10 @@ causally.
 #### Evaluation metrics
 
 Primary metrics were: (i) weighted interval score (WIS), computed for the
-central 90% prediction interval per Bracher et al. (13); (ii) 90% empirical
+central 90% prediction interval per Bracher et al. (16); (ii) 90% empirical
 coverage, reported as numerator/denominator (e.g., 16/28) and fraction;
 (iii) mean 90% interval width; (iv) mean absolute error (MAE) against the
 median prediction; (v) Brier score for any reported case (threshold: ≥1 case).
-
-For a 90% prediction interval [l, u] and miscoverage α = 0.10, WIS is:
-
-  IS_α = (u − l) + (2/α)(l − y)·𝟙(y < l) + (2/α)(y − u)·𝟙(y > u)
-  WIS = [0.5|y − median| + (α/2)·IS_α] / 1.5
 
 Lower WIS indicates better combined sharpness and calibration. Coverage near
 0.90 is nominal; below-nominal coverage indicates underestimated uncertainty;
@@ -314,23 +282,20 @@ aggregation did not pass the pre-specified gate.
 
 *Validation year (2022, n = 29 countries).* The empirical negative-binomial
 baseline achieved the lowest WIS (47.17) and complete 90% coverage (29/29,
-100%), but at the cost of very wide prediction intervals (mean width 694.2 cases;
-Table 2). The hierarchical negative-binomial baseline produced nearly identical
-results (WIS 47.38; coverage 29/29). The country historical mean-rate baseline
-had a lower interval width (21.07 cases) but substantially higher WIS (65.58) and
-below-nominal coverage (18/29, 62%). The last-observed country-rate baseline had
-the worst WIS among simple baselines in 2022 (101.5) and undercovered observed
-counts (16/29, 55%). The gradient-boosting covariate model had a WIS of 92.31
-with no empirical coverage.
+100%), but at the cost of very wide prediction intervals (mean width 694.2
+reported cases; Table 2). The country historical mean-rate baseline had narrower
+intervals (21.07 cases) but higher WIS (65.58) and below-nominal coverage
+(18/29, 62%). The last-observed country-rate baseline performed poorly in 2022
+(WIS 101.5; coverage 16/29, 55%).
 
 *Test year (2023, n = 28 countries).* The last-observed country-rate baseline
 achieved the lowest WIS (42.86) and the narrowest mean prediction intervals
-(14.61 cases per 100,000), but its 90% empirical coverage was substantially below
+(14.61 reported cases), but its 90% empirical coverage was substantially below
 nominal (16/28, 57%). The empirical and hierarchical negative-binomial baselines
 covered all 28 observed counts (28/28, 100%) but used substantially wider
-prediction intervals (mean width ≈ 660 cases per 100,000). The country historical
-mean-rate baseline had an intermediate WIS (52.47) but below-nominal coverage
-(15/28, 54%).
+prediction intervals (mean width approximately 660 reported cases). The country
+historical mean-rate baseline had an intermediate WIS (52.47) but below-nominal
+coverage (15/28, 54%).
 
 The 2023 results exposed a pronounced calibration–sharpness tradeoff (Figure 2):
 the sharpest baseline undercovered observed counts; the best-covering baselines
@@ -346,9 +311,10 @@ block (mean WIS 318.5; 90% coverage 19/28, 68%), which was more than seven times
 worse on WIS than the best simple baseline (42.86). The all-public feature set
 had the worst 2023 WIS among covariate blocks (331.3; coverage 18/28, 64%). All
 covariate blocks showed substantial WIS deterioration from the 2022 validation
-year to the 2023 test year: for example, the all-public block improved slightly
-over the simple baselines in 2022 (WIS 74.46 vs. 65.58 for the country
-historical mean), but degraded sharply in 2023. This validation-to-test
+year to the 2023 test year: for example, the all-public block was better than
+the last-observed baseline in 2022 but worse than the country historical mean
+baseline (WIS 74.46 vs. 65.58), then degraded sharply in 2023. This
+validation-to-test
 instability indicates that the covariate associations learned on the 2019–2021
 training window did not transfer reliably to the 2023 test year. Public
 demographic, land-use, and climate covariates did not provide a stable,
@@ -387,10 +353,9 @@ not change the main conclusion: the best covariate block (land use) had a
 models did not outperform simple surveillance-history baselines. Excluding
 2020–2021 COVID-era training rows shifted numerical WIS values but did not
 reverse the negative result; the all-public covariate block under this scenario
-had a 2023 WIS of 75.85, still above or comparable to the negative-binomial
-baselines, and did not achieve near-nominal 90% coverage (89% vs. nominal 90%
-but with very wide intervals of mean width 764 cases). The central finding was
-robust across all three sensitivity scenarios.
+had a 2023 WIS of 75.85, above the best simple baseline, and approached nominal
+coverage only with very wide intervals (89% coverage; mean width 764 cases).
+The central finding was robust across all three sensitivity scenarios.
 
 ### Discussion
 
@@ -399,8 +364,8 @@ public surveillance data support transparent probabilistic evaluation but not
 stable covariate-driven prediction. In 2023, the lowest WIS was achieved by
 a simple last-observed country-rate baseline, yet this baseline undercovered
 observed counts. Negative-binomial baselines achieved complete empirical coverage
-by producing prediction intervals that span hundreds of cases per 100,000
-population — intervals that are nominally correct but operationally uninformative.
+by producing prediction intervals that span hundreds of reported cases —
+intervals that are nominally correct but operationally uninformative.
 No covariate-augmented model improved upon both dimensions simultaneously. The
 negative result is the public-health result: sparse annual public data did not
 support stable covariate-driven improvement over simple surveillance history.
@@ -413,13 +378,11 @@ evaluation should be assessed against both WIS and 90% empirical coverage,
 not against point accuracy alone. A model that appears to have low mean absolute
 error can simultaneously undercover observed counts, overstating confidence in
 its predictions. Second, simple baselines — last-observed rate, historical mean —
-are stronger than they appear in absolute terms: their median predictions are
-often closer to observations than those of covariate-augmented models on sparse
-annual data, and their uncertainty intervals, while not perfectly calibrated,
-are narrower and more interpretable than overdispersed negative-binomial
-alternatives. Surveillance programs that currently generate predictive statements
-from public annual data without baseline comparisons risk overstating predictive
-value.
+are stronger than they appear: their median predictions were often closer to
+observations than those of covariate-augmented models, and their uncertainty
+intervals were narrower and more interpretable than overdispersed
+negative-binomial alternatives. Predictive statements from public annual data
+without baseline comparisons risk overstating value.
 
 The calibration–sharpness tradeoff documented here has direct relevance for
 risk communication during periods of heightened public attention to hantavirus.
@@ -430,25 +393,21 @@ this tradeoff to public health practitioners and to the media can help prevent
 the false precision that follows from reporting a point estimate without its
 calibration context. The social amplification of risk literature documents how
 overconfident quantitative claims can amplify public concern disproportionately
-to epidemiologic probability (7); transparent calibration benchmarks provide
+to epidemiologic probability (8); transparent calibration benchmarks provide
 practitioners with the evidence needed to resist this amplification.
 
 The value of this benchmark is not that it produces a deployable predictor.
 Its value is that it makes false precision visible.
 
 The data limitations identified by this benchmark point toward productive
-directions for surveillance improvement. Subnational data — at the regional or
-prefecture level, where rodent habitat is more homogeneous — would substantially
-reduce ecological aggregation bias inherent in country-year modeling. Reservoir
-host density data, if collected systematically alongside hantavirus reporting,
-would provide the mechanistic signal that public climate and land-use covariates
-cannot. Longer comparable annual panels — extending the 2019–2023 window
-backward with consistent case definitions — would improve the sample efficiency
-of training and reduce dependence on COVID-era data that may reflect reporting
-artifacts. Better harmonization of case definitions and surveillance completeness
-reporting across EU/EEA member states would reduce the noise currently captured
-by quality-grade flags. These structural improvements to surveillance
-infrastructure are a more productive path than adding coarser public covariates
+surveillance improvements. Subnational data, where rodent habitat is more
+homogeneous, would reduce ecological aggregation bias. Systematic reservoir host
+density data would provide mechanistic signal that public climate and land-use
+covariates cannot. Longer comparable annual panels would improve training sample
+size and reduce dependence on COVID-era data. Better harmonization of case
+definitions and surveillance completeness reporting across EU/EEA member states
+would reduce the noise currently captured by quality-grade flags. These
+structural improvements are more useful than adding coarser public covariates
 to an already sparse annual panel.
 
 **Limitations.** This benchmark has five annual reporting years, which severely
@@ -510,53 +469,57 @@ ecology, epidemiology, and disease. Clin Microbiol Rev. 2010;23:412–41.
 Hantavirus infections in Europe and their impact on public health. Rev Med
 Virol. 2013;23:35–49.
 
-3. World Health Organization. Hantavirus cluster linked to cruise ship travel,
-multi-country — Disease Outbreak News. Geneva: WHO; 2026 [cited 2026 May 12].
-Available at: https://www.who.int/emergencies/disease-outbreak-news/item/2026-DON600
+3. World Health Organization. Hantavirus fact sheet. Geneva: WHO; 2026
+[cited 2026 May 13]. https://www.who.int/news-room/fact-sheets/detail/hantavirus
 
-4. European Centre for Disease Prevention and Control. Hantavirus infection —
-Annual Epidemiological Report for 2023. Stockholm: ECDC; 2024 [cited 2026 May 12].
-Available at: https://www.ecdc.europa.eu/en/publications-data/hantavirus-infection-annual-epidemiological-report-2023
+4. European Centre for Disease Prevention and Control. Hantavirus infection.
+In: ECDC. Annual Epidemiological Report for 2023. Stockholm: ECDC; 2025
+[cited 2026 May 13]. https://www.ecdc.europa.eu/en/publications-data/hantavirus-infection-annual-epidemiological-report-2023
 
 5. Voutilainen L, Sironen T, Tonteri E, Balk-Moller NC, Iivanainen A, Niemimaa J,
 et al. Life-long antibody responses and evidence for waning immunity to Puumala
 hantavirus in a bank vole population. J Virol. 2015;89:5765–75.
 
-6. World Health Organization. Hantavirus fact sheet. Geneva: WHO; 2023
-[cited 2026 May 12]. Available at:
-https://www.who.int/news-room/fact-sheets/detail/hantavirus
+6. World Health Organization. Hantavirus cluster linked to cruise ship travel,
+multi-country — Disease Outbreak News. Geneva: WHO; 2026 [cited 2026 May 13].
+https://www.who.int/emergencies/disease-outbreak-news/item/2026-DON600
 
-7. Kasperson RE, Renn O, Slovic P, Brown HS, Emel J, Goble R, et al. The social
+7. European Centre for Disease Prevention and Control. Hantavirus-associated
+cluster of illness on a cruise ship: ECDC assessment and recommendations.
+Stockholm: ECDC; 2026 [cited 2026 May 13].
+https://www.ecdc.europa.eu/en/publications-data/hantavirus-associated-cluster-illness-cruise-ship-ecdc-assessment-and
+
+8. Kasperson RE, Renn O, Slovic P, Brown HS, Emel J, Goble R, et al. The social
 amplification of risk: a conceptual framework. Risk Anal. 1988;8:177–87.
 
-8. Zeimes CB, Olsson GE, Ahlm C, Vanwambeke SO. Landscape and local climatic
+9. Zeimes CB, Olsson GE, Ahlm C, Vanwambeke SO. Landscape and local climatic
 effects on human Puumala hantavirus incidence — the role of forest spatial
 pattern. PeerJ. 2014;2:e541.
 
-9. Kallio ER, Klingström J, Gustafsson E, Manni T, Vaheri A, Henttonen H, et al.
+10. Kallio ER, Klingström J, Gustafsson E, Manni T, Vaheri A, Henttonen H, et al.
 Prolonged survival of Puumala hantavirus outside the host: evidence for indirect
 transmission via the environment. J Gen Virol. 2006;87:2127–34.
 
-10. Reusken C, Heyman P. Factors driving hantavirus emergence in Europe.
+11. Reusken C, Heyman P. Factors driving hantavirus emergence in Europe.
 Curr Opin Virol. 2013;3:92–9.
 
-11. Abatzoglou JT, Dobrowski SZ, Parks SA, Hegewisch KC. TerraClimate, a
+12. World Bank Open Data. World development indicators [Internet]. Washington
+(DC): World Bank; 2024 [cited 2026 May 13].
+https://data.worldbank.org
+
+13. Food and Agriculture Organization of the United Nations. FAOSTAT land use
+[Internet]. Rome: FAO; 2024 [cited 2026 May 13].
+https://www.fao.org/faostat/en/#data/RL
+
+14. Abatzoglou JT, Dobrowski SZ, Parks SA, Hegewisch KC. TerraClimate, a
 high-resolution global dataset of monthly climate and climatic water balance
 from 1958–2015. Sci Data. 2018;5:170191.
 
-12. Natural Earth. Natural Earth: free vector and raster map data [Internet].
-2024 [cited 2026 May 12]. Available at: https://www.naturalearthdata.com
+15. Natural Earth. Natural Earth: free vector and raster map data [Internet].
+2024 [cited 2026 May 13]. https://www.naturalearthdata.com
 
-13. Bracher J, Ray EL, Gneiting T, Reich NG. Evaluating epidemic forecasts in an
+16. Bracher J, Ray EL, Gneiting T, Reich NG. Evaluating epidemic forecasts in an
 interval format. PLoS Comput Biol. 2021;17:e1008618.
-
-14. World Bank Open Data. World development indicators [Internet]. Washington
-(DC): World Bank; 2024 [cited 2026 May 12]. Available at:
-https://data.worldbank.org
-
-15. Food and Agriculture Organization of the United Nations. FAOSTAT land use
-[Internet]. Rome: FAO; 2024 [cited 2026 May 12]. Available at:
-https://www.fao.org/faostat/en/#data/RL
 
 ---
 
@@ -572,7 +535,7 @@ EVI = enhanced vegetation index; QA = quality assurance.
 evaluation years. WIS = weighted interval score (lower is better); Coverage =
 90% empirical coverage (fraction of observed counts inside the 90% prediction
 interval, reported as numerator/total); Width = mean 90% interval width in
-cases per 100,000 population; MAE = mean absolute error against median
+reported cases; MAE = mean absolute error against median
 prediction; Brier = Brier score for any reported case (threshold ≥1 case).
 Bold indicates best value per column per evaluation year. NB = negative binomial.
 
@@ -590,7 +553,7 @@ are quality grade C (surveillance-system changes).
 
 **Figure 2.** Calibration–sharpness tradeoff for 2023 one-year-ahead
 probabilistic forecasts. Each point represents one model or covariate block.
-x-axis: mean 90% prediction interval width (cases per 100,000 population);
+x-axis: mean 90% prediction interval width (reported cases);
 y-axis: mean weighted interval score (lower is better). Point shape indicates
 model family: circles = simple surveillance-history baselines; squares =
 negative-binomial baselines; triangles = covariate blocks (gradient boosting);
@@ -605,8 +568,6 @@ counts (16/28, 57%); the empirical negative-binomial baseline (best coverage,
 ## TABLES
 
 **Table 1. Source and quality audit for the EU/EEA hantavirus incidence benchmark, 2019–2023.**
-
-[NOTE TO AUTHOR: Reproduce this table using Word's table tool (not as image).]
 
 | Component | Source | Years | Rows/Coverage | QA result | Manuscript use |
 |---|---|---|---|---|---|
@@ -623,8 +584,6 @@ Note: Belgium 2023 and Cyprus 2023 are quality grade C (surveillance-system chan
 
 **Table 2. Core benchmark performance for 2022 (validation) and 2023 (test) evaluation years.**
 
-[NOTE TO AUTHOR: Reproduce this table using Word's table tool (not as image).]
-
 | Year | Model | WIS | Coverage, n/N (%) | Width | MAE | Brier |
 |---|---|---|---|---|---|---|
 | 2022 | Country historical mean rate | 65.58 | 18/29 (62%) | 21.07 | 69.79 | 0.025 |
@@ -640,6 +599,6 @@ Note: Belgium 2023 and Cyprus 2023 are quality grade C (surveillance-system chan
 | 2023 | Best covariate block (land use) | 318.5 | 19/28 (68%) | 325.9 | 367.4 | 0.294 |
 | 2023 | Best penalized Poisson (land use) | 159.4 | 9/28 (32%) | 28.82 | 167.6 | 0.099 |
 
-WIS = weighted interval score (lower is better). Width = mean 90% interval width (cases per 100,000).
+WIS = weighted interval score (lower is better). Width = mean 90% interval width (reported cases).
 Bold indicates best value per column per evaluation year.
 † Penalized Poisson 2022 results reflect validation-year WIS used for tuning only; primary evaluation is the 2023 test year.

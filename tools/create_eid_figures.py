@@ -218,7 +218,7 @@ def _create_figure2_tradeoff(
                     color=style["color"],
                 )
 
-    ax.set_xlabel("Mean 90% prediction interval width (cases per 100,000)")
+    ax.set_xlabel("Mean 90% prediction interval width (reported cases)")
     ax.set_ylabel("Mean weighted interval score (WIS; lower = better)")
     ax.legend(loc="upper left", frameon=True, framealpha=0.9)
 
