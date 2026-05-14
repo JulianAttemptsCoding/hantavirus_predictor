@@ -125,6 +125,7 @@ def check_readiness(strict: bool = False) -> tuple[list[str], list[str]]:
         "author biography": "Biographical sketch",
         "orcid": "ORCID",
         "corresponding email": "Email:",
+        "eid author checklist": "Author Checklist",
     }
     combined = "\n".join([manuscript, cover, statements, appendix])
     for label, phrase in required_phrases.items():

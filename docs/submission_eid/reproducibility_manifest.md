@@ -23,7 +23,7 @@ verified immediately before journal upload.
 The current submission package is produced by this state-gated command sequence:
 
 ```powershell
-python tools/create_ecdc_case_table.py --accessed-date 2026-05-13
+python tools/create_ecdc_case_table.py --accessed-date 2026-05-14
 python tools/validate_international_cases.py --strict
 python tools/download_faostat_land_use.py
 python tools/create_terraclimate_manifest.py
@@ -32,6 +32,7 @@ python tools/aggregate_terraclimate_country_year.py
 python tools/build_international_dataset.py
 python tools/write_international_data_audit.py
 python tools/run_international_baselines.py
+python tools/run_markov_simulation.py
 python tools/run_feature_ablation.py
 python tools/run_count_models.py
 python tools/run_sensitivity_power.py

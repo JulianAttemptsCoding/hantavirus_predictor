@@ -3,6 +3,8 @@
 Last updated: 2026-05-14
 
 This manifest defines the active reproducibility path for the EID benchmark.
+The tracked submission snapshot is in `docs/submission_eid/`; generated raw and
+processed data remain ignored and rebuildable.
 
 ## Environment
 
@@ -10,14 +12,6 @@ Install from the repository root:
 
 ```powershell
 python -m pip install -e ".[dev,geo]"
-```
-
-Minimum QA:
-
-```powershell
-python -m pytest
-python -m ruff check src tests tools
-git diff --check
 ```
 
 ## Full Rebuild
@@ -35,17 +29,24 @@ python tools/build_international_dataset.py
 python tools/create_mod13c2_manifest.py
 python tools/write_international_data_audit.py
 python tools/run_international_baselines.py
+python tools/run_markov_simulation.py
 python tools/run_feature_ablation.py
 python tools/run_count_models.py
 python tools/run_sensitivity_power.py
+python tools/write_eid_model_inputs_table.py
+python tools/check_eid_model_inputs_table.py
+python tools/run_surveillance_quality_sensitivity.py
+python tools/run_country_influence.py
+python tools/write_calibration_localization.py
+python tools/run_detectability_screen.py --iterations 100
 python tools/create_eid_figures.py
 python tools/build_eid_docx.py
 python tools/check_publication_readiness.py
+python tools/check_eid_submission_readiness.py --strict
+python -m pytest
+python -m ruff check src tests tools
+git diff --check
 ```
-
-`tools/check_publication_readiness.py` is a legacy broad gate. The final EID
-package still needs `tools/check_eid_submission_readiness.py` as specified in
-`PUBLICATION_MASTER_PLAN.md`.
 
 ## Source Data Policy
 
@@ -56,14 +57,15 @@ Tracked:
 - Schemas.
 - Configs.
 - Documentation.
-- EID submission manuscript files and final figure/supplement artifacts.
+- EID manuscript and final submission artifacts.
+- EID report/table snapshot under `docs/submission_eid/`.
 - Empty `.gitkeep` placeholders for ignored data/report directories.
 
 Ignored:
 
 - Raw downloads.
 - Processed data.
-- Generated reports.
+- Generated root reports.
 - Root-level exploratory figures.
 - Model artifacts.
 - Credentials.
@@ -100,31 +102,31 @@ Natural Earth:
 
 MODIS:
 
-- Keep MODIS out of primary manuscript claims unless quality-masked aggregation passes
-  the inclusion gate.
+- Keep MODIS out of primary manuscript claims unless quality-masked aggregation
+  passes the inclusion gate.
 
 ## Archive and DOI
 
 Before final EID submission:
 
 1. Confirm the working tree is clean.
-2. Generate a final reproducibility manifest with commit hash, OS, Python version,
-   command list, row counts, figure DPI, and table paths.
+2. Generate or verify a final reproducibility manifest with commit hash, OS,
+   Python version, command list, row counts, figure DPI, and table paths.
 3. Create a clean git tag for the submission version.
-4. Deposit the clean archive on Zenodo.
+4. Deposit the clean archive on Zenodo or update the existing record.
 5. Confirm the DOI resolves and points to the final archive version.
 
-Do not upload old ZIP packages or the archive branch contents as the active EID package.
+Do not upload old ZIP packages or the archive branch contents as the active EID
+package.
 
-## Final Reproducibility Gate
+## Final Local Gate
 
-The package is not ready until:
+The package is locally ready for human portal preparation when all commands in
+the full rebuild/QA sequence pass and the strict EID checker reports:
 
-- ECDC annual totals reconcile.
-- Strict schema validation passes.
-- Baseline and covariate metrics include WIS, coverage, interval width, MAE,
-  deviance, and Brier score.
-- EID-specific sensitivity/influence/localization outputs exist.
-- No credentials are tracked.
-- `pytest`, `ruff`, `git diff --check`, and the future strict EID readiness
-  checker pass.
+```text
+EID readiness: PASS
+```
+
+Expected warnings are limited to human-only mailing address/phone and final
+DOI/archive verification.

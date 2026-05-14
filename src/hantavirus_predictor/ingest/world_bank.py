@@ -40,9 +40,12 @@ def fetch_indicator(
 
     rows: list[IndicatorValue] = []
     codes = sorted(set(iso3_codes))
-    for start in range(0, len(codes), 4):
+    chunk_size = 4
+    for start in range(0, len(codes), chunk_size):
         rows.extend(
-            _fetch_indicator_chunk(codes[start : start + 8], indicator, start_year, end_year)
+            _fetch_indicator_chunk(
+                codes[start : start + chunk_size], indicator, start_year, end_year
+            )
         )
     return rows
 

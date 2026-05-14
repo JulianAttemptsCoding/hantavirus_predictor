@@ -13,6 +13,7 @@ from hantavirus_predictor.ingest.world_bank import INDICATORS, fetch_indicators
 
 
 WORLD_BANK_CONTEXT_INDICATORS = ["SP.RUR.TOTL.ZS", "NY.GDP.PCAP.CD"]
+WORLD_BANK_CONTEXT_COLUMNS = [INDICATORS[indicator] for indicator in WORLD_BANK_CONTEXT_INDICATORS]
 DEFAULT_FAOSTAT_ZIP = Path("data/raw/faostat_land_use_normalized.zip")
 DEFAULT_TERRACLIMATE = Path("data/processed/terraclimate_country_year.csv")
 
@@ -39,7 +40,7 @@ def _world_bank_context(cases: pd.DataFrame) -> pd.DataFrame:
             RuntimeWarning,
             stacklevel=2,
         )
-        return pd.DataFrame(columns=["iso3", "year"])
+        return pd.DataFrame(columns=["iso3", "year", *WORLD_BANK_CONTEXT_COLUMNS])
     records = [
         {
             "iso3": value.iso3,
@@ -49,10 +50,10 @@ def _world_bank_context(cases: pd.DataFrame) -> pd.DataFrame:
         for value in values
     ]
     if not records:
-        return pd.DataFrame(columns=["iso3", "year"])
+        return pd.DataFrame(columns=["iso3", "year", *WORLD_BANK_CONTEXT_COLUMNS])
     long = pd.DataFrame.from_records(records)
     context = long.groupby(["iso3", "year"], as_index=False).first()
-    return context
+    return context.reindex(columns=["iso3", "year", *WORLD_BANK_CONTEXT_COLUMNS])
 
 
 def _join_faostat_land_use(cases: pd.DataFrame, faostat_zip: Path) -> pd.DataFrame:

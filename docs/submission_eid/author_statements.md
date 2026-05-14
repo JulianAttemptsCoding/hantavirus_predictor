@@ -40,6 +40,11 @@ Source data were obtained from:
 
 No individual-level, clinical, address-level, or restricted data were used.
 
+## EID Author Checklist Reminder
+
+The EID Author Checklist should be completed during portal submission, including
+the chatbot/AI-use disclosure and image-manipulation attestations.
+
 ## CRediT Author Contributions
 
 Julian Juan: Conceptualization, Data curation, Formal analysis, Investigation,

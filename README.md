@@ -43,11 +43,19 @@ python tools/aggregate_terraclimate_country_year.py
 python tools/build_international_dataset.py
 python tools/write_international_data_audit.py
 python tools/run_international_baselines.py
+python tools/run_markov_simulation.py
 python tools/run_feature_ablation.py
 python tools/run_count_models.py
 python tools/run_sensitivity_power.py
+python tools/write_eid_model_inputs_table.py
+python tools/check_eid_model_inputs_table.py
+python tools/run_surveillance_quality_sensitivity.py
+python tools/run_country_influence.py
+python tools/write_calibration_localization.py
+python tools/run_detectability_screen.py --iterations 100
 python tools/create_eid_figures.py
 python tools/build_eid_docx.py
+python tools/check_eid_submission_readiness.py --strict
 python -m pytest
 python -m ruff check src tests tools
 ```
@@ -60,7 +68,7 @@ Tracked scripts rebuild them.
 - `PUBLICATION_MASTER_PLAN.md` - active EID acceptance plan and QA gates.
 - `docs/submission_eid/` - current manuscript, cover letter, author statements,
   figures, supplement, and submission guide.
-- `docs/PROJECT_STATE.md` - concise current state and next work package.
+- `docs/PROJECT_STATE.md` - concise current state and human-only remaining items.
 - `docs/AGENT_HANDOFF.md` - future-agent start instructions.
 - `docs/data_dictionary.md` - EID benchmark data dictionary.
 - `docs/reproducibility_manifest.md` - rebuild and archive requirements.
