@@ -28,7 +28,7 @@ def _write_report(metrics: pd.DataFrame, report_path: Path) -> None:
     lines = [
         "# International Baseline Report",
         "",
-        "Status: first reproducible ECDC seed benchmark.",
+        "Status: reproducible ECDC seed benchmark.",
         "",
         "The current benchmark uses ECDC country-year reported hantavirus infection rows for "
         "2019-2023. It is sufficient to verify the modeling and QA pipeline, but not yet "

@@ -4,20 +4,30 @@ international_country_year:
     validation_years: [2022]
     test_years: [2023]
     rationale: >
-      The current ECDC seed table spans 2019-2023. This first frozen split keeps
-      the most recent complete year as test data and uses 2022 for model
-      selection while additional sources are being added.
-  rolling_origin:
+      The ECDC public panel spans 2019-2023. The primary split reserves 2023
+      as the held-out test year and uses 2022 for validation and model-selection
+      checks.
+
+  rolling_origin_sensitivity:
     - train_years: [2019, 2020]
       test_years: [2021]
     - train_years: [2019, 2020, 2021]
       test_years: [2022]
     - train_years: [2019, 2020, 2021, 2022]
       test_years: [2023]
-  leave_country_out:
+
+  surveillance_quality_sensitivity:
+    - "exclude Belgium 2023"
+    - "exclude Cyprus 2023"
+    - "exclude Belgium 2023 and Cyprus 2023"
+    - "retain flagged rows with flagged-row indicator"
+    - "exclude 2020 training rows where feasible"
+    - "exclude 2021 training rows where feasible"
+    - "exclude 2020-2021 training rows where feasible"
+
+  country_influence_sensitivity:
     unit: iso3
-    minimum_training_years: 3
-    note: >
-      Use after a second source system is added or after the ECDC panel grows;
-      current seed table is enough to exercise code paths but not to claim
-      robust spatial generalisation.
+    pre_specified_high_influence_countries: ["FIN", "DEU"]
+    rationale: >
+      ECDC reports that Finland and Germany accounted for 60.5 percent of
+      reported 2023 cases, so leave-one-country-out influence must be reported.

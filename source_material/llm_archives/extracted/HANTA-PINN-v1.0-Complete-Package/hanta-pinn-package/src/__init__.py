@@ -1,1 +1,0 @@
-"""HANTA-PINN source package."""

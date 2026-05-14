@@ -1,104 +1,107 @@
-# Hantavirus Predictor
+# EU/EEA Hantavirus Surveillance Benchmark
 
-Research-grade setup for an international hantavirus surveillance, reservoir,
-and reported-incidence benchmark project.
+Reproducible EU/EEA country-year benchmark for reported hantavirus incidence
+and EID-oriented evaluation of public-surveillance forecasting limits.
 
-This repository is not an operational public-health predictor. It is a
-rigor-first handoff for future agents to build a publishable paper without
-inheriting unsupported claims from the LLM-generated archive packages in
-`source_material/`.
+This repository is not an operational public-health predictor, a live risk
+dashboard, a clinical tool, or a within-country risk map. The active target is
+an *Emerging Infectious Diseases* Research article about what sparse annual
+public surveillance can and cannot support.
 
 ## Current Decision
 
-The live project should target:
+Active target:
 
-1. An ECDC/EU-EEA country-year reported-incidence benchmark as the primary publication path.
-2. Retrospective one-year-ahead evaluation, not true prospective forecasting.
-3. Emerging Infectious Diseases (EID, CDC) as the first journal target, with Scientific Data or BMC Public Health as fallbacks.
-4. Explicit syndrome and surveillance strata before any non-ECDC expansion.
-5. U.S./NEON rodent serology as mechanistic support and a fallback reservoir-risk paper.
-6. County-level U.S. human prediction only after a state health department, CDC, or IRB-approved partner provides data.
+1. Journal: *Emerging Infectious Diseases*.
+2. Article type: Research.
+3. Scope: EU/EEA country-year reported hantavirus incidence, 2019-2023.
+4. Evaluation: retrospective one-year-ahead probabilistic benchmark.
+5. Data: public surveillance and public covariates only.
+6. Claim: public covariates did not provide stable, calibrated improvement over
+   surveillance-history baselines; surveillance standardization and uncertainty
+   reporting are the practical bottlenecks.
 
-The supplied ZIP packages are preserved and audited, but their code is not copied into production because their tests either fail or depend on uninstalled heavy packages, and their reports overclaim readiness.
+Archived legacy ZIPs, old Overleaf output, pre-EID drafts, and extracted LLM
+packages were moved off the active branch. The preserved snapshot is on:
+
+```text
+codex/archive-pre-eid-cleanup-20260514
+```
 
 ## Quick Start
 
 ```powershell
 python -m venv .venv
-.\\.venv\\Scripts\\Activate.ps1
+.\.venv\Scripts\Activate.ps1
 python -m pip install -e ".[dev,geo]"
-python tools/summarize_neon_products.py
-python tools/create_ecdc_case_table.py --accessed-date 2026-05-12
+python tools/create_ecdc_case_table.py --accessed-date 2026-05-14
 python tools/validate_international_cases.py --strict
 python tools/download_faostat_land_use.py
 python tools/create_terraclimate_manifest.py
 python tools/download_natural_earth_countries.py
 python tools/aggregate_terraclimate_country_year.py
 python tools/build_international_dataset.py
-python tools/create_mod13c2_manifest.py
 python tools/write_international_data_audit.py
 python tools/run_international_baselines.py
-python tools/plot_international_baselines.py
-python tools/run_markov_simulation.py
-python tools/write_paper_readiness_report.py
-python tools/check_publication_readiness.py
-pytest
+python tools/run_feature_ablation.py
+python tools/run_count_models.py
+python tools/run_sensitivity_power.py
+python tools/create_eid_figures.py
+python tools/build_eid_docx.py
+python -m pytest
+python -m ruff check src tests tools
 ```
+
+Generated `data/`, `reports/`, and root-level figure outputs are ignored by git.
+Tracked scripts rebuild them.
 
 ## Repository Map
 
-- `PUBLICATION_MASTER_PLAN.md` - authoritative audited plan from repo state to publication.
-- `docs/SOURCE_ARCHIVE_AUDIT.md` - what is inside the three ZIP packages and what is reusable.
-- `docs/RESEARCH_CLAIMS_AUDIT.md` - checked claims, citations, and project decisions.
-- `docs/PROJECT_STATE.md` - current checkpoint, QA status, and next work package.
-- `docs/data_dictionary.md` - publication-track data dictionary.
-- `docs/reproducibility_manifest.md` - rebuild, attribution, and archive manifest.
-- `docs/reviewer_response_playbook.md` - reviewer defense notes.
-- `docs/DATA_REQUIREMENTS.md` - exact data inventory and what must be provided manually.
-- `docs/PUBLICATION_ROADMAP.md` - spec-by-spec plan from this repo to journal submission.
-- `docs/PUBLICATION_FIRST_DIFFERENTIATION_PLAN.md` - how to publish something distinct from HantavirusMap.
-- `docs/PAPER_IMPLEMENTATION_PLAN_AND_BLOCKERS.md` - exact implementation plan and blocker responses.
-- `docs/INTERNATIONAL_PUBLICATION_AND_MARKETING_PLAN.md` - international pivot, QA,
-  implementation specs, and audience positioning.
-- `docs/BLOCKER_RESPONSE_PLAN.md` - response to the blockers in the root text files.
-- `docs/AGENT_HANDOFF.md` - next-agent instructions.
-- `src/hantavirus_predictor/` - tested utilities for source metadata, ingestion, features,
-  metrics, and first-pass baselines.
-- `tools/` - setup, validation, data-build, audit, and benchmark scripts.
-- `source_material/llm_archives/extracted/` - extracted LLM packages for reference only.
+- `PUBLICATION_MASTER_PLAN.md` - active EID acceptance plan and QA gates.
+- `docs/submission_eid/` - current manuscript, cover letter, author statements,
+  figures, supplement, and submission guide.
+- `docs/PROJECT_STATE.md` - concise current state and next work package.
+- `docs/AGENT_HANDOFF.md` - future-agent start instructions.
+- `docs/data_dictionary.md` - EID benchmark data dictionary.
+- `docs/reproducibility_manifest.md` - rebuild and archive requirements.
+- `docs/reviewer_response_playbook.md` - reviewer-risk response notes.
+- `configs/validation_splits.yaml` - frozen temporal split.
+- `configs/data_catalog.yaml` - active EID public data sources.
+- `configs/modeling_plan.yaml` - active EID model promotion gates.
+- `src/hantavirus_predictor/` - tested package code.
+- `tools/` - data build, validation, modeling, reporting, and EID artifact scripts.
+- `tests/` - regression and QA tests.
 
-## Non-Negotiable Scientific Guardrails
+## Scientific Guardrails
 
-- Do not claim county-level human case prediction from public CDC data; CDC's current hantavirus page says public case data are state-level only for privacy.
-- Do not pool HFRS and HPS/HCPS as one disease process without explicit syndrome, region, and source-system strata.
-- Do not claim the model predicts human infections unless validated against human case data at the matching spatial and temporal resolution.
-- Do not train primarily on synthetic trajectories unless the manuscript frames them as priors or regularizers, not evidence.
-- Do not advance a PINN, graph neural network, or time-series foundation model unless it beats SARIMAX, GAM/GLMM, and gradient-boosted baselines under strict temporal and spatial validation.
+- Model reported cases/incidence, not true infections.
+- Do not call the evaluation prospective.
+- Do not claim operational prediction, individual risk, county-level human risk,
+  or within-country risk.
+- Do not make causal climate or land-use claims.
+- Do not promote a model on WIS alone; coverage and interval width are required.
+- Keep MODIS/vegetation claims out unless quality-masked aggregation passes a
+  documented inclusion gate.
+- Keep Andes-virus and cruise-ship context separate from the EU/EEA HFRS
+  country-year benchmark.
 
 ## Current Data State
 
-The first ECDC seed milestone is reproducible:
+The reproducible ECDC seed milestone contains 142 EU/EEA country-year rows.
+Annual totals reconcile to ECDC for 2019-2023:
 
-- `tools/create_ecdc_case_table.py` creates the ignored manual ECDC country-year table.
-- The ECDC table carries EU/EEA status and surveillance-completeness flags, including
-  Belgium 2023 and Cyprus 2023 caveats.
-- `tools/build_international_dataset.py` joins World Bank population, rurality, and GDP context.
-- `tools/download_faostat_land_use.py` adds FAOSTAT land-use features to the processed table.
-- `tools/create_terraclimate_manifest.py`, `tools/download_natural_earth_countries.py`, and
-  `tools/aggregate_terraclimate_country_year.py` add country-year TerraClimate climate and
-  water-balance covariates.
-- `tools/create_mod13c2_manifest.py` creates the MODIS source manifest; quality-masked
-  vegetation aggregation is optional future work until it is implemented and audited.
-- `tools/write_international_data_audit.py` writes `reports/01_international_data_audit.md`.
-- `tools/run_international_baselines.py` writes quantile forecasts, WIS, relative WIS,
-  empirical coverage, interval width, MAE, deviance, Brier metrics, and
-  `reports/02_international_baselines.md`.
+| Year | Reported cases |
+| --- | ---: |
+| 2019 | 4,088 |
+| 2020 | 1,693 |
+| 2021 | 4,947 |
+| 2022 | 2,185 |
+| 2023 | 1,885 |
 
-Generated `data/` and `reports/` outputs are ignored by git; tracked scripts rebuild them.
+Belgium 2023 and Cyprus 2023 carry surveillance-quality caveats and must be
+tested in sensitivity analyses.
 
 ## GitHub
-
-Remote:
 
 ```powershell
 origin https://github.com/JulianAttemptsCoding/hantavirus_predictor.git

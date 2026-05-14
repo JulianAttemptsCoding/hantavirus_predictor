@@ -1,12 +1,11 @@
-# Author Statements — EID Submission
+# Author Statements for EID Submission
 
 ## Ethics Statement
 
-This study used aggregate, publicly available surveillance data at the country-year
-level. No individual-level, clinical, address-level, or restricted human-subject
-data were accessed. All data are freely available from ECDC, World Bank, FAOSTAT,
-TerraClimate, and Natural Earth. Institutional review was not required for secondary
-analysis of publicly available aggregate data.
+This study used aggregate, publicly available surveillance data at the
+country-year level. No individual-level, clinical, address-level, or restricted
+human-subject data were accessed. Institutional review was not required for
+secondary analysis of publicly available aggregate data.
 
 ## Funding Statement
 
@@ -18,8 +17,9 @@ The author declares no competing interests.
 
 ## AI Disclosure
 
-Artificial intelligence assistance was used for manuscript planning, language
-editing, and pre-submission quality checks. The author verified all analyses,
+Artificial intelligence tools were used to assist with manuscript planning,
+language editing, and pre-submission quality checks. No confidential or
+nonpublic data were entered into AI tools. The author verified all analyses,
 references, and claims and accepts responsibility for the final manuscript. No
 AI-generated figures were used.
 
@@ -27,15 +27,11 @@ AI-generated figures were used.
 
 All analysis code, processed public-data tables, data dictionaries, and
 reproducibility scripts are archived at https://doi.org/10.5281/zenodo.20150542.
-To obtain your DOI:
-1. Go to https://zenodo.org and log in (free account).
-2. Create new upload → upload a zip of this repository.
-3. Set access to Open Access, license MIT, resource type Software.
-4. Reserve DOI before publishing if you want to add it to the manuscript first.
-5. Publish → copy the DOI (format: 10.5281/zenodo.XXXXXXX).
-6. DOI https://doi.org/10.5281/zenodo.20150542 already inserted in all files.
+Before final submission, this DOI must be verified against the final clean
+archive version.
 
 Source data were obtained from:
+
 - ECDC Annual Epidemiological Reports (https://www.ecdc.europa.eu)
 - World Bank Open Data (https://data.worldbank.org)
 - FAOSTAT (https://www.fao.org/faostat)
@@ -47,12 +43,12 @@ No individual-level, clinical, address-level, or restricted data were used.
 ## CRediT Author Contributions
 
 Julian Juan: Conceptualization, Data curation, Formal analysis, Investigation,
-Methodology, Software, Validation, Visualization, Writing – original draft,
-Writing – review and editing.
+Methodology, Software, Validation, Visualization, Writing - original draft,
+Writing - review and editing.
 
 ## Author Biography
 
-Julian Juan is an independent researcher interested in reproducible infectious-
+Julian Juan is an independent researcher interested in reproducible infectious
 disease surveillance, probabilistic evaluation, and public-health modeling.
 
 ## ORCID
@@ -61,5 +57,5 @@ disease surveillance, probabilistic evaluation, and public-health modeling.
 
 ## Keywords
 
-hantavirus; zoonoses; disease surveillance; EU/EEA; probabilistic forecasting;
-calibration; public health communication
+hantavirus; zoonoses; disease surveillance; European Union; European Economic
+Area; probabilistic forecasting; calibration; public health surveillance

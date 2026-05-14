@@ -10,15 +10,29 @@ import re
 from pathlib import Path
 
 from docx import Document
-from docx.enum.text import WD_ALIGN_PARAGRAPH
+from docx.enum.text import WD_ALIGN_PARAGRAPH, WD_LINE_SPACING
+from docx.oxml import OxmlElement
+from docx.oxml.ns import qn
 from docx.shared import Pt, Inches
 ROOT = Path(__file__).resolve().parents[1]
 MD_PATH = ROOT / "docs" / "submission_eid" / "manuscript_eid.md"
 DOCX_PATH = ROOT / "docs" / "submission_eid" / "manuscript_eid.docx"
+COVER_MD_PATH = ROOT / "docs" / "submission_eid" / "cover_letter_eid.md"
+COVER_DOCX_PATH = ROOT / "docs" / "submission_eid" / "cover_letter_eid.docx"
+STATEMENTS_MD_PATH = ROOT / "docs" / "submission_eid" / "author_statements.md"
+STATEMENTS_DOCX_PATH = ROOT / "docs" / "submission_eid" / "author_statements.docx"
+APPENDIX_MD_PATH = ROOT / "docs" / "submission_eid" / "supplements" / "Appendix_methods_eid.md"
+APPENDIX_DOCX_PATH = ROOT / "docs" / "submission_eid" / "supplements" / "Appendix_methods_eid.docx"
 
 
-def _set_font(run, bold: bool = False, italic: bool = False, size: int = 12) -> None:
-    run.font.name = "Times New Roman"
+def _set_font(
+    run,
+    bold: bool = False,
+    italic: bool = False,
+    size: int = 12,
+    font_name: str = "Times New Roman",
+) -> None:
+    run.font.name = font_name
     run.font.size = Pt(size)
     run.bold = bold
     run.italic = italic
@@ -28,8 +42,37 @@ def _para_format(para, space_before: int = 0, space_after: int = 0) -> None:
     para.paragraph_format.space_before = Pt(space_before)
     para.paragraph_format.space_after = Pt(space_after)
     para.paragraph_format.alignment = WD_ALIGN_PARAGRAPH.LEFT
-    # Double spacing
-    para.paragraph_format.line_spacing = Pt(24)
+    para.paragraph_format.line_spacing_rule = WD_LINE_SPACING.DOUBLE
+
+
+def _enable_line_numbering(doc: Document) -> None:
+    for section in doc.sections:
+        sect_pr = section._sectPr
+        existing = sect_pr.find(qn("w:lnNumType"))
+        if existing is not None:
+            sect_pr.remove(existing)
+        ln_num = OxmlElement("w:lnNumType")
+        ln_num.set(qn("w:start"), "1")
+        ln_num.set(qn("w:countBy"), "1")
+        ln_num.set(qn("w:restart"), "continuous")
+        sect_pr.append(ln_num)
+
+
+def _add_marked_runs(para, text: str, size: int = 12, font_name: str = "Times New Roman") -> None:
+    text = text.replace("`", "")
+    parts = re.split(r"(\*\*[^*]+\*\*|\*[^*]+\*)", text)
+    for part in parts:
+        if not part:
+            continue
+        if part.startswith("**") and part.endswith("**"):
+            run = para.add_run(part[2:-2])
+            _set_font(run, bold=True, size=size, font_name=font_name)
+        elif part.startswith("*") and part.endswith("*"):
+            run = para.add_run(part[1:-1])
+            _set_font(run, italic=True, size=size, font_name=font_name)
+        else:
+            run = para.add_run(part)
+            _set_font(run, size=size, font_name=font_name)
 
 
 def _add_heading(doc: Document, text: str, level: int) -> None:
@@ -44,24 +87,26 @@ def _add_body(doc: Document, text: str, italic: bool = False) -> None:
         return
     para = doc.add_paragraph()
     _para_format(para)
-    run = para.add_run(text)
-    _set_font(run, italic=italic)
+    if italic:
+        run = para.add_run(text)
+        _set_font(run, italic=True)
+    else:
+        _add_marked_runs(para, text)
 
 
 def _add_table(doc: Document, header: list[str], rows: list[list[str]]) -> None:
     table = doc.add_table(rows=1 + len(rows), cols=len(header))
-    table.style = "Table Grid"
     # Header row
     for i, cell_text in enumerate(header):
         cell = table.rows[0].cells[i]
-        run = cell.paragraphs[0].add_run(cell_text)
-        _set_font(run, bold=True, size=10)
+        _add_marked_runs(cell.paragraphs[0], cell_text, size=8, font_name="Arial")
+        for run in cell.paragraphs[0].runs:
+            run.bold = True
     # Data rows
     for r_idx, row in enumerate(rows):
         for c_idx, cell_text in enumerate(row):
             cell = table.rows[r_idx + 1].cells[c_idx]
-            run = cell.paragraphs[0].add_run(cell_text)
-            _set_font(run, size=10)
+            _add_marked_runs(cell.paragraphs[0], cell_text, size=8, font_name="Arial")
     doc.add_paragraph()  # spacer after table
 
 
@@ -90,7 +135,7 @@ def build_docx(md_path: Path, docx_path: Path) -> None:
     style = doc.styles["Normal"]
     style.font.name = "Times New Roman"
     style.font.size = Pt(12)
-    style.paragraph_format.line_spacing = Pt(24)
+    style.paragraph_format.line_spacing_rule = WD_LINE_SPACING.DOUBLE
     style.paragraph_format.space_before = Pt(0)
     style.paragraph_format.space_after = Pt(0)
 
@@ -201,14 +246,14 @@ def build_docx(md_path: Path, docx_path: Path) -> None:
         if header:
             _add_table(doc, header, rows)
 
+    _enable_line_numbering(doc)
     docx_path.parent.mkdir(parents=True, exist_ok=True)
     doc.save(docx_path)
     print(f"Saved: {docx_path}")
-    print()
-    print("IMPORTANT: Open in Word and enable line numbering:")
-    print("  Layout -> Page Setup -> Line Numbers -> Continuous")
-    print("Then verify formatting and recreate any bold/italic as needed.")
 
 
 if __name__ == "__main__":
     build_docx(MD_PATH, DOCX_PATH)
+    build_docx(COVER_MD_PATH, COVER_DOCX_PATH)
+    build_docx(STATEMENTS_MD_PATH, STATEMENTS_DOCX_PATH)
+    build_docx(APPENDIX_MD_PATH, APPENDIX_DOCX_PATH)

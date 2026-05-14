@@ -1,182 +1,75 @@
 project_scope:
-  primary_target: "international country-year reported human hantavirus incidence, stratified by syndrome and surveillance system"
-  secondary_target: "NEON site-month rodent hantavirus seroprevalence as mechanistic support and fallback manuscript"
-  tertiary_target: "state-level or partner-approved U.S. human spillover risk"
-  blocked_target: "public county-level human hantavirus case prediction"
-  publication_decision: "pivot to international country-level first; keep U.S./NEON as secondary validation"
+  active_target: "Emerging Infectious Diseases Research article"
+  geography: "European Union and European Economic Area"
+  unit: "country-year"
+  years: [2019, 2020, 2021, 2022, 2023]
+  outcome: "reported annual hantavirus cases and reported incidence"
 
 sources:
-  international_country_cases:
-    path: "data/manual/international_country_cases.csv"
-    schema: "schemas/international_country_cases.schema.yaml"
-    auth: "public manual extraction or partner-approved aggregate"
-    role: "primary international human surveillance label"
-    required_columns:
-      - "iso3"
-      - "country"
-      - "region"
-      - "syndrome"
-      - "pathogen_or_virus"
-      - "case_definition"
-      - "reporting_system"
-      - "year"
-      - "cases"
-      - "deaths"
-      - "population"
-      - "source_url"
-      - "source_title"
-      - "accessed_date"
-      - "source_type"
-      - "quality_grade"
-      - "notes"
-    qa:
-      - "run python tools/validate_international_cases.py before modeling"
-      - "do not pool HFRS and HPS/HCPS without syndrome as a model stratum"
-      - "exclude quality_grade D rows from primary model"
-      - "document provisional counts and reporting-system changes"
-
   ecdc_hantavirus_surveillance:
     url: "https://www.ecdc.europa.eu/en/publications-data/hantavirus-infection-annual-epidemiological-report-2023"
     auth: "none"
-    role: "primary country-year anchor for EU/EEA hantavirus infection/HFRS"
-    extraction: "manual or surveillance-export ingestion with source citation"
+    role: "primary country-year reported-case outcome"
+    key_metadata:
+      report_publication_date: "2025-03-07"
+      tessy_retrieval_date: "2024-11-06"
+      reported_2023_cases: 1885
+      reporting_countries_2023: 28
+      finland_germany_case_share_2023_percent: 60.5
     qa:
-      - "record annual report year and TESSy retrieval date"
-      - "compare extracted totals to ECDC headline totals"
-      - "tag all rows as Europe/ECDC source_system"
-
-  paho_hantavirus_alerts:
-    url: "https://www.paho.org/sites/default/files/2025-12/2025-12-19-epidemiological-alert-hantavirus-engfinal.pdf"
-    auth: "none"
-    role: "Americas HPS/HCPS extension and recent outbreak context"
-    extraction: "manual PDF extraction plus cited national-source lookup"
-    qa:
-      - "flag provisional epidemiological-week totals"
-      - "keep HPS/HCPS separate from HFRS"
-      - "do not use PAHO alerts as a complete long-term series unless country backfills exist"
-
-  china_hfrs_surveillance:
-    url: "https://weekly.chinacdc.cn/en/article/doi/10.46234/ccdcw2025.141"
-    auth: "none"
-    role: "large HFRS external validation and sensitivity analysis"
-    extraction: "manual extraction from article tables/figures where permissible"
-    qa:
-      - "store article DOI and figure/table provenance"
-      - "model as separate source_system; do not assume comparability with ECDC"
+      - "Reconcile annual totals for 2019-2023."
+      - "Flag Belgium 2023 as not comprehensive."
+      - "Flag Cyprus 2023 as unspecified."
+      - "Exclude UK rows from the primary panel."
 
   world_bank_indicators:
-    url: "https://datahelpdesk.worldbank.org/knowledgebase/articles/889392-about-the-indicators-api-documentation"
+    url: "https://data.worldbank.org"
     auth: "none"
     indicators:
       - "SP.POP.TOTL"
       - "SP.RUR.TOTL.ZS"
-      - "NY.GDP.PCAP.CD"
-    role: "country-year denominators and reporting/context covariates"
-
-  terraclimate_global:
-    url: "https://www.climatologylab.org/terraclimate.html"
-    auth: "none"
-    variables:
-      - "precipitation"
-      - "tmin"
-      - "tmax"
-      - "vapor pressure deficit"
-      - "soil moisture"
-      - "climate water deficit"
-    role: "monthly global climate covariates aggregated to country-year lags"
-
-  mod13c2_global_vegetation:
-    url: "https://lpdaac.usgs.gov/products/mod13c2v061/"
-    auth: "NASA Earthdata account"
-    variables:
-      - "NDVI"
-      - "EVI"
-    role: "monthly global vegetation/productivity covariates"
-    qa:
-      - "store DOI and access date"
-      - "apply product quality flags when using gridded extracts"
+      - "NY.GDP.PCAP.PP.KD"
+    role: "population denominator and demographic/economic context"
 
   faostat_land_use:
     url: "https://www.fao.org/faostat/en/#data/RL"
     auth: "none"
-    role: "country-year land-use covariates such as cropland, forest, and agricultural area"
+    role: "country-year land-use covariates"
 
-  neon_hantavirus_serology:
-    product_id: "DP1.10064.001"
-    url: "https://data.neonscience.org/api/v0/products/DP1.10064.001"
+  terraclimate:
+    url: "https://www.climatologylab.org/terraclimate.html"
     auth: "none"
-    expected_tables:
-      - "rpt_bloodtesting"
-    join_keys:
-      - "bloodSampleID"
-    role: "primary infection-status label"
-    qa:
-      - "deduplicate bloodSampleID before joins"
-      - "count positives, negatives, indeterminates by site-month and species"
-      - "do not extrapolate serology after 2019 as ground truth"
-
-  neon_small_mammal_box_trapping:
-    product_id: "DP1.10072.001"
-    url: "https://data.neonscience.org/api/v0/products/DP1.10072.001"
-    auth: "none"
-    expected_tables:
-      - "mam_pertrapnight"
-      - "mam_perplotnight"
-    role: "abundance, trap effort, species, and individual-level covariates"
-    qa:
-      - "use trap nights as denominator for abundance proxies"
-      - "honor samplingImpractical and site closure flags"
-      - "stratify by reservoir species instead of pooling all rodents by default"
-
-  cdc_hantavirus_public:
-    url: "https://www.cdc.gov/hantavirus/data-research/cases/index.html"
-    auth: "none"
-    role: "state-level human case context and external plausibility check"
-    qa:
-      - "document that public CDC county-level data are unavailable"
-      - "do not fit county-month human models without restricted partner data"
-
-  daymet:
-    url: "https://daymet.ornl.gov/"
-    auth: "none"
+    role: "country-year climate and water-balance covariates"
     variables:
-      - "tmin"
-      - "tmax"
-      - "prcp"
-      - "vp"
-      - "srad"
-      - "swe"
-      - "dayl"
-    role: "site-scale weather covariates"
+      - "temperature"
+      - "precipitation"
+      - "maximum temperature"
+      - "minimum temperature"
+      - "soil moisture"
+      - "Palmer Drought Severity Index"
 
-  modis_viirs_appeears:
-    url: "https://www.earthdata.nasa.gov/data/tools/appeears"
+  natural_earth:
+    url: "https://www.naturalearthdata.com"
+    auth: "none"
+    role: "country boundaries for aggregation and maps"
+
+  modis_mod13c2:
+    url: "https://lpdaac.usgs.gov/products/mod13c2v061/"
     auth: "NASA Earthdata account"
-    variables:
-      - "NDVI"
-      - "EVI"
-      - "land surface temperature"
-      - "quality flags"
-    role: "vegetation/productivity and habitat proxies"
-    qa:
-      - "store AppEEARS request JSON and generated README"
-      - "mask or weight by quality flags"
+    role: "candidate vegetation covariates only"
+    status: "excluded from primary claims until quality-masked aggregation passes inclusion gate"
 
-  nlcd:
-    url: "https://www.usgs.gov/centers/eros/science/annual-nlcd-data-access"
-    auth: "none or requester-pays AWS depending on access path"
-    role: "annual land cover, developed/open area, forest/grassland features"
-
-  restricted_county_cases:
-    path: "data/manual/cdc_county_month_cases.csv"
-    auth: "DUA, IRB, or state health department approval"
-    role: "only valid source for county-level human spillover validation"
-    required_columns:
-      - "county_fips"
-      - "report_year"
-      - "report_month"
-      - "cases"
-      - "condition"
-      - "source_url_or_dua_id"
-      - "release_date"
-      - "suppression_flag"
+data_policy:
+  tracked:
+    - "source code"
+    - "tests"
+    - "schemas"
+    - "configs"
+    - "documentation"
+    - "EID manuscript and final submission artifacts"
+  ignored:
+    - "raw downloads"
+    - "processed data"
+    - "generated reports"
+    - "credentials"
+    - "ad hoc ZIP archives"

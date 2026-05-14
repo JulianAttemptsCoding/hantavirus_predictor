@@ -23,6 +23,7 @@ cdsapirc*
 nasa earthdata acc info.txt
 
 # Large and derived data
+*.zip
 data/raw/*
 data/interim/*
 data/processed/*
@@ -40,6 +41,10 @@ reports/*
 /models/
 outputs/
 figures/
+!docs/submission_eid/figures/
+!docs/submission_eid/figures/*
+!docs/submission_eid/supplements/
+!docs/submission_eid/supplements/*
 mlruns/
 wandb/
 

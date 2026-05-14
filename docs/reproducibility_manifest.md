@@ -1,13 +1,12 @@
 # Reproducibility Manifest
 
-Last updated: 2026-05-12
+Last updated: 2026-05-14
 
-This manifest defines the minimum reproducibility package required before
-journal submission.
+This manifest defines the active reproducibility path for the EID benchmark.
 
 ## Environment
 
-Install from repo root:
+Install from the repository root:
 
 ```powershell
 python -m pip install -e ".[dev,geo]"
@@ -18,14 +17,15 @@ Minimum QA:
 ```powershell
 python -m pytest
 python -m ruff check src tests tools
+git diff --check
 ```
 
-## Rebuild Commands
+## Full Rebuild
 
-Run from repo root:
+Run from the repository root:
 
 ```powershell
-python tools/create_ecdc_case_table.py --accessed-date 2026-05-12
+python tools/create_ecdc_case_table.py --accessed-date 2026-05-14
 python tools/validate_international_cases.py --strict
 python tools/download_faostat_land_use.py
 python tools/create_terraclimate_manifest.py
@@ -35,15 +35,17 @@ python tools/build_international_dataset.py
 python tools/create_mod13c2_manifest.py
 python tools/write_international_data_audit.py
 python tools/run_international_baselines.py
-python tools/plot_international_baselines.py
 python tools/run_feature_ablation.py
 python tools/run_count_models.py
-python tools/create_ijhg_maps.py
 python tools/run_sensitivity_power.py
-python tools/run_markov_simulation.py
-python tools/write_paper_readiness_report.py
+python tools/create_eid_figures.py
+python tools/build_eid_docx.py
 python tools/check_publication_readiness.py
 ```
+
+`tools/check_publication_readiness.py` is a legacy broad gate. The final EID
+package still needs `tools/check_eid_submission_readiness.py` as specified in
+`PUBLICATION_MASTER_PLAN.md`.
 
 ## Source Data Policy
 
@@ -54,33 +56,35 @@ Tracked:
 - Schemas.
 - Configs.
 - Documentation.
-- Empty `.gitkeep` placeholders.
+- EID submission manuscript files and final figure/supplement artifacts.
+- Empty `.gitkeep` placeholders for ignored data/report directories.
 
 Ignored:
 
 - Raw downloads.
 - Processed data.
-- Reports.
-- Figures.
+- Generated reports.
+- Root-level exploratory figures.
 - Model artifacts.
 - Credentials.
+- Ad hoc ZIP archives.
 
 Credential rule:
 
 - `nasa earthdata acc info.txt` must stay ignored.
 - Do not print, stage, or commit credentials.
 
-## Source Attribution Requirements
+## Source Attribution
 
 ECDC:
 
 - Cite the ECDC Annual Epidemiological Report for 2023.
-- Acknowledge ECDC as the surveillance source.
+- Preserve 2019-2023 total reconciliation.
+- Preserve Belgium 2023 and Cyprus 2023 surveillance caveats.
 
 World Bank:
 
-- Dataset terms default to CC BY 4.0 unless specifically labeled otherwise.
-- Attribute World Bank data in data availability and relevant tables.
+- Attribute World Bank Open Data for population, rural population, and GDP context.
 
 FAOSTAT:
 
@@ -92,39 +96,35 @@ TerraClimate:
 
 Natural Earth:
 
-- Public domain. Recommended attribution: "Made with Natural Earth. Free
-  vector and raster map data at naturalearthdata.com."
+- Attribute Natural Earth for map boundaries.
 
 MODIS:
 
-- Use only MOD13C2 Version 6.1 unless the plan is updated.
-- Record product version, access date, granule list, QA mask, and checksums.
+- Keep MODIS out of primary manuscript claims unless quality-masked aggregation passes
+  the inclusion gate.
 
-## Checksums And Archive
+## Archive and DOI
 
-Before submission:
+Before final EID submission:
 
-1. Generate SHA-256 checksums for final processed tables and reports.
-2. Create a GitHub release tag matching the manuscript version.
-3. Deposit final processed tables, documentation, and code snapshot on Zenodo
-   or OSF if source licenses allow redistribution.
-4. Add DOI to the manuscript data availability statement.
+1. Confirm the working tree is clean.
+2. Generate a final reproducibility manifest with commit hash, OS, Python version,
+   command list, row counts, figure DPI, and table paths.
+3. Create a clean git tag for the submission version.
+4. Deposit the clean archive on Zenodo.
+5. Confirm the DOI resolves and points to the final archive version.
 
-Large-file handling:
-
-- Do not commit raw downloads above normal git size limits.
-- Document exact source URLs, access dates, and checksums.
-- Use Zenodo/OSF for publication snapshots, not ad hoc zip packages.
+Do not upload old ZIP packages or the archive branch contents as the active EID package.
 
 ## Final Reproducibility Gate
 
-The publication package is not ready until:
+The package is not ready until:
 
 - ECDC annual totals reconcile.
 - Strict schema validation passes.
-- Baseline metrics include WIS, relative WIS, coverage, interval width, MAE,
+- Baseline and covariate metrics include WIS, coverage, interval width, MAE,
   deviance, and Brier score.
-- TerraClimate per-variable missingness is reported.
-- Non-comprehensive surveillance rows are flagged.
+- EID-specific sensitivity/influence/localization outputs exist.
 - No credentials are tracked.
-- `pytest`, `ruff`, and `git diff --check` pass.
+- `pytest`, `ruff`, `git diff --check`, and the future strict EID readiness
+  checker pass.

@@ -1,73 +1,79 @@
 # Reviewer Response Playbook
 
-Last updated: 2026-05-12
+Last updated: 2026-05-14
 
-This file is a compact defense guide for the publication-track manuscript.
+This is a compact defense guide for the EID manuscript.
 
 ## What Does This Add Beyond ECDC Tables?
 
-ECDC provides authoritative surveillance totals. This project adds a frozen,
-open, reproducible benchmark that links those labels to public demographic,
-land-use, and climate covariates, evaluates probabilistic one-year-ahead
-retrospective predictions, and quantifies whether covariates improve over
-simple surveillance baselines.
+ECDC provides authoritative surveillance totals. This project adds a reproducible
+benchmark that links those labels to public covariates, compares forecasts with
+strong surveillance-history baselines, and quantifies calibration and sharpness
+with held-out country-year observations.
 
-## How Is This Different From HantavirusMap?
+## Why Is A Negative Result Publishable?
 
-HantavirusMap is a live public signal tracker. This project is a benchmark:
-frozen labels, documented source provenance, reproducible covariate joins,
-calibration metrics, ablation tests, and negative results retained.
+Because the result identifies a practical public-health bottleneck. Sparse annual
+public surveillance and heterogeneous completeness metadata limit what calibrated
+country-level forecasting can support. The paper should not say "we built a
+predictor"; it should say "we tested the public-data forecasting ceiling."
 
-## How Is This Different From Zeimes Et Al. 2015?
+## Why Country-Year Rather Than District Or Monthly Data?
 
-Zeimes et al. studied spatial distribution and environmental risk of human
-hantavirus cases in Europe. This project studies country-year reported
-incidence as a temporal benchmark with probabilistic evaluation and
-source-audited public covariates.
+Country-year ECDC reports are the public cross-national labels that can be
+audited and reproduced across EU/EEA countries. District-level or monthly
+modeling would answer a different question and often requires country-specific
+or nonpublic data systems.
 
-## Why Country-Year Rather Than County Or District?
+## Does This Contradict German Puumala Forecasting Work?
 
-The paper is limited to free public harmonized surveillance. Country-year ECDC
-reports are the available cross-national public labels. More granular human
-data are often privacy-limited; CDC explicitly states that U.S. county-level
-hantavirus data cannot be provided to protect identities.
+No. Kazasidis and Jacob 2023 and Kazasidis, Geduhn, and Jacob 2024 use richer
+German district-level PUUV data and biologically specific predictors. This
+project tests a harder and coarser public EU/EEA country-year setting.
 
-## Why Not PAHO Or China In Version 1?
+## Why Reported Cases Instead Of True Infections?
 
-PAHO alerts are event-based Hantavirus Pulmonary Syndrome signals in the
-Americas. China CDC Weekly reports HFRS with PLAD/county structure and HTNV/
-SEOV diversity. These are different source systems, syndromes, viruses, and
-spatial scales. Pooling them with ECDC would create false comparability.
+The public outcome is reported annual cases. Reported incidence reflects true
+incidence, ascertainment, case definitions, reporting completeness, and health
+system behavior. The manuscript must not claim unbiased infection burden.
 
-## Why Not A Human-To-Human Spread Simulation?
+## Why Include 2020-2021?
 
-Most hantavirus transmission is reservoir-to-human. Andes virus can transmit
-person-to-person, but that is not the ECDC country-year target. The current
-simulation is only a sparse reported-incidence state stress test and is not
-used as validation evidence.
+Those years are part of the available 2019-2023 public panel. The manuscript must
+include COVID-era sensitivity analyses rather than silently removing or ignoring
+them.
 
-## What If Climate Adds No Predictive Value?
+## Could Belgium Or Cyprus Drive The Result?
 
-That is still a useful result. It would show that, at the public EU/EEA
-country-year scale, simple surveillance baselines are hard to beat and that
-improved surveillance completeness/timeliness may matter more than adding
-coarse covariates.
+This must be tested directly. The EID-ready package needs separate Belgium 2023,
+Cyprus 2023, combined exclusion, and flagged-row indicator scenarios.
 
-## What If 90 Percent Coverage Is Poor?
+## Could Finland Or Germany Drive The Result?
 
-Report it directly. Calibration failure is a result, not something to hide.
-Discuss WIS together with empirical coverage and interval width so reviewers
-can see the tradeoff between accuracy and sharpness.
+This must be tested directly because ECDC reports Finland and Germany accounted
+for 60.5% of 2023 cases. The EID-ready package needs leave-one-country-out
+influence analysis.
 
 ## Why Use WIS?
 
-Weighted interval score is a proper score widely used for probabilistic
-epidemic forecast evaluation. It rewards accurate medians while penalizing
-miscalibrated and overly wide intervals.
+Weighted interval score is a proper interval-format forecast score used in
+epidemic forecast evaluation. It rewards forecasts that are sharp and calibrated,
+but it must be reported with empirical coverage and interval width.
 
-## Why Avoid PLOS NTD For ECDC-Only?
+## Why Not Promote The Penalized Poisson Model?
 
-PLOS NTD focuses on neglected diseases affecting under-resourced and often
-LMIC populations, and its scope restricts high-income-country work unless it
-has LMIC consequences. The ECDC-only paper is a better fit for IJHG, Scientific
-Data, or BMC Public Health.
+The current best penalized Poisson model is sharp but poorly calibrated. In 2023,
+the land-use penalized Poisson model covered 9/28 observations, about 32%, far
+below the nominal 90% interval target.
+
+## Why No MODIS Vegetation Claim?
+
+The MODIS source manifest exists, but quality-masked country-year aggregation did
+not pass the inclusion gate. Excluding it is a strength: the paper avoids claims
+it cannot audit.
+
+## What Is The Public-Health Takeaway?
+
+Before public covariates can support credible pan-European hantavirus forecasts,
+surveillance systems need standardized completeness flags, longer comparable
+panels, harmonized metadata, and explicit uncertainty reporting.

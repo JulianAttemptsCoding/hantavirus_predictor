@@ -19,7 +19,8 @@ DEFAULT_SENSITIVITY = ROOT / "data" / "processed" / "sensitivity_metrics.csv"
 DEFAULT_POWER = ROOT / "data" / "processed" / "power_detectability.csv"
 DEFAULT_COUNT_MODELS = ROOT / "data" / "processed" / "count_model_metrics.csv"
 DEFAULT_OUTPUT = ROOT / "reports" / "05_publication_readiness_gate.md"
-DEFAULT_MAP_REPORT = ROOT / "reports" / "06_ijhg_maps.md"
+DEFAULT_FIGURE_1 = ROOT / "docs" / "submission_eid" / "figures" / "Figure_1.tif"
+DEFAULT_FIGURE_2 = ROOT / "docs" / "submission_eid" / "figures" / "Figure_2.tif"
 
 ECDC_TOTALS = {
     2019: 4088,
@@ -83,7 +84,7 @@ def build_gate_report(
     sensitivity: pd.DataFrame | None = None,
     power: pd.DataFrame | None = None,
     count_models: pd.DataFrame | None = None,
-    map_report_exists: bool = False,
+    eid_figures_exist: bool = False,
 ) -> tuple[str, bool]:
     annual = cases.groupby("year", as_index=False)["cases"].sum()
     annual["expected_ecdc_total"] = annual["year"].map(ECDC_TOTALS)
@@ -247,9 +248,12 @@ def build_gate_report(
                 ),
             },
             {
-                "area": "IJHG map package",
-                "status": _status(map_report_exists),
-                "evidence": "Natural Earth map notes exist with projection and palette details.",
+                "area": "EID figure package",
+                "status": _status(eid_figures_exist),
+                "evidence": (
+                    "Draft EID figure files exist separately from manuscript text with "
+                    "country-level display only."
+                ),
             },
             {
                 "area": "Simulation appendix",
@@ -317,7 +321,7 @@ def build_gate_report(
         "",
         "- Main claim: an open, uncertainty-calibrated EU/EEA country-year reported-incidence benchmark using free public surveillance, demographic, land-use, and TerraClimate covariates.",
         "- Simulation claim: reported-incidence state stress testing only; not human-to-human spread prediction and not extra validation data.",
-        "- Exclusions: no county-level U.S. human prediction, no operational alerting, no vegetation claim until MODIS QA aggregation exists, and no global generalization claim until non-ECDC source systems are added.",
+        "- Exclusions: no individual infection prediction, no within-country risk map, no operational alerting, no vegetation claim until MODIS QA aggregation exists, and no global generalization claim until non-ECDC source systems are added.",
     ]
     return "\n".join(lines) + "\n", not failed
 
@@ -333,7 +337,8 @@ def main() -> int:
     parser.add_argument("--sensitivity", default=str(DEFAULT_SENSITIVITY))
     parser.add_argument("--power", default=str(DEFAULT_POWER))
     parser.add_argument("--count-models", default=str(DEFAULT_COUNT_MODELS))
-    parser.add_argument("--map-report", default=str(DEFAULT_MAP_REPORT))
+    parser.add_argument("--figure-1", default=str(DEFAULT_FIGURE_1))
+    parser.add_argument("--figure-2", default=str(DEFAULT_FIGURE_2))
     parser.add_argument("--output", default=str(DEFAULT_OUTPUT))
     args = parser.parse_args()
 
@@ -364,7 +369,7 @@ def main() -> int:
         sensitivity=sensitivity,
         power=power,
         count_models=count_models,
-        map_report_exists=Path(args.map_report).exists(),
+        eid_figures_exist=Path(args.figure_1).exists() and Path(args.figure_2).exists(),
     )
     output = Path(args.output)
     output.parent.mkdir(parents=True, exist_ok=True)

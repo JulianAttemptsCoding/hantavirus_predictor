@@ -1,59 +1,57 @@
-validation_gates:
-  minimum_before_deep_learning:
-    - "international case table validated with syndrome, source-system, and provenance fields"
-    - "country-year population denominators joined without missing primary rows"
-    - "temporal and leave-country-out validation folds defined before feature selection"
-    - "NEON serology join audited with row counts and duplicate report"
-    - "trap effort denominators validated by site-month"
-    - "strict temporal split with no future covariates"
-    - "SARIMAX, GAM/GLMM, and gradient boosting baselines implemented"
-  promote_complex_model_only_if:
-    - "mean WIS improves by at least 10 percent over best simple baseline"
-    - "90 percent interval empirical coverage is between 85 and 95 percent overall"
-    - "coverage does not collapse below 80 percent in any major region/biome stratum"
-    - "spatial leave-domain-out result is directionally consistent with temporal CV"
-    - "improvement holds in at least one leave-region or leave-country validation setting"
+project:
+  active_target: "Emerging Infectious Diseases Research article"
+  scope: "EU/EEA country-year reported hantavirus incidence, 2019-2023"
+  design: "retrospective one-year-ahead probabilistic benchmark"
 
 model_sequence:
-  phase_0_international_baselines:
-    - name: "country historical mean rate"
-      purpose: "minimum country-year incidence floor"
-    - name: "last-observed country rate"
-      purpose: "persistence baseline for recent surveillance"
-    - name: "negative-binomial panel GLM"
-      purpose: "interpretable rate model with population offset"
-    - name: "hierarchical negative-binomial model"
-      purpose: "partial pooling across country, syndrome, region, and source system"
-    - name: "gradient boosting with lagged climate and land-use features"
-      purpose: "strong nonlinear tabular benchmark"
-  phase_1_us_neon_baselines:
-    - name: "historical climatology"
-      purpose: "minimum skill floor"
-    - name: "SARIMAX with weather and vegetation covariates"
-      purpose: "time-series reviewer baseline"
-    - name: "binomial or beta-binomial GLMM/GAM"
-      purpose: "interpretable ecological baseline for seroprevalence"
-    - name: "gradient boosting"
-      purpose: "strong tabular nonlinear baseline"
-  phase_2_mechanistic:
-    - name: "hierarchical reservoir transmission model"
-      purpose: "biologically constrained dynamics with partial pooling"
-  phase_3_optional_advanced:
-    - name: "PINN"
-      purpose: "only if residual physics constraints improve held-out performance"
-    - name: "TimesFM or Chronos prior"
-      purpose: "cold-start time-series prior, not proof of biological mechanism"
-    - name: "spatiotemporal graph model"
-      purpose: "only if graph edges are justified without private mobility data"
+  surveillance_baselines:
+    - name: "country_historical_mean_rate"
+      purpose: "minimum country-specific surveillance-history comparator"
+    - name: "last_observed_country_rate"
+      purpose: "persistence baseline for recent reported incidence"
+    - name: "empirical_negative_binomial_rate"
+      purpose: "conservative uncertainty reference"
+    - name: "hierarchical_negative_binomial_rate"
+      purpose: "shrinkage reference for sparse country histories"
+  covariate_blocks:
+    - name: "surveillance_only"
+      purpose: "lagged and panel surveillance summaries"
+    - name: "context"
+      purpose: "World Bank demographic and socioeconomic context"
+    - name: "land_use"
+      purpose: "FAOSTAT land-use context"
+    - name: "climate"
+      purpose: "TerraClimate lagged climate and water-balance context"
+    - name: "all_public"
+      purpose: "all public covariates plus source-quality metadata"
+  exploratory_count_model:
+    - name: "penalized_poisson_glm"
+      purpose: "count-scale sensitivity with population offset; do not interpret coefficients causally"
 
-publication_claims_allowed:
-  - "international country-level reported-incidence benchmark"
-  - "syndrome-stratified country-year risk model"
-  - "reservoir-risk forecast"
-  - "spillover-risk proxy"
-  - "decision-support research prototype"
+promotion_rule:
+  required:
+    - "2023 WIS improves by at least 5 percent over the best simple surveillance baseline, or WIS is comparable and coverage is materially closer to 0.90."
+    - "2023 90 percent coverage is not lower than the best simple baseline by more than 5 percentage points."
+    - "Mean interval width is interpretable and not merely inflated."
+    - "No target-year outcome information is used in imputation, screening, tuning, or features."
+    - "Result survives flagged-row sensitivity."
+    - "Result is not driven solely by Finland or Germany."
+    - "No causal claim is made from model coefficients."
 
-publication_claims_blocked_until_partner_data:
-  - "county-level human case predictor"
-  - "operational public-health warning system"
-  - "validated prospective hantavirus outbreak forecast"
+blocked_claims:
+  - "operational public-health predictor"
+  - "clinical decision tool"
+  - "within-country risk map"
+  - "prospective forecast"
+  - "causal climate effect"
+  - "true infection burden"
+  - "human infection predictor without matching human surveillance validation"
+
+eid_missing_gates:
+  - "model-input Table 1 with ranges, sources, lags, and missingness"
+  - "model/workflow schematic"
+  - "surveillance-quality sensitivity"
+  - "leave-one-country-out influence"
+  - "calibration localization"
+  - "null-calibrated detectability screen"
+  - "strict EID readiness checker"
