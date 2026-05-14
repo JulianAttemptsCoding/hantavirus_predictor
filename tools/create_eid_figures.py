@@ -1,9 +1,10 @@
-"""Create EID submission figures: Figure 1 (incidence map) and Figure 2 (calibration-sharpness).
+"""Create EID submission figures.
 
 Figure 1: Country-level reported hantavirus incidence per 100,000, EU/EEA 2023.
 Figure 2: Calibration-sharpness tradeoff scatter for 2023 one-year-ahead forecasts.
+Figure 3: Sensitivity, influence, and calibration summary.
 
-Outputs go to docs/submission_eid/figures/ as Figure_1.tif and Figure_2.tif at 600 dpi.
+Outputs go to docs/submission_eid/figures/ as TIFF files at 600 dpi.
 """
 
 from __future__ import annotations
@@ -24,6 +25,9 @@ DEFAULT_CASES = ROOT / "data" / "processed" / "international_country_year.csv"
 DEFAULT_BASELINE_METRICS = ROOT / "data" / "processed" / "international_baseline_metrics.csv"
 DEFAULT_ABLATION_METRICS = ROOT / "data" / "processed" / "feature_ablation_metrics.csv"
 DEFAULT_COUNT_METRICS = ROOT / "data" / "processed" / "count_model_metrics.csv"
+DEFAULT_SENSITIVITY = ROOT / "docs" / "submission_eid" / "tables" / "appendix_surveillance_quality_sensitivity.csv"
+DEFAULT_INFLUENCE = ROOT / "docs" / "submission_eid" / "tables" / "appendix_country_influence.csv"
+DEFAULT_CALIBRATION = ROOT / "docs" / "submission_eid" / "tables" / "appendix_calibration_localization.csv"
 DEFAULT_BOUNDARIES = ROOT / "data" / "raw" / "natural_earth" / "ne_50m_admin_0_countries.zip"
 DEFAULT_OUTPUT = ROOT / "docs" / "submission_eid" / "figures"
 
@@ -230,12 +234,101 @@ def _create_figure2_tradeoff(
     plt.close(fig)
 
 
+def _create_figure3_sensitivity(
+    sensitivity: pd.DataFrame,
+    influence: pd.DataFrame,
+    calibration: pd.DataFrame,
+    output: Path,
+) -> None:
+    """Create EID Figure 3: sensitivity, influence, and calibration summary."""
+    if sensitivity.empty or influence.empty or calibration.empty:
+        return
+    plt.rcParams.update(EID_RC)
+    fig, axes = plt.subplots(1, 3, figsize=(9.5, 3.6))
+
+    sens = sensitivity.sort_values("coverage_90")
+    axes[0].barh(sens["scenario"], sens["coverage_90"], color="#0072B2")
+    axes[0].axvline(0.9, color="black", linestyle="--", linewidth=1)
+    axes[0].set_xlim(0, 1.05)
+    axes[0].set_xlabel("90% coverage")
+    axes[0].set_title("Surveillance sensitivity")
+
+    key = influence[influence["removed_iso3"].isin(["FIN", "DEU"])].copy()
+    if key.empty:
+        key = influence.nlargest(2, "removed_2023_cases").copy()
+    axes[1].bar(
+        key["removed_iso3"],
+        key["delta_best_ablation_wis"],
+        color=["#D55E00" if value else "#009E73" for value in key["conclusion_changes"]],
+    )
+    axes[1].axhline(0, color="black", linewidth=1)
+    axes[1].set_ylabel("Delta WIS")
+    axes[1].set_title("Country influence")
+
+    cal = (
+        calibration.groupby(["model_family", "feature_set"], as_index=False)["covered_90"]
+        .mean()
+        .sort_values("covered_90")
+    )
+    cal["label"] = cal["model_family"].str.replace("_", " ") + ": " + cal["feature_set"].astype(str)
+    axes[2].barh(cal["label"].tail(8), cal["covered_90"].tail(8), color="#009E73")
+    axes[2].axvline(0.9, color="black", linestyle="--", linewidth=1)
+    axes[2].set_xlim(0, 1.05)
+    axes[2].set_xlabel("2023 coverage")
+    axes[2].set_title("Calibration localization")
+
+    fig.tight_layout()
+    _save_figure_tif(fig, output / "Figure_3.tif")
+    plt.close(fig)
+
+
+def _create_model_schematic(output: Path) -> None:
+    """Create appendix model/workflow schematic."""
+    plt.rcParams.update(EID_RC)
+    labels = [
+        "ECDC reported\ncountry-year labels",
+        "Public covariates\nby ISO3-year",
+        "Training-only\nimputation/screening",
+        "Baselines and\ncovariate blocks",
+        "2022 validation\n2023 locked test",
+        "WIS, coverage,\nwidth, MAE, Brier",
+        "Sensitivity,\ninfluence,\ndetectability",
+    ]
+    fig, ax = plt.subplots(figsize=(8.0, 2.8))
+    ax.set_axis_off()
+    for x, label in enumerate(labels):
+        ax.text(
+            x,
+            0.5,
+            label,
+            ha="center",
+            va="center",
+            bbox={"boxstyle": "round,pad=0.35", "facecolor": "#F2F2F2", "edgecolor": "#4D4D4D"},
+            fontsize=8,
+        )
+        if x < len(labels) - 1:
+            ax.annotate(
+                "",
+                xy=(x + 0.42, 0.5),
+                xytext=(x + 0.58, 0.5),
+                arrowprops={"arrowstyle": "->", "color": "#4D4D4D"},
+            )
+    ax.set_xlim(-0.6, len(labels) - 0.4)
+    ax.set_ylim(0, 1)
+    fig.tight_layout()
+    _save_figure_tif(fig, output / "Appendix_Figure_model_schematic.tif")
+    plt.close(fig)
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--cases", default=str(DEFAULT_CASES))
     parser.add_argument("--baseline-metrics", default=str(DEFAULT_BASELINE_METRICS))
     parser.add_argument("--ablation-metrics", default=str(DEFAULT_ABLATION_METRICS))
     parser.add_argument("--count-metrics", default=str(DEFAULT_COUNT_METRICS))
+    parser.add_argument("--sensitivity", default=str(DEFAULT_SENSITIVITY))
+    parser.add_argument("--influence", default=str(DEFAULT_INFLUENCE))
+    parser.add_argument("--calibration", default=str(DEFAULT_CALIBRATION))
     parser.add_argument("--boundaries", default=str(DEFAULT_BOUNDARIES))
     parser.add_argument("--output-dir", default=str(DEFAULT_OUTPUT))
     args = parser.parse_args()
@@ -260,6 +353,15 @@ def main() -> int:
 
     print("Creating Figure 2 (calibration-sharpness tradeoff)...")
     _create_figure2_tradeoff(baseline_metrics, ablation_metrics, count_metrics, output)
+
+    sensitivity = pd.read_csv(args.sensitivity) if Path(args.sensitivity).exists() else pd.DataFrame()
+    influence = pd.read_csv(args.influence) if Path(args.influence).exists() else pd.DataFrame()
+    calibration = pd.read_csv(args.calibration) if Path(args.calibration).exists() else pd.DataFrame()
+    if not sensitivity.empty and not influence.empty and not calibration.empty:
+        print("Creating Figure 3 (sensitivity/influence/calibration)...")
+        _create_figure3_sensitivity(sensitivity, influence, calibration, output)
+    print("Creating Appendix model schematic...")
+    _create_model_schematic(output)
 
     print(f"\nEID figures written to: {output}")
     print("Verify DPI: python -c \"from PIL import Image; from pathlib import Path; "

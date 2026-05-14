@@ -1,7 +1,8 @@
 # EID Submission Guide
 
-This guide is for the eventual *Emerging Infectious Diseases* upload. The
-current package is not final-ready until `PUBLICATION_MASTER_PLAN.md` gates pass.
+This guide is for the *Emerging Infectious Diseases* upload. The current local
+package passes the strict EID readiness checker; remaining work is limited to
+human portal details and final DOI/archive verification.
 
 ## Submission Target
 
@@ -15,15 +16,23 @@ current package is not final-ready until `PUBLICATION_MASTER_PLAN.md` gates pass
 Before submission, confirm the DOI points to the final clean commit or publish a
 new Zenodo version.
 
+Suitability inquiry decision: EID does not list a Research-article
+pre-submission inquiry as a required step. Use one only if the author wants an
+extra editorial-risk check before portal upload; it is not a local readiness
+blocker.
+
 ## Draft Files
 
 - Main manuscript: `docs/submission_eid/manuscript_eid.docx`
 - Cover letter: `docs/submission_eid/cover_letter_eid.docx`
 - Main Figure 1: `docs/submission_eid/figures/Figure_1.tif`
 - Main Figure 2: `docs/submission_eid/figures/Figure_2.tif`
+- Main Figure 3: `docs/submission_eid/figures/Figure_3.tif`
+- Appendix model schematic: `docs/submission_eid/figures/Appendix_Figure_model_schematic.tif`
 - Supplementary appendix: `docs/submission_eid/supplements/Appendix_methods_eid.docx`
 - Author statements: `docs/submission_eid/author_statements.docx`
-- Draft QA record: `docs/submission_eid/final_qa_report_eid.md`
+- Final QA record: `docs/submission_eid/final_qa_report_eid.md`
+- Reproducibility manifest: `docs/submission_eid/reproducibility_manifest.md`
 
 Do not upload archive-branch materials, old ZIP packages, old Overleaf files, or
 any pre-EID journal-target files.

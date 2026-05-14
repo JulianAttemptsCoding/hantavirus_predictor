@@ -10,7 +10,8 @@ The active project is an *Emerging Infectious Diseases* Research article:
 > forecasting of reported hantavirus incidence; public covariates do not
 > reliably improve over surveillance-history baselines.
 
-This is a retrospective public-data benchmark, not an operational predictor.
+This is a retrospective public-data benchmark, not a deployable forecasting
+tool.
 
 ## Current Repository State
 
@@ -36,8 +37,9 @@ The local EID package currently includes:
 - `docs/submission_eid/supplements/Appendix_methods_eid.docx`
 - `docs/submission_eid/submission_guide_eid.md`
 
-The package is an advanced draft. It is not final EID-ready until the missing
-modeling-compliance gates in `PUBLICATION_MASTER_PLAN.md` are complete.
+The package now passes the strict local EID readiness checker. Remaining work is
+limited to human-only portal/archive verification, including final mailing
+address, phone number, final DOI/archive match, and author checklist responses.
 
 ## Working Data Facts
 
@@ -52,14 +54,13 @@ modeling-compliance gates in `PUBLICATION_MASTER_PLAN.md` are complete.
 
 ## Must-Fix Before Submission
 
-1. Add EID model-input Table 1 with variable ranges, lags, missingness, and sources.
-2. Add a model/workflow schematic.
-3. Replace coarse sensitivity with separate Belgium, Cyprus, flagged-indicator,
-   COVID-era, and country-influence analyses.
-4. Add calibration localization for all 2023 test predictions.
-5. Redesign the detectability simulation with a null false-positive gate.
-6. Add strict EID readiness tooling.
-7. Rebuild manuscript, appendix, figures, and DOCX from the upgraded evidence package.
+No local analysis or repo-organization blockers remain. Human-only items before
+portal submission:
+
+1. Confirm corresponding author's mailing address and phone number.
+2. Verify that the final DOI resolves to the archive matching the final commit.
+3. Complete the EID author checklist and conflict-of-interest responses.
+4. Open the DOCX files in Word for final visual inspection.
 
 ## QA Commands
 
@@ -70,4 +71,4 @@ python -m ruff check src tests tools
 git diff --check
 ```
 
-Full rebuild commands are in `docs/reproducibility_manifest.md`.
+Full rebuild commands are in `docs/submission_eid/reproducibility_manifest.md`.

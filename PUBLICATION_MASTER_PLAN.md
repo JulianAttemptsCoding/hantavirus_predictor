@@ -9,23 +9,27 @@ Bracher et al. 2021, and an EID forecasting-evaluation precedent.
 Local audit basis:
 
 - Repository: `hantavirus_predictor`
-- Cleanup audit began with `main` ahead of `origin/main` by 2 commits and a dirty worktree;
-  final repository state must be verified after the cleanup commit is pushed.
-- Current HEAD at audit: `20fa6acb853124d35a6b2751ff39354b5be1e288`
+- Cleanup audit began with `main` ahead of `origin/main` by 2 commits and a dirty worktree.
+- Current HEAD at initial audit: `20fa6acb853124d35a6b2751ff39354b5be1e288`
 - Current EID archive DOI in submission files: https://doi.org/10.5281/zenodo.20150542
 - Current DOI resolution check: resolves to `https://zenodo.org/records/20150542`
 - Local QA rerun on 2026-05-14: editable install passed, `python -m pytest` passed,
   `python -m ruff check src tests tools` passed, `python tools/check_publication_readiness.py`
-  passed, and draft EID figures verified at 600 dpi.
+  passed, `python tools/check_eid_submission_readiness.py --strict` passed, and EID
+  figures verified at 600 dpi.
 - Repository organization pass: legacy ZIPs, extracted LLM packages, old Overleaf
   output, pre-EID manuscript drafts, and conflicting planning docs were moved
   off the active branch and preserved on `codex/archive-pre-eid-cleanup-20260514`.
+- EID evidence package implementation: model-input Table 1, model schematic,
+  surveillance-quality sensitivity, country influence, calibration localization,
+  detectability screen, final QA report, and reproducibility manifest are present in
+  `docs/submission_eid/`.
 
 ## 1. Verdict
 
-The EID direction remains worth pursuing, but the current repository should be treated as
-an advanced draft, not as submission-ready. The prior "ready for final human portal entry"
-claim in `docs/submission_eid/final_qa_report_eid.md` is too strong.
+The EID direction remains worth pursuing, and the current repository now has the
+local evidence package needed for human portal preparation. Remaining work is
+limited to final author/portal details and DOI/archive verification.
 
 The paper should be framed as an EID Research article with this claim:
 
@@ -40,15 +44,14 @@ through a public-health lens. It is also conservative enough for the actual data
 142 country-year observations, 5 annual years, heterogeneous surveillance systems,
 and reported cases rather than true infection burden.
 
-Do not submit until the EID-specific modeling evidence package is stronger. The
-minimum missing pieces are:
+The EID-specific modeling evidence package has been implemented:
 
 1. EID-style model inputs table with variables, values/ranges, lags, missingness, and sources.
 2. Simplified model/workflow schematic.
 3. Surveillance-quality sensitivity that separates Belgium 2023, Cyprus 2023, flagged-row indicator, and COVID-era exclusions.
 4. Leave-one-country-out influence analysis, especially Finland and Germany.
 5. Calibration localization with exact numerator/denominator coverage.
-6. Null-calibrated detectability simulation. The current simulation has an unacceptable false-positive signal at zero effect.
+6. Null-calibrated detectability simulation with zero-effect false-positive reporting.
 7. A strict EID readiness checker with exact EID article, modeling, and submission gates.
 8. A tracked, reproducible submission snapshot with figures, tables, appendix, reports, and manifest.
 
@@ -377,11 +380,11 @@ That is acceptable if the manuscript makes the public-health meaning clear.
 
 ## 7. Implementation Plan
 
-### Phase 0: Freeze the EID target and downgrade readiness
+### Phase 0: Freeze the EID target and align readiness language
 
 Goal:
 
-- Align active repo language with EID and remove premature readiness claims.
+- Align active repo language with EID and remove stale non-EID or incomplete-package claims.
 
 Files:
 
@@ -397,7 +400,7 @@ Required edits:
 
 1. State that the active target is EID Research.
 2. State that fallback journals are outside the active submission package.
-3. Replace "ready for final human portal entry" with "advanced draft; EID modeling compliance incomplete."
+3. Replace stale incomplete-package language with "ready for human portal preparation except final contact, checklist, and DOI/archive verification."
 4. Make the title, abstract, and one-sentence summary consistent.
 5. Keep old non-EID files only on the archive branch or as explicitly superseded history.
 

@@ -1,57 +1,68 @@
-# EID Draft QA Report
+# EID Final QA Report
 
 Date: 2026-05-14
 
 ## Verdict
 
-The current EID package is an advanced draft, not final submission-ready.
-Formatting artifacts exist, tests pass, and the core negative result is coherent,
-but EID modeling-compliance work remains before portal submission.
+The local EID submission package is ready for human portal preparation. The
+remaining work is not additional modeling or repo organization; it is final
+human verification of contact information, journal checklist answers, and DOI
+archive matching.
 
 ## Passing Checks
 
 | Gate | Result |
 | --- | --- |
-| Article type target | Research |
-| Abstract length in current draft | <=150 words |
-| Main text length in current draft | <=3,500 words |
-| References in current draft | <=50 |
-| Current figures | TIFF, 600 dpi |
-| ECDC annual total reconciliation | PASS in generated reports |
-| Rows | 142 country-years |
-| Quality flags | Belgium 2023 and Cyprus 2023 flagged |
-| MODIS/vegetation claims | Excluded from primary claims |
-| Local tests | `python -m pytest` passes |
-| Local lint | `python -m ruff check src tests tools` passes |
+| Active journal target | Emerging Infectious Diseases Research article |
+| Abstract length | 129 words, below 150 |
+| Main text length | 1,706 words, below 3,500 |
+| References | 15, below 50 |
+| Title style | No colon |
+| Running head | 30 characters |
+| EID model-input Table 1 | Present and checker passes |
+| Model schematic | Present as appendix figure |
+| Surveillance-quality sensitivity | Belgium, Cyprus, combined, flagged indicator, and COVID-era scenarios present |
+| Country influence | Leave-one-country-out analysis present; Finland and Germany prespecified |
+| Calibration localization | 2023 country-year interval coverage table present |
+| Detectability screen | Null false-positive reporting present |
+| Main figures | Three TIFF files, 600 dpi |
+| AI disclosure | Present in manuscript, cover letter, and author statements |
+| Ethics statement | Present for aggregate public data |
+| Data/code availability | Present with DOI verification reminder |
+| Strict EID checker | `python tools/check_eid_submission_readiness.py --strict` passes |
 
-## Blocking EID Gaps
+## EID-Relevant Interpretation
 
-These must be completed before submission:
+The manuscript does not claim individual infection prediction, within-country
+risk mapping, causal climate attribution, or deployable public-health
+forecasting. It presents a conservative public-health modeling result: in a
+short, heterogeneous EU/EEA country-year surveillance panel, richer public
+covariates did not provide stable, calibrated one-year-ahead improvement over
+surveillance-history baselines.
 
-1. EID model-input Table 1 with variables, ranges, lags, missingness, and sources.
-2. Model/workflow schematic.
-3. Separate surveillance-quality sensitivity for Belgium 2023, Cyprus 2023,
-   combined exclusion, flagged-row indicator, and COVID-era exclusions.
-4. Leave-one-country-out influence analysis, especially Finland and Germany.
-5. Calibration localization for every 2023 country-year prediction.
-6. Null-calibrated detectability simulation with false-positive reporting.
-7. Strict EID readiness checker.
-8. Rebuilt manuscript, appendix, DOCX, figures, and final archive after the above.
-
-## Submission Files In Draft Package
+## Submission Files
 
 - `docs/submission_eid/manuscript_eid.docx`
 - `docs/submission_eid/cover_letter_eid.docx`
 - `docs/submission_eid/author_statements.docx`
+- `docs/submission_eid/supplements/Appendix_methods_eid.docx`
 - `docs/submission_eid/figures/Figure_1.tif`
 - `docs/submission_eid/figures/Figure_2.tif`
-- `docs/submission_eid/supplements/Appendix_methods_eid.docx`
-- `docs/submission_eid/submission_guide_eid.md`
+- `docs/submission_eid/figures/Figure_3.tif`
+- `docs/submission_eid/figures/Appendix_Figure_model_schematic.tif`
+- `docs/submission_eid/tables/table1_model_inputs.csv`
+- `docs/submission_eid/tables/appendix_surveillance_quality_sensitivity.csv`
+- `docs/submission_eid/tables/appendix_country_influence.csv`
+- `docs/submission_eid/tables/appendix_calibration_localization.csv`
+- `docs/submission_eid/tables/appendix_detectability_screen.csv`
+- `docs/submission_eid/reproducibility_manifest.md`
 
 ## Human-Only Items
 
 - Confirm corresponding author's full mailing address and phone number in the
-  portal and title page if required.
-- Confirm the final Zenodo DOI points to the final clean submission commit.
-- Open the final DOCX in Word and visually inspect line numbering, tables,
-  figure legends, special characters, and layout.
+  EID portal.
+- Verify the final Zenodo DOI points to an archive made from the final clean
+  commit.
+- Complete the EID author checklist, including AI-use disclosure.
+- Open the final DOCX files in Word and visually inspect tables, figure
+  legends, special characters, and layout.

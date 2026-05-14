@@ -46,7 +46,7 @@ Julian Juan: Conceptualization, Data curation, Formal analysis, Investigation,
 Methodology, Software, Validation, Visualization, Writing - original draft,
 Writing - review and editing.
 
-## Author Biography
+## Biographical Sketch
 
 Julian Juan is an independent researcher interested in reproducible infectious
 disease surveillance, probabilistic evaluation, and public-health modeling.
