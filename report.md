@@ -296,3 +296,175 @@ Everything in the EID acceptance plan that can be implemented locally has been
 implemented and QA'd. The package is locally ready for EID human portal
 preparation, excluding only final DOI/archive verification and author/portal
 metadata tasks.
+
+---
+
+# Final Paper and DOCX Hardening Iteration
+
+Date: 2026-05-14
+
+Purpose: implement the remaining paper/package hardening implied by "full paper
+and everything else," with special focus on DOCX submission artifacts, CI parity,
+and end-to-end rebuild reproducibility.
+
+## Additional Work Completed
+
+- Audited the DOCX build path and found that wrapped Markdown lines were being
+  emitted as separate Word paragraphs. This was structurally valid but not
+  polished enough for a journal submission document.
+- Reworked `tools/build_eid_docx.py` so wrapped prose lines are merged into real
+  paragraphs, bullet and numbered items become Word list paragraphs, Markdown
+  tables remain real Word tables, and code blocks render in a monospaced font.
+- Rebuilt all DOCX files:
+  - `docs/submission_eid/manuscript_eid.docx`
+  - `docs/submission_eid/cover_letter_eid.docx`
+  - `docs/submission_eid/author_statements.docx`
+  - `docs/submission_eid/supplements/Appendix_methods_eid.docx`
+- Added `tools/check_docx_artifacts.py` for structural DOCX QA when visual
+  rendering is unavailable.
+- Added `tests/test_docx_artifacts.py` so DOCX structural readiness is covered by
+  pytest.
+- Updated README, root reproducibility manifest, submission reproducibility
+  manifest, and CI to include the DOCX artifact checker.
+- Rebuilt the full analysis and submission artifact chain end to end after the
+  DOCX builder fix.
+
+## DOCX Render Attempt
+
+The Documents render workflow was attempted with the bundled renderer:
+
+```powershell
+python render_docx.py docs/submission_eid/manuscript_eid.docx --output_dir ...
+```
+
+Rendering could not be completed because LibreOffice/`soffice` is not installed
+or discoverable in this Windows environment. I therefore did not claim visual
+PNG QA. Instead, I implemented and ran structural DOCX QA:
+
+- DOCX files open as valid OOXML packages.
+- No comments/revision parts are present.
+- No tracked-change XML is present.
+- Line numbering XML is present.
+- Margins are 1 inch.
+- Manuscript has real Word tables.
+- Markdown source files are ASCII-only.
+- The rebuilt manuscript no longer has paragraph counts consistent with one
+  paragraph per wrapped Markdown line.
+
+## DOCX Structural Results
+
+| DOCX | Real Word tables | Paragraphs | Line numbering XML |
+| --- | ---: | ---: | ---: |
+| `manuscript_eid.docx` | 3 | 368 | present |
+| `cover_letter_eid.docx` | 0 | 28 | present |
+| `author_statements.docx` | 0 | 63 | present |
+| `Appendix_methods_eid.docx` | 0 | 243 | present |
+
+Figure QA remained passing:
+
+| Figure | Size | DPI | Width |
+| --- | ---: | ---: | ---: |
+| `Appendix_Figure_model_schematic.tif` | 4740 x 1619 | 600 | 7.90 in |
+| `Figure_1.tif` | 4132 x 3336 | 600 | 6.89 in |
+| `Figure_2.tif` | 4123 x 2931 | 600 | 6.87 in |
+| `Figure_3.tif` | 5828 x 2085 | 600 | 9.71 in |
+
+## Full Rebuild Rerun
+
+The full command chain completed after the final DOCX-builder changes:
+
+```powershell
+python tools/create_ecdc_case_table.py --accessed-date 2026-05-14
+python tools/validate_international_cases.py --strict
+python tools/download_faostat_land_use.py
+python tools/create_terraclimate_manifest.py
+python tools/download_natural_earth_countries.py
+python tools/aggregate_terraclimate_country_year.py
+python tools/build_international_dataset.py
+python tools/create_mod13c2_manifest.py
+python tools/write_international_data_audit.py
+python tools/run_international_baselines.py
+python tools/run_markov_simulation.py
+python tools/run_feature_ablation.py
+python tools/run_count_models.py
+python tools/run_sensitivity_power.py
+python tools/write_eid_model_inputs_table.py
+python tools/check_eid_model_inputs_table.py
+python tools/run_surveillance_quality_sensitivity.py
+python tools/run_country_influence.py
+python tools/write_calibration_localization.py
+python tools/run_detectability_screen.py --iterations 100
+python tools/create_eid_figures.py
+python tools/build_eid_docx.py
+python tools/check_docx_artifacts.py
+python tools/check_publication_readiness.py
+python tools/check_eid_submission_readiness.py --strict
+```
+
+Rebuild result: PASS.
+
+## Final QA Rerun
+
+```powershell
+python -m pytest
+```
+
+Result: PASS, 33 tests passed.
+
+```powershell
+python -m ruff check src tests tools
+```
+
+Result: PASS.
+
+```powershell
+python tools/check_docx_artifacts.py
+```
+
+Result: PASS.
+
+```powershell
+python tools/check_eid_model_inputs_table.py
+```
+
+Result: PASS.
+
+```powershell
+python tools/check_eid_submission_readiness.py --strict
+```
+
+Result: PASS.
+
+Expected warnings:
+
+- Mailing address/phone still require human portal confirmation.
+- DOI must be verified or updated after final archive/version.
+
+```powershell
+python tools/check_publication_readiness.py
+```
+
+Result: PASS during the full rebuild, when generated processed data were
+present.
+
+```powershell
+git diff --check
+```
+
+Result: PASS.
+
+## Updated Final Determination
+
+The full paper package is now locally complete to the limit possible without
+human-only fields and external archive actions. The manuscript, cover letter,
+author statements, appendix, tables, figures, reports, build scripts, CI gates,
+readiness checkers, and DOCX structural checks are implemented and passing.
+
+Remaining external/human-only items:
+
+- Verify or update the final Zenodo archive and DOI.
+- Confirm ORCID/author metadata in the journal portal.
+- Enter mailing address and phone number.
+- Complete EID Author Checklist and COI/funding portal fields.
+- Open DOCX files in Word for final visual inspection because LibreOffice-based
+  PNG rendering is unavailable in this environment.

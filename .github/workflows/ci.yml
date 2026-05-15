@@ -18,5 +18,7 @@ jobs:
         run: python -m pytest
       - name: Lint
         run: python -m ruff check src tests tools
+      - name: DOCX artifacts
+        run: python tools/check_docx_artifacts.py
       - name: EID readiness
         run: python tools/check_eid_submission_readiness.py --strict

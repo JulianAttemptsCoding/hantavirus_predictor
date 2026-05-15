@@ -13,7 +13,8 @@ from docx import Document
 from docx.enum.text import WD_ALIGN_PARAGRAPH, WD_LINE_SPACING
 from docx.oxml import OxmlElement
 from docx.oxml.ns import qn
-from docx.shared import Pt, Inches
+from docx.shared import Inches, Pt
+
 ROOT = Path(__file__).resolve().parents[1]
 MD_PATH = ROOT / "docs" / "submission_eid" / "manuscript_eid.md"
 DOCX_PATH = ROOT / "docs" / "submission_eid" / "manuscript_eid.docx"
@@ -94,6 +95,21 @@ def _add_body(doc: Document, text: str, italic: bool = False) -> None:
         _add_marked_runs(para, text)
 
 
+def _add_list_item(doc: Document, text: str, numbered: bool = False) -> None:
+    style = "List Number" if numbered else "List Bullet"
+    para = doc.add_paragraph(style=style)
+    _para_format(para)
+    _add_marked_runs(para, text)
+
+
+def _add_code_lines(doc: Document, lines: list[str]) -> None:
+    for line in lines:
+        para = doc.add_paragraph()
+        _para_format(para)
+        run = para.add_run(line)
+        _set_font(run, size=10, font_name="Courier New")
+
+
 def _add_table(doc: Document, header: list[str], rows: list[list[str]]) -> None:
     table = doc.add_table(rows=1 + len(rows), cols=len(header))
     # Header row
@@ -150,7 +166,37 @@ def build_docx(md_path: Path, docx_path: Path) -> None:
     i = 0
     in_table = False
     table_lines: list[str] = []
+    paragraph_lines: list[str] = []
+    list_lines: list[str] = []
+    list_numbered = False
+    in_code_block = False
+    code_lines: list[str] = []
     skip_note = False
+
+    def flush_paragraph() -> None:
+        nonlocal paragraph_lines
+        if paragraph_lines:
+            _add_body(doc, " ".join(line.strip() for line in paragraph_lines))
+            paragraph_lines = []
+
+    def flush_list() -> None:
+        nonlocal list_lines
+        if list_lines:
+            _add_list_item(
+                doc,
+                " ".join(line.strip() for line in list_lines),
+                numbered=list_numbered,
+            )
+            list_lines = []
+
+    def flush_table() -> None:
+        nonlocal in_table, table_lines
+        if in_table and table_lines:
+            header, rows = _parse_md_table(table_lines)
+            if header:
+                _add_table(doc, header, rows)
+        in_table = False
+        table_lines = []
 
     while i < len(lines):
         line = lines[i]
@@ -164,13 +210,36 @@ def build_docx(md_path: Path, docx_path: Path) -> None:
             i += 1
             continue
 
+        if line.strip().startswith("```"):
+            flush_paragraph()
+            flush_list()
+            flush_table()
+            if in_code_block:
+                _add_code_lines(doc, code_lines)
+                code_lines = []
+                in_code_block = False
+            else:
+                in_code_block = True
+            i += 1
+            continue
+
+        if in_code_block:
+            code_lines.append(line)
+            i += 1
+            continue
+
         # Skip markdown front matter / horizontal rules
         if line.startswith("---") and len(line.strip()) == 3:
+            flush_paragraph()
+            flush_list()
+            flush_table()
             i += 1
             continue
 
         # Table handling
         if line.startswith("|"):
+            flush_paragraph()
+            flush_list()
             if not in_table:
                 in_table = True
                 table_lines = []
@@ -178,11 +247,7 @@ def build_docx(md_path: Path, docx_path: Path) -> None:
             i += 1
             continue
         elif in_table:
-            in_table = False
-            header, rows = _parse_md_table(table_lines)
-            if header:
-                _add_table(doc, header, rows)
-            table_lines = []
+            flush_table()
 
         # Skip [NOTE TO AUTHOR...] inline notes
         if line.startswith("[NOTE TO AUTHOR"):
@@ -191,6 +256,8 @@ def build_docx(md_path: Path, docx_path: Path) -> None:
 
         # H1 title (# heading)
         if line.startswith("# ") and not line.startswith("## "):
+            flush_paragraph()
+            flush_list()
             run_text = line[2:].strip()
             para = doc.add_paragraph()
             _para_format(para, space_before=0, space_after=6)
@@ -201,18 +268,24 @@ def build_docx(md_path: Path, docx_path: Path) -> None:
 
         # H2 heading
         if line.startswith("## "):
+            flush_paragraph()
+            flush_list()
             _add_heading(doc, line[3:].strip(), 2)
             i += 1
             continue
 
         # H3 heading
         if line.startswith("### "):
+            flush_paragraph()
+            flush_list()
             _add_heading(doc, line[4:].strip(), 3)
             i += 1
             continue
 
         # H4 heading
         if line.startswith("#### "):
+            flush_paragraph()
+            flush_list()
             para = doc.add_paragraph()
             _para_format(para, space_before=6)
             run = para.add_run(line[5:].strip())
@@ -220,31 +293,37 @@ def build_docx(md_path: Path, docx_path: Path) -> None:
             i += 1
             continue
 
-        # Bold **text** lines (like field labels in title page)
-        if line.startswith("**") and line.count("**") >= 2:
-            # Check if it's a label: value line
-            clean = line.replace("**", "")
-            para = doc.add_paragraph()
-            _para_format(para)
-            run = para.add_run(clean)
-            _set_font(run)
+        bullet_match = re.match(r"^\s*[-*]\s+(.+)", line)
+        numbered_match = re.match(r"^\s*\d+\.\s+(.+)", line)
+        if bullet_match or numbered_match:
+            flush_paragraph()
+            flush_list()
+            list_numbered = bool(numbered_match)
+            list_lines = [(numbered_match or bullet_match).group(1)]
             i += 1
             continue
 
-        # Empty line → paragraph break
+        # Empty line: paragraph break
         if line.strip() == "":
+            flush_paragraph()
+            flush_list()
             i += 1
             continue
 
-        # Regular paragraph
-        _add_body(doc, line)
+        # Regular paragraph or continuation of a wrapped list item.
+        if list_lines:
+            list_lines.append(line)
+        else:
+            paragraph_lines.append(line)
         i += 1
 
+    flush_paragraph()
+    flush_list()
+
     # Handle any remaining table
-    if in_table and table_lines:
-        header, rows = _parse_md_table(table_lines)
-        if header:
-            _add_table(doc, header, rows)
+    flush_table()
+    if in_code_block and code_lines:
+        _add_code_lines(doc, code_lines)
 
     _enable_line_numbering(doc)
     docx_path.parent.mkdir(parents=True, exist_ok=True)

@@ -44,6 +44,7 @@ python tools/write_calibration_localization.py
 python tools/run_detectability_screen.py --iterations 100
 python tools/create_eid_figures.py
 python tools/build_eid_docx.py
+python tools/check_docx_artifacts.py
 python tools/check_publication_readiness.py
 python tools/check_eid_submission_readiness.py --strict
 python -m pytest
